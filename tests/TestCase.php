@@ -14,6 +14,8 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
+        $this->withoutVite();
+
         Cache::flush();
 
         if ($this->fakeFrankfurterRates) {

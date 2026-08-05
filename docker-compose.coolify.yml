@@ -1,0 +1,85 @@
+# Coolify Docker Compose for SmelterWorks Web.
+# Point Coolify at this file (Docker Compose build pack).
+# Do not publish host ports: Coolify's proxy routes by domain.
+# Assign a domain in the Coolify UI, or rely on SERVICE_URL_WEB_8080.
+# Container listens on 8080 (not 80), so the port suffix is required.
+#
+# Before first deploy, set APP_KEY in Coolify (php artisan key:generate --show).
+
+name: smelterworks-web
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        OCI_VERSION: ${OCI_VERSION:-coolify}
+        OCI_REVISION: ${SOURCE_COMMIT:-unknown}
+    image: smelterworks/web:${OCI_VERSION:-coolify}
+    init: true
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    user: "65532:65532"
+    environment:
+      # Proxy: public URL on Coolify's domain, routed to container port 8080
+      - SERVICE_URL_WEB_8080
+      - APP_URL=${SERVICE_URL_WEB}
+
+      # Required
+      - APP_KEY=${APP_KEY:?}
+
+      # Hardcoded production defaults (not shown as editable Coolify fields)
+      - APP_NAME=SmelterWorks
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - LOG_CHANNEL=stderr
+      - LOG_LEVEL=${LOG_LEVEL:-warning}
+      - DB_CONNECTION=sqlite
+      - DB_DATABASE=/var/www/html/storage/database.sqlite
+      - SESSION_DRIVER=file
+      - SESSION_SECURE_COOKIE=${SESSION_SECURE_COOKIE:-true}
+      - CACHE_STORE=file
+      - QUEUE_CONNECTION=sync
+      - BROADCAST_CONNECTION=log
+      - FILESYSTEM_DISK=local
+      - MAIL_MAILER=log
+
+      # Optional public links (editable in Coolify UI, blank hides in the site)
+      - SMELTERWORKS_FLUXER_URL=${SMELTERWORKS_FLUXER_URL:-}
+      - SMELTERWORKS_GITHUB_URL=${SMELTERWORKS_GITHUB_URL:-https://github.com/SmelterWorks}
+      - SMELTERWORKS_RELIC_REPO_URL=${SMELTERWORKS_RELIC_REPO_URL:-https://github.com/SmelterWorks/Relic-Launcher}
+      - SMELTERWORKS_PANEL_URL=${SMELTERWORKS_PANEL_URL:-}
+      - SMELTERWORKS_WIKI_URL=${SMELTERWORKS_WIKI_URL:-}
+      - SMELTERWORKS_LEGAL_CONTACT=${SMELTERWORKS_LEGAL_CONTACT:-}
+      - SMELTERWORKS_CONTACT_EMAIL=${SMELTERWORKS_CONTACT_EMAIL:-}
+      - SMELTERWORKS_KOFI_URL=${SMELTERWORKS_KOFI_URL:-https://ko-fi.com/smelterworks}
+      - SMELTERWORKS_RELIC_PREVIEW_URL=${SMELTERWORKS_RELIC_PREVIEW_URL:-}
+      - SMELTERWORKS_BANNER_ENABLED=${SMELTERWORKS_BANNER_ENABLED:-true}
+      - SMELTERWORKS_BANNER_MESSAGE=${SMELTERWORKS_BANNER_MESSAGE:-Website is under construction}
+      - SMELTERWORKS_BANNER_BACKGROUND=${SMELTERWORKS_BANNER_BACKGROUND:-#b45309}
+      - SMELTERWORKS_BANNER_COLOR=${SMELTERWORKS_BANNER_COLOR:-#ebe4d8}
+      - SMELTERWORKS_BANNER_HREF=${SMELTERWORKS_BANNER_HREF:-}
+      - SMELTERWORKS_BANNER_LINK_LABEL=${SMELTERWORKS_BANNER_LINK_LABEL:-}
+    tmpfs:
+      - /tmp:mode=1777,size=64m
+    volumes:
+      - app-storage:/var/www/html/storage
+      - app-cache:/var/www/html/bootstrap/cache
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/up"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+    restart: unless-stopped
+    cpus: 1.0
+    mem_limit: 512m
+    mem_reservation: 128m
+
+volumes:
+  app-storage:
+  app-cache:

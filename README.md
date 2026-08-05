@@ -6,7 +6,7 @@ Licensed under the Apache License, Version 2.0. See `LICENSE`.
 
 ## Stack
 
-- PHP 8.3+
+- PHP 8.4+
 - Laravel 13
 - Blade
 - Vite + Tailwind CSS 4
@@ -67,13 +67,15 @@ docker compose up -d
 
 The runtime listens on port 8080, drops capabilities, uses a read-only root filesystem, and health-checks `/up`.
 
+For Coolify, use `docker-compose.coolify.yml` as the Compose file. It skips host port publishes, routes through Coolify's proxy with `SERVICE_URL_WEB_8080`, and surfaces `APP_KEY` plus optional `SMELTERWORKS_*` links in the Coolify UI. Set `APP_KEY` before the first deploy (`php artisan key:generate --show`).
+
 ## CI/CD
 
 GitHub Actions runs on pushes and pull requests to `main`:
 
 | Workflow | Purpose |
 | --- | --- |
-| `ci.yml` | PHP 8.3/8.4 tests, Pint, PHPStan, Blade format check, Vite build |
+| `ci.yml` | PHP 8.4/8.5 tests, Pint, PHPStan, Blade format check, Vite build |
 | `links.yml` | Dead link check on docs, config URLs, and Blade templates |
 | `codeql.yml` | CodeQL for PHP, JavaScript, and Actions |
 | `dependency-review.yml` | Blocks PRs that add vulnerable dependencies |

@@ -46,7 +46,7 @@ jobs:
             --no-progress
             --cache
             --max-cache-age 7d
-            --exclude-mail
+            --include-mail=false
             --exclude-loopback
             --accept 200,403,429
             README.md
