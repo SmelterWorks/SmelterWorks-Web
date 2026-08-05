@@ -7,11 +7,12 @@ use App\Support\Relic\RelicGitHubReleases;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Http;
+use Tests\Support\FakesRelicReleases;
 use Tests\TestCase;
 
 class RelicPageTest extends TestCase
 {
+    use FakesRelicReleases;
     use RefreshDatabase;
 
     protected function setUp(): void
@@ -25,7 +26,7 @@ class RelicPageTest extends TestCase
 
     public function test_relic_page_renders_with_default_config(): void
     {
-        $this->fakeEmptyReleases();
+        $this->fakeRelicEmptyReleases();
 
         $this->get(route('relic'))
             ->assertOk()
@@ -49,7 +50,7 @@ class RelicPageTest extends TestCase
         $this->get(route('relic'))
             ->assertOk()
             ->assertSee('button__badge--version', false)
-            ->assertSee('>v1.0.0<', false);
+            ->assertSee('>v0.1.0<', false);
     }
 
     public function test_relic_page_renders_with_legacy_string_platform_config(): void
@@ -60,7 +61,7 @@ class RelicPageTest extends TestCase
             'macOS 13+ (x64 and arm64)',
         ]);
 
-        $this->fakeEmptyReleases();
+        $this->fakeRelicEmptyReleases();
 
         $this->get(route('relic'))
             ->assertOk()
@@ -82,7 +83,7 @@ class RelicPageTest extends TestCase
             ->assertSee('Suggested for you', false)
             ->assertSee('Download Windows', false)
             ->assertSee('download-card__icon', false)
-            ->assertSee('v1.0.0', false)
+            ->assertSee('v0.1.0', false)
             ->assertSee('Nightly pre-release', false)
             ->assertSee('Pre-release', false);
     }
@@ -100,7 +101,7 @@ class RelicPageTest extends TestCase
 
     public function test_relic_download_page_shows_empty_state_without_releases(): void
     {
-        $this->fakeEmptyReleases();
+        $this->fakeRelicEmptyReleases();
 
         $this->get(route('relic.download'))
             ->assertOk()
@@ -118,13 +119,13 @@ class RelicPageTest extends TestCase
 
         $this->get(route('relic.download'))
             ->assertOk()
-            ->assertSee('v1.0.0', false)
+            ->assertSee('v0.1.0', false)
             ->assertDontSee('Nightly pre-release', false);
     }
 
     public function test_relic_pages_do_not_promote_hosting(): void
     {
-        $this->fakeEmptyReleases();
+        $this->fakeRelicEmptyReleases();
 
         $this->get(route('relic'))
             ->assertDontSee('View hosting', false)
@@ -138,36 +139,12 @@ class RelicPageTest extends TestCase
             ->assertDontSee('Buy hosting', false);
     }
 
-    private function fakeEmptyReleases(): void
-    {
-        Http::fake([
-            'api.github.com/repos/SmelterWorks/Relic-Launcher/releases*' => Http::response([], 200),
-            'git.smelterworks.com/api/v1/repos/smelter/Relic-Launcher/releases*' => Http::response([], 200),
-        ]);
-    }
-
     private function fakeStableRelease(): void
     {
         Cache::flush();
         app()->forgetInstance(RelicGitHubReleases::class);
         app()->forgetInstance(RelicCatalog::class);
 
-        $release = [
-            'tag_name' => 'v1.0.0',
-            'prerelease' => false,
-            'html_url' => 'https://github.com/SmelterWorks/Relic-Launcher/releases/tag/v1.0.0',
-            'published_at' => '2026-08-01T00:00:00Z',
-            'assets' => [
-                [
-                    'name' => 'relic-launcher-v1.0.0-win-x64.zip',
-                    'browser_download_url' => 'https://example.test/stable-win.zip',
-                ],
-            ],
-        ];
-
-        Http::fake([
-            'api.github.com/repos/SmelterWorks/Relic-Launcher/releases*' => Http::response([$release], 200),
-            'git.smelterworks.com/api/v1/repos/smelter/Relic-Launcher/releases*' => Http::response([$release], 200),
-        ]);
+        $this->fakeRelicLatestStable($this->relicStableReleaseFixture('v0.1.0'));
     }
 }

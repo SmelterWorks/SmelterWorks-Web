@@ -21,6 +21,16 @@ final class RelicGitHubReleases
     private array $memoryReleases = [];
 
     /**
+     * @var array<string, array{
+     *     tag: string,
+     *     html_url: string,
+     *     published_at: string|null,
+     *     assets: list<array{name: string, browser_download_url: string}>
+     * }|null>
+     */
+    private array $memoryStable = [];
+
+    /**
      * @return array{owner: string, repo: string}|null
      */
     public function parseRepo(string $repoUrl): ?array
@@ -84,7 +94,7 @@ final class RelicGitHubReleases
     }
 
     /**
-     * Newest GitHub stable release (non-prerelease).
+     * Latest published stable release from GitHub or Forgejo.
      *
      * @return array{
      *     tag: string,
@@ -95,22 +105,53 @@ final class RelicGitHubReleases
      */
     public function latestStable(string $owner, string $repo): ?array
     {
-        $releases = $this->releasesList($owner, $repo);
+        $memoryKey = "{$owner}/{$repo}";
 
-        if ($releases === null) {
-            return null;
+        if (array_key_exists($memoryKey, $this->memoryStable)) {
+            return $this->memoryStable[$memoryKey];
         }
 
-        $stable = collect($releases)
-            ->filter(fn (array $release): bool => ! ($release['prerelease'] ?? false))
-            ->sortByDesc(fn (array $release): string => (string) ($release['published_at'] ?? ''))
-            ->first();
+        $cacheKey = "relic.releases.latest.{$owner}.{$repo}";
+        $cached = Cache::get($cacheKey);
 
-        if (! is_array($stable)) {
-            return null;
+        if (is_array($cached) && $this->isFreshCache($cached)) {
+            /** @var array{tag: string, html_url: string, published_at: string|null, assets: list<array{name: string, browser_download_url: string}>}|null|false $release */
+            $release = $cached['release'] ?? null;
+
+            return $this->memoryStable[$memoryKey] = ($release === false ? null : $release);
         }
 
-        return $this->normalizeRelease($stable);
+        $fetched = $this->fetchLatestStableRelease($owner, $repo);
+
+        if ($fetched !== null) {
+            $this->rememberLatestStable($cacheKey, $fetched);
+
+            return $this->memoryStable[$memoryKey] = $fetched;
+        }
+
+        if (is_array($cached) && $this->isStaleLatestStableUsable($cached)) {
+            Log::warning('Relic stable release lookup failed. Serving stale cache.', [
+                'owner' => $owner,
+                'repo' => $repo,
+            ]);
+
+            /** @var array{tag: string, html_url: string, published_at: string|null, assets: list<array{name: string, browser_download_url: string}>} $release */
+            $release = $cached['release'];
+
+            return $this->memoryStable[$memoryKey] = $release;
+        }
+
+        Log::warning('Relic stable release lookup failed.', [
+            'owner' => $owner,
+            'repo' => $repo,
+        ]);
+
+        Cache::put($cacheKey, [
+            'release' => false,
+            'cached_at' => now()->getTimestamp(),
+        ], now()->addSeconds(self::RATE_LIMIT_CACHE_SECONDS));
+
+        return $this->memoryStable[$memoryKey] = null;
     }
 
     /**
@@ -136,7 +177,7 @@ final class RelicGitHubReleases
 
             $tar = $candidates->first(
                 fn (array $asset): bool => str_contains($asset['name'], 'linux-x64')
-                  && str_ends_with($asset['name'], '.tar.gz'),
+                    && str_ends_with($asset['name'], '.tar.gz'),
             );
             if ($tar !== null) {
                 return $tar['browser_download_url'];
@@ -146,7 +187,7 @@ final class RelicGitHubReleases
         if (str_starts_with($rid, 'osx-')) {
             $bundle = $candidates->first(
                 fn (array $asset): bool => str_contains($asset['name'], $rid)
-                  && str_ends_with($asset['name'], '.app.zip'),
+                    && str_ends_with($asset['name'], '.app.zip'),
             );
             if ($bundle !== null) {
                 return $bundle['browser_download_url'];
@@ -156,8 +197,8 @@ final class RelicGitHubReleases
         if ($rid === 'win-x64') {
             $zip = $candidates->first(
                 fn (array $asset): bool => str_contains($asset['name'], 'win-x64')
-                  && str_ends_with($asset['name'], '.zip')
-                  && ! str_ends_with($asset['name'], '.app.zip'),
+                    && str_ends_with($asset['name'], '.zip')
+                    && ! str_ends_with($asset['name'], '.app.zip'),
             );
             if ($zip !== null) {
                 return $zip['browser_download_url'];
@@ -169,6 +210,111 @@ final class RelicGitHubReleases
         );
 
         return $fallback['browser_download_url'] ?? null;
+    }
+
+    /**
+     * @return array{
+     *     tag: string,
+     *     html_url: string,
+     *     published_at: string|null,
+     *     assets: list<array{name: string, browser_download_url: string}>
+     * }|null
+     */
+    private function fetchLatestStableRelease(string $owner, string $repo): ?array
+    {
+        $github = $this->fetchGitHubLatestStable($owner, $repo);
+
+        if ($github !== null) {
+            return $github;
+        }
+
+        return $this->fetchForgejoLatestStable();
+    }
+
+    /**
+     * @return array{
+     *     tag: string,
+     *     html_url: string,
+     *     published_at: string|null,
+     *     assets: list<array{name: string, browser_download_url: string}>
+     * }|null
+     */
+    private function fetchGitHubLatestStable(string $owner, string $repo): ?array
+    {
+        try {
+            $response = $this->githubClient()
+                ->get("https://api.github.com/repos/{$owner}/{$repo}/releases/latest");
+        } catch (ConnectionException) {
+            return null;
+        }
+
+        if ($this->isRateLimited($response)) {
+            return null;
+        }
+
+        if ($response->status() === 404) {
+            return null;
+        }
+
+        if (! $response->successful()) {
+            return null;
+        }
+
+        return $this->releaseFromPayload($response->json());
+    }
+
+    /**
+     * @return array{
+     *     tag: string,
+     *     html_url: string,
+     *     published_at: string|null,
+     *     assets: list<array{name: string, browser_download_url: string}>
+     * }|null
+     */
+    private function fetchForgejoLatestStable(): ?array
+    {
+        $repoUrl = $this->forgejoReleasesRepoUrl();
+
+        if (! filled($repoUrl)) {
+            return null;
+        }
+
+        $parsed = $this->parseRepo((string) $repoUrl);
+
+        if ($parsed === null) {
+            return null;
+        }
+
+        try {
+            $uri = Uri::parse(trim((string) $repoUrl));
+        } catch (\Throwable) {
+            return null;
+        }
+
+        $apiBase = $uri->getScheme().'://'.$uri->getHost();
+        $endpoint = "{$apiBase}/api/v1/repos/{$parsed['owner']}/{$parsed['repo']}/releases/latest";
+
+        try {
+            $response = Http::timeout(8)
+                ->connectTimeout(3)
+                ->acceptJson()
+                ->withHeaders([
+                    'User-Agent' => 'SmelterWorks-Web',
+                ])
+                ->get($endpoint);
+        } catch (ConnectionException) {
+            return null;
+        }
+
+        if ($response->status() === 404) {
+            return null;
+        }
+
+        if (! $response->successful()) {
+            return null;
+        }
+
+        return $this->releaseFromPayload($response->json());
     }
 
     /**
@@ -349,12 +495,45 @@ final class RelicGitHubReleases
     }
 
     /**
+     * @return array{
+     *     tag: string,
+     *     html_url: string,
+     *     published_at: string|null,
+     *     assets: list<array{name: string, browser_download_url: string}>
+     * }|null
+     */
+    private function releaseFromPayload(mixed $payload): ?array
+    {
+        if (! is_array($payload) || ! isset($payload['tag_name'])) {
+            return null;
+        }
+
+        return $this->normalizeRelease($payload);
+    }
+
+    /**
      * @param  list<array<string, mixed>>  $releases
      */
     private function rememberReleases(string $cacheKey, array $releases): void
     {
         Cache::put($cacheKey, [
             'releases' => $releases,
+            'cached_at' => now()->getTimestamp(),
+        ], now()->addSeconds($this->cacheSeconds()));
+    }
+
+    /**
+     * @param  array{
+     *     tag: string,
+     *     html_url: string,
+     *     published_at: string|null,
+     *     assets: list<array{name: string, browser_download_url: string}>
+     * }  $release
+     */
+    private function rememberLatestStable(string $cacheKey, array $release): void
+    {
+        Cache::put($cacheKey, [
+            'release' => $release,
             'cached_at' => now()->getTimestamp(),
         ], now()->addSeconds($this->cacheSeconds()));
     }
@@ -377,9 +556,22 @@ final class RelicGitHubReleases
         $cachedAt = (int) ($cached['cached_at'] ?? 0);
 
         return $cachedAt > 0
-          && array_key_exists('releases', $cached)
-          && is_array($cached['releases'])
-          && (now()->getTimestamp() - $cachedAt) <= $this->staleCacheSeconds();
+            && array_key_exists('releases', $cached)
+            && is_array($cached['releases'])
+            && (now()->getTimestamp() - $cachedAt) <= $this->staleCacheSeconds();
+    }
+
+    /**
+     * @param  array<string, mixed>  $cached
+     */
+    private function isStaleLatestStableUsable(array $cached): bool
+    {
+        $cachedAt = (int) ($cached['cached_at'] ?? 0);
+
+        return $cachedAt > 0
+            && isset($cached['release'])
+            && is_array($cached['release'])
+            && (now()->getTimestamp() - $cachedAt) <= $this->staleCacheSeconds();
     }
 
     private function cacheSeconds(): int
