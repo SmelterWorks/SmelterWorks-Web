@@ -1,101 +1,79 @@
 # SmelterWorks Web
 
-Laravel + Blade site for SmelterWorks: open-source Vintage Story tools, mods, Relic Launcher, and hosting catalog.
+Public site for [SmelterWorks](https://github.com/SmelterWorks): Vintage Story tools, mods, [Relic Launcher](https://github.com/SmelterWorks/Relic-Launcher), and hosting catalog.
 
-Licensed under the Apache License, Version 2.0. See `LICENSE`.
+SmelterWorks is not affiliated with Anego Studios.
 
-## Stack
+Stack: PHP 8.4+, Laravel 13, Blade, Vite, Tailwind CSS 4. Apache License 2.0.
 
-- PHP 8.4+
-- Laravel 13
-- Blade
-- Vite + Tailwind CSS 4
+## Requirements
 
-## Local setup
+- PHP 8.4+ with pdo_sqlite / sqlite3
+- Composer 2
+- Node.js 22+ (Vite build and icon sync)
+
+## Build and run
 
 ```bash
 composer install
 cp .env.example .env
 ./bin/php artisan key:generate
-./bin/php artisan migrate --seed
-npm install
+./bin/php artisan migrate
+npm ci
 npm run build
 ./bin/serve
 ```
 
-Set deploy-specific links in `.env` (`SMELTERWORKS_FLUXER_URL`, `SMELTERWORKS_PANEL_URL`, `SMELTERWORKS_CONTACT_EMAIL`, and so on). Do not commit real invites, keys, or secrets. This repository is public.
+Tests, format, lint:
 
-See `CONTRIBUTING.md` for PR expectations and `SECURITY.md` for vulnerability reports.
+```bash
+composer test
+composer format && composer lint
+npm run format && npm run lint
+```
 
-Arch/CachyOS PHP often ships with `pdo_sqlite` commented out. This repo uses `./bin/php` and `./bin/serve`, which load `php-local.ini` so SQLite works for artisan and the built-in server.
-
-Do not run plain `php artisan serve` unless you have enabled `pdo_sqlite` and `sqlite3` in system PHP.
-
-## Project layout
-
-| Path | Role |
-| --- | --- |
-| `app/Http/Controllers` | Thin HTTP adapters |
-| `app/Data` | Immutable view/domain DTOs |
-| `app/Support/Content` | Content catalog services |
-| `app/Support/Hosting` | Hosting stock and purchases |
-| `app/Support/Platform` | Relic download User-Agent detection |
-| `config/smelterworks.php` | Public site copy, nav, project catalog |
-| `config/smelterworks/` | Split catalogs: `hosting.php`, `relic.php`, `projects.php` |
-| `public/icons` | Synced icon SVGs (Simple Icons, Font Awesome brands, Lucide) |
-| `scripts/sync-icons.mjs` | Copies icon packs into `public/icons` |
-| `docker/` | Nginx, PHP-FPM, and entrypoint for the container image |
-| `resources/css/site/` | Split page styles imported by `resources/css/app.css` |
-| `resources/views/pages` | Page templates |
-| `resources/views/components` | Reusable Blade UI |
-| `routes/web.php` | Named public routes |
-| `.agents/skills/` | Agent writing and project skills |
-
-Add projects in `config/smelterworks.php`. Use `page_route` when a catalog entry should open a dedicated page (Relic uses `relic`). Replace `ProjectCatalog` with an Eloquent-backed store when you need admin editing or a database.
-
-`npm run build` runs `icons:sync` first so brand and UI icons stay current.
+Set SMELTERWORKS_* URLs in .env for Fluxer, panel, contact, and related links. Leave blank to hide. Do not commit secrets. This repo is public.
 
 ## Docker
 
-Rootless-friendly image and compose files ship in the repo:
+Image listens on 8080. Set APP_KEY in .env first.
 
 ```bash
-# Set APP_KEY in .env first
 docker compose build
 docker compose up -d
 ```
 
-The runtime listens on port 8080, drops capabilities, uses a read-only root filesystem, and health-checks `/up`.
+Coolify: point the stack at docker-compose.coolify.yml. Pulls ghcr.io/smelterworks/smelterworks-web. Set APP_KEY (and optional IMAGE_TAG). Do not override the container user. Publish the GHCR package as public, or supply a pull token.
 
-For Coolify, use `docker-compose.coolify.yml`. It pulls `ghcr.io/smelterworks/smelterworks-web` (built by the Docker workflow), skips host port publishes, and routes through Coolify's proxy with `SERVICE_URL_WEB_8080`. Set `APP_KEY` before the first deploy (`php artisan key:generate --show`). Optionally set `IMAGE_TAG` (default `latest`, or a release / `sha-…` tag). Make the GHCR package public under the org Packages settings so Coolify can pull without a token.
+## Project map
 
-## CI/CD
-
-GitHub Actions runs on pushes and pull requests to `main`:
-
-| Workflow | Purpose |
+| Path | Role |
 | --- | --- |
-| `ci.yml` | PHP 8.4/8.5 tests, Pint, PHPStan, Blade format check, Vite build |
-| `docker.yml` | Build and publish `ghcr.io/smelterworks/smelterworks-web` |
-| `links.yml` | Dead link check on docs, config URLs, and Blade templates |
-| `codeql.yml` | CodeQL for PHP, JavaScript, and Actions |
-| `dependency-review.yml` | Blocks PRs that add vulnerable dependencies |
+| app/Http/Controllers | HTTP adapters |
+| app/Data | Immutable DTOs |
+| app/Support | Content, hosting, currency, platform helpers |
+| config/smelterworks.php | Site copy, nav, catalog entrypoint |
+| config/smelterworks/ | hosting, relic, projects catalogs |
+| resources/views | Blade pages and components |
+| resources/css/site/ | Page styles |
+| routes/web.php | Public routes |
+| docker/ | Nginx, PHP-FPM, entrypoint |
+| scripts/sync-icons.mjs | Icon pack sync into public/icons |
 
-Actions are pinned to full commit SHAs per [GitHub Actions secure use](https://docs.github.com/en/actions/reference/security/secure-use). Dependabot opens weekly update PRs for Composer, npm, and Actions.
+Catalog entries live under config/smelterworks. Use page_route when an entry should open a dedicated page (Relic uses relic).
 
-## Agent writing rules
+## CI
 
-User-facing copy should follow the [no_ai_slop_writing_rules](https://github.com/realrossmanngroup/no_ai_slop_writing_rules) skills in `.agents/skills/`. See `AGENTS.md` and `.agents/skills/smelterworks-web/SKILL.md`.
+Workflows under .github/workflows: PHP tests (8.4/8.5), Pint, PHPStan, Blade format, Vite build, GHCR publish, link check, CodeQL, dependency review. Actions are SHA-pinned. Dependabot updates Composer, npm, and Actions weekly.
 
-## Useful commands
+## Contributing
 
-```bash
-npm run icons:sync
-npm run format
-npm run lint
-npm run dev
-composer format
-composer lint
-composer test
-./bin/php artisan route:list
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Security
+
+See [SECURITY.md](SECURITY.md).
+
+## License
+
+Apache-2.0. See [LICENSE](LICENSE).

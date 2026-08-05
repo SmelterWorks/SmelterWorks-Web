@@ -80,20 +80,31 @@ LABEL org.opencontainers.image.title="${OCI_TITLE}" \
 
 WORKDIR /var/www/html
 
-RUN apk add --no-cache nginx sqlite-libs curl \
+RUN apk add --no-cache nginx sqlite-libs curl su-exec \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS sqlite-dev \
     && docker-php-ext-install -j"$(nproc)" opcache pdo_sqlite \
     && apk del --no-network .build-deps \
     && rm -rf /tmp/pear /usr/src/php* /var/cache/apk/* \
     && addgroup -g "${APP_GID}" -S app \
     && adduser -u "${APP_UID}" -S app -G app \
-    && mkdir -p /tmp/nginx /var/www/html \
+    && mkdir -p \
+        /tmp/nginx \
+        /var/lib/nginx/logs \
+        /var/lib/nginx/tmp \
+        /var/www/html/storage/app/public \
+        /var/www/html/storage/framework/cache/data \
+        /var/www/html/storage/framework/sessions \
+        /var/www/html/storage/framework/views \
+        /var/www/html/storage/logs \
+        /var/www/html/bootstrap/cache \
     && rm -rf /etc/nginx/http.d/default.conf \
     && chown -R app:app /tmp/nginx /var/www/html /var/lib/nginx /var/log/nginx
 
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/php-fpm.conf /usr/local/etc/php-fpm.conf
+COPY docker/docker.conf /usr/local/etc/php-fpm.d/docker.conf
 COPY docker/www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY docker/zz-app.conf /usr/local/etc/php-fpm.d/zz-app.conf
 COPY docker/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 COPY docker/php.ini /usr/local/etc/php/conf.d/zz-security.ini
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
@@ -115,7 +126,8 @@ COPY --chown=app:app composer.lock ./composer.lock
 
 RUN chmod 755 /usr/local/bin/entrypoint.sh
 
-USER app
+# Starts as root so entrypoint can chown named volumes, then drops to app via su-exec.
+USER root
 
 EXPOSE 8080
 

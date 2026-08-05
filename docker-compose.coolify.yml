@@ -1,13 +1,9 @@
-# Coolify Docker Compose for SmelterWorks Web.
-# Point Coolify at this file (Docker Compose build pack).
-# Pulls the prebuilt image from GHCR (published by .github/workflows/docker.yml).
-# Do not publish host ports: Coolify's proxy routes by domain.
-# Assign a domain in the Coolify UI, or rely on SERVICE_URL_WEB_8080.
-# Container listens on 8080 (not 80), so the port suffix is required.
-#
-# Before first deploy, set APP_KEY in Coolify (php artisan key:generate --show).
-# IMAGE_TAG defaults to latest. Pin to a release (v1.2.3) or sha-abcdef for deploys.
-# Make the GHCR package public, or add a pull token for private packages.
+# Coolify compose for SmelterWorks Web.
+# Use this file as the Coolify Docker Compose build pack.
+# Image: ghcr.io/smelterworks/smelterworks-web (see .github/workflows/docker.yml).
+# Proxy via SERVICE_URL_WEB_8080 (container listens on 8080). No host port publish.
+# Set APP_KEY before deploy. IMAGE_TAG defaults to latest.
+# Do not set user: on the service. Entrypoint chowns volumes then drops to app.
 
 name: smelterworks-web
 
@@ -21,16 +17,16 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
-    user: "65532:65532"
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+      - DAC_OVERRIDE
+      - FOWNER
     environment:
-      # Proxy: public URL on Coolify's domain, routed to container port 8080
       - SERVICE_URL_WEB_8080
       - APP_URL=${SERVICE_URL_WEB}
-
-      # Required
       - APP_KEY=${APP_KEY:?}
-
-      # Hardcoded production defaults (not shown as editable Coolify fields)
       - APP_NAME=SmelterWorks
       - APP_ENV=production
       - APP_DEBUG=false
@@ -45,8 +41,6 @@ services:
       - BROADCAST_CONNECTION=log
       - FILESYSTEM_DISK=local
       - MAIL_MAILER=log
-
-      # Optional public links (editable in Coolify UI, blank hides in the site)
       - SMELTERWORKS_FLUXER_URL=${SMELTERWORKS_FLUXER_URL:-}
       - SMELTERWORKS_GITHUB_URL=${SMELTERWORKS_GITHUB_URL:-https://github.com/SmelterWorks}
       - SMELTERWORKS_RELIC_REPO_URL=${SMELTERWORKS_RELIC_REPO_URL:-https://github.com/SmelterWorks/Relic-Launcher}
@@ -64,6 +58,7 @@ services:
       - SMELTERWORKS_BANNER_LINK_LABEL=${SMELTERWORKS_BANNER_LINK_LABEL:-}
     tmpfs:
       - /tmp:mode=1777,size=64m
+      - /var/lib/nginx:uid=65532,gid=65532,mode=0755,size=16m
     volumes:
       - app-storage:/var/www/html/storage
       - app-cache:/var/www/html/bootstrap/cache
