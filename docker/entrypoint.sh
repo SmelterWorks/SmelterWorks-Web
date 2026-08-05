@@ -18,16 +18,8 @@ if [ "$(id -u)" = "0" ]; then
         /tmp/nginx/uwsgi \
         /tmp/nginx/scgi \
         /tmp/nginx/logs \
+        /var/lib/nginx/logs \
         /var/lib/nginx/tmp
-    # Alpine nginx opens /var/lib/nginx/logs before reading nginx.conf.
-    # Keep that path as a symlink into writable /tmp (compose tmpfs).
-    mkdir -p /tmp/nginx/logs
-    if [ -L /var/lib/nginx/logs ]; then
-        :
-    elif [ -d /var/lib/nginx ]; then
-        rm -rf /var/lib/nginx/logs
-        ln -sfn /tmp/nginx/logs /var/lib/nginx/logs
-    fi
     chown -R app:app \
         /var/www/html/storage \
         /var/www/html/bootstrap/cache \
@@ -49,6 +41,7 @@ mkdir -p \
     /tmp/nginx/uwsgi \
     /tmp/nginx/scgi \
     /tmp/nginx/logs \
+    /var/lib/nginx/logs \
     /var/lib/nginx/tmp
 
 if [ ! -f storage/database.sqlite ]; then
