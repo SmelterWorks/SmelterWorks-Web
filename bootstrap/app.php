@@ -30,7 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
             fn (Request $request) => $request->is('api/*'),
         );
 
-        $exceptions->reportable(function (\Throwable $e): void {
+        $exceptions->reportable(function (Throwable $e): void {
             Log::error($e->getMessage(), [
                 'exception' => $e::class,
                 'file' => $e->getFile().':'.$e->getLine(),
