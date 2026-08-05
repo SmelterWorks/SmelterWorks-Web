@@ -46,6 +46,7 @@ Do not invent live panel features in copy.
 Most public copy lives under `config/smelterworks.php` and focused files in `config/smelterworks/` (`hosting.php`, `relic.php`, `projects.php`). Controllers stay thin.
 
 - Relic download detection: `App\Support\Platform\PlatformDetector`
+- Relic releases: stable buttons use `{repo}/releases/latest`; nightlies resolve `nightly-YYYYMMDD` prereleases via GitHub API
 - Hosting index view data: `App\Support\Hosting\HostingIndexPresenter`
 - Hosting RSS: `HostingFeedController` + `HostingFeedBuilder`
 - Catalog projects may set `page_route` (Relic uses `relic`) so list links open the dedicated page

@@ -3,82 +3,59 @@
 namespace Tests\Unit;
 
 use App\Support\Relic\RelicCatalog;
-use PHPUnit\Framework\Attributes\DataProvider;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class RelicCatalogTest extends TestCase
 {
-    private RelicCatalog $catalog;
-
-    protected function setUp(): void
+    public function test_stable_downloads_all_point_at_releases_latest(): void
     {
-        parent::setUp();
+        $relic = app(RelicCatalog::class)->forView();
 
-        $this->catalog = new RelicCatalog;
-    }
+        $this->assertSame(
+            'https://github.com/SmelterWorks/Relic-Launcher/releases/latest',
+            $relic['releases_url'],
+        );
 
-    public function test_normalize_platforms_accepts_structured_entries(): void
-    {
-        $platforms = $this->catalog->normalizePlatforms([
-            ['icon' => 'windows', 'label' => 'Windows', 'detail' => '10+ x64'],
-            ['icon' => 'linux', 'label' => 'Linux', 'detail' => 'x64'],
-        ]);
-
-        $this->assertSame('windows', $platforms[0]['icon']);
-        $this->assertSame('Windows', $platforms[0]['label']);
-        $this->assertSame('linux', $platforms[1]['icon']);
-    }
-
-    #[DataProvider('legacyPlatformLabels')]
-    public function test_normalize_platforms_accepts_legacy_string_labels(string $label, string $icon, string $name): void
-    {
-        $platforms = $this->catalog->normalizePlatforms([$label]);
-
-        $this->assertSame($icon, $platforms[0]['icon']);
-        $this->assertSame($name, $platforms[0]['label']);
-        $this->assertSame($label, $platforms[0]['detail']);
-    }
-
-    /**
-     * @return array<string, array{0: string, 1: string, 2: string}>
-     */
-    public static function legacyPlatformLabels(): array
-    {
-        return [
-            'windows' => ['Windows 10+ x64', 'windows', 'Windows'],
-            'linux' => ['Linux x64 (X11 and native Wayland)', 'linux', 'Linux'],
-            'macos' => ['macOS 13+ (x64 and arm64)', 'macos', 'macOS'],
-        ];
-    }
-
-    public function test_for_view_never_returns_string_platform_entries(): void
-    {
-        config([
-            'smelterworks.relic' => array_merge(config('smelterworks.relic'), [
-                'platforms' => [
-                    'Windows 10+ x64',
-                    'Linux x64 (X11 and native Wayland)',
-                ],
-            ]),
-        ]);
-
-        $relic = $this->catalog->forView();
-
-        foreach ($relic['platforms'] as $platform) {
-            $this->assertIsArray($platform);
-            $this->assertArrayHasKey('icon', $platform);
-            $this->assertArrayHasKey('label', $platform);
+        foreach ($relic['downloads'] as $download) {
+            $this->assertSame($relic['releases_url'], $download['url']);
+            $this->assertSame('stable', $download['channel']);
+            $this->assertNotSame('', $download['rid']);
         }
     }
 
-    public function test_normalize_platforms_drops_blank_labels(): void
+    public function test_download_page_resolves_nightly_assets(): void
     {
-        $platforms = $this->catalog->normalizePlatforms([
-            ['icon' => 'windows', 'label' => '', 'detail' => null],
-            ['icon' => 'linux', 'label' => 'Linux', 'detail' => null],
+        Http::fake([
+            'api.frankfurter.app/*' => Http::response([
+                'amount' => 1.0,
+                'base' => 'USD',
+                'date' => '2026-08-04',
+                'rates' => ['EUR' => 0.86843],
+            ], 200),
+            'api.github.com/repos/SmelterWorks/Relic-Launcher/releases*' => Http::response([
+                [
+                    'tag_name' => 'nightly-20260804',
+                    'prerelease' => true,
+                    'html_url' => 'https://github.com/SmelterWorks/Relic-Launcher/releases/tag/nightly-20260804',
+                    'published_at' => '2026-08-04T05:30:00Z',
+                    'assets' => [
+                        [
+                            'name' => 'relic-launcher-nightly-20260804-win-x64.zip',
+                            'browser_download_url' => 'https://example.test/nightly-win.zip',
+                        ],
+                    ],
+                ],
+            ], 200),
         ]);
 
-        $this->assertCount(1, $platforms);
-        $this->assertSame('Linux', $platforms[0]['label']);
+        $page = app(RelicCatalog::class)->forDownloadPage();
+
+        $this->assertTrue($page['nightly']['enabled']);
+        $this->assertTrue($page['nightly']['available']);
+        $this->assertSame('nightly-20260804', $page['nightly']['tag']);
+
+        $windows = collect($page['nightly']['downloads'])->firstWhere('id', 'windows');
+        $this->assertSame('https://example.test/nightly-win.zip', $windows['url']);
     }
 }

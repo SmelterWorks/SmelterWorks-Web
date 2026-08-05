@@ -51,7 +51,10 @@ class RelicPageTest extends TestCase
             ->assertSee('Looks like you are on Windows', false)
             ->assertSee('Suggested for you', false)
             ->assertSee('Download Windows', false)
-            ->assertSee('download-card__icon', false);
+            ->assertSee('download-card__icon', false)
+            ->assertSee('releases/latest', false)
+            ->assertSee('Nightly pre-release', false)
+            ->assertSee('Pre-release', false);
     }
 
     public function test_relic_download_page_detects_linux(): void
@@ -61,6 +64,16 @@ class RelicPageTest extends TestCase
             ->assertOk()
             ->assertSee('Looks like you are on Linux', false)
             ->assertSee('Download Linux', false);
+    }
+
+    public function test_relic_download_page_can_hide_nightly_channel(): void
+    {
+        Config::set('smelterworks.relic.nightly.enabled', false);
+
+        $this->get(route('relic.download'))
+            ->assertOk()
+            ->assertSee('releases/latest', false)
+            ->assertDontSee('Nightly pre-release', false);
     }
 
     public function test_relic_pages_do_not_promote_hosting(): void

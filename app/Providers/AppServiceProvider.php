@@ -8,6 +8,7 @@ use App\Support\Hosting\HostingCatalog;
 use App\Support\Hosting\HostingPurchaseService;
 use App\Support\Hosting\HostingStockService;
 use App\Support\Relic\RelicCatalog;
+use App\Support\Relic\RelicGitHubReleases;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(HostingCatalog::class);
         $this->app->singleton(HostingStockService::class);
         $this->app->singleton(HostingPurchaseService::class);
+        $this->app->singleton(RelicGitHubReleases::class);
         $this->app->singleton(RelicCatalog::class);
     }
 

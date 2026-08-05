@@ -38,7 +38,7 @@
                 @else
                     Pick a build for your system.
                 @endif
-                Release packages run on their own. No extra runtime install.
+                Stable builds open the latest GitHub release. Nightly builds are pre-releases.
             </p>
             <div class="platform-list platform-list--compact">
                 <x-platform-chip platform="windows" label="Windows" detail="10+ x64" />
@@ -65,11 +65,18 @@
                             Download {{ $suggested['label'] }}
                         </x-button>
                         <x-button :href="$relic['releases_url']" variant="ghost" rel="noopener noreferrer" target="_blank">
-                            All releases
+                            Latest release
                         </x-button>
                     </div>
                 </div>
             @endif
+
+            <h2 class="download-channel__title">Latest release</h2>
+            <p class="download-channel__lede">
+                Buttons open
+                <a href="{{ $relic['releases_url'] }}" rel="noopener noreferrer" target="_blank">releases/latest</a>
+                on GitHub. Pick the asset for your OS there.
+            </p>
 
             <div class="download-grid">
                 @foreach ($downloads as $download)
@@ -94,10 +101,49 @@
                 @endforeach
             </div>
 
+            @if ($nightly['enabled'])
+                <div class="download-channel download-channel--nightly">
+                    <div class="download-channel__heading">
+                        <h2 class="download-channel__title">Nightly pre-release</h2>
+                        <span class="pill pill--muted">Pre-release</span>
+                    </div>
+                    <p class="download-channel__lede">
+                        Automated builds from main. They can break. Use the latest release unless you are testing.
+                        @if ($nightly['available'] && filled($nightly['tag']))
+                            Current nightly:
+                            <a href="{{ $nightly['html_url'] }}" rel="noopener noreferrer"
+                                target="_blank">{{ $nightly['tag'] }}</a>.
+                        @else
+                            No nightly is published right now. Check
+                            <a href="{{ $nightly['html_url'] }}" rel="noopener noreferrer" target="_blank">GitHub
+                                Releases</a>
+                            later.
+                        @endif
+                    </p>
+
+                    <div class="download-grid">
+                        @foreach ($nightly['downloads'] as $download)
+                            <article class="download-card download-card--nightly">
+                                <div class="download-card__head">
+                                    <span class="download-card__icon" aria-hidden="true">
+                                        <x-platform-icon :platform="$platformIcon($download['id'])" :size="28" />
+                                    </span>
+                                    <div>
+                                        <h3 class="download-card__title">{{ $download['label'] }}</h3>
+                                        <p class="download-card__detail">{{ $download['detail'] }}</p>
+                                    </div>
+                                </div>
+                                <x-button :href="$download['url']" variant="ghost" rel="noopener noreferrer" target="_blank">
+                                    {{ $nightly['available'] ? 'Download nightly' : 'View nightlies' }}
+                                </x-button>
+                            </article>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             <div class="prose-block" style="margin-top: 2rem;">
                 <p>
-                    Releases ship from GitHub. If a direct asset is not published yet, the button opens the latest
-                    release page.
                     Source and issue tracker:
                     <a href="{{ $relic['repo_url'] }}" rel="noopener noreferrer"
                         target="_blank">{{ $relic['repo_url'] }}</a>.

@@ -23,17 +23,15 @@ class RelicController extends Controller
 
     public function download(Request $request): View
     {
-        $relic = $this->relic->forView();
+        $page = $this->relic->forDownloadPage();
         $detected = $this->platforms->detect($request->userAgent());
 
-        /** @var list<array<string, mixed>> $downloads */
-        $downloads = $relic['downloads'] ?? [];
-
-        $suggested = collect($downloads)->firstWhere('id', $detected['id']);
+        $suggested = collect($page['downloads'])->firstWhere('id', $detected['id']);
 
         return view('pages.relic.download', [
-            'relic' => $relic,
-            'downloads' => $downloads,
+            'relic' => $page['relic'],
+            'downloads' => $page['downloads'],
+            'nightly' => $page['nightly'],
             'detected' => $detected,
             'suggested' => $suggested,
         ]);

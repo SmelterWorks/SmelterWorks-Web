@@ -46,6 +46,41 @@
         color: var(--color-iron-soft);
     }
 
+    .download-channel {
+        margin-top: 2.5rem;
+    }
+
+    .download-channel--nightly {
+        padding-top: 1.5rem;
+        border-top: 1px solid color-mix(in oklab, var(--color-iron) 12%, transparent);
+    }
+
+    .download-channel__heading {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.65rem;
+        margin-bottom: 0.45rem;
+    }
+
+    .download-channel__title {
+        margin: 0 0 0.45rem;
+        font-family: var(--font-display);
+        font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+        letter-spacing: -0.02em;
+        color: var(--color-iron);
+    }
+
+    .download-channel__heading .download-channel__title {
+        margin: 0;
+    }
+
+    .download-channel__lede {
+        margin: 0 0 1rem;
+        color: var(--color-iron-soft);
+        max-width: 42rem;
+    }
+
     .download-grid {
         display: grid;
         gap: 0.85rem;

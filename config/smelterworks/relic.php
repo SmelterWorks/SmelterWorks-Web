@@ -5,11 +5,15 @@ return [
     'tagline' => 'Unofficial desktop launcher for Vintage Story',
     'summary' => 'Install the game, browse VS ModDB, add mods, and launch from one app. Works on Windows, Linux, and Mac.',
     'repo_url' => env('SMELTERWORKS_RELIC_REPO_URL', 'https://github.com/SmelterWorks/Relic-Launcher'),
-    'releases_url' => env('SMELTERWORKS_RELIC_RELEASES_URL', 'https://github.com/SmelterWorks/Relic-Launcher/releases/latest'),
+    // Blank derives {repo_url}/releases/latest. Stable download buttons always use this URL.
+    'releases_url' => env('SMELTERWORKS_RELIC_RELEASES_URL'),
     'preview_url' => env('SMELTERWORKS_RELIC_PREVIEW_URL')
         ?: 'https://github.com/SmelterWorks/Relic-Launcher/raw/main/assets/screenshots/home-relic-default.png',
     'preview_alt' => 'Relic Launcher home screen with game versions and news',
     'license' => '0BSD',
+    'nightly' => [
+        'enabled' => filter_var(env('SMELTERWORKS_RELIC_NIGHTLY_ENABLED', true), FILTER_VALIDATE_BOOLEAN),
+    ],
     'platforms' => [
         ['icon' => 'windows', 'label' => 'Windows', 'detail' => '10+ x64'],
         ['icon' => 'linux', 'label' => 'Linux', 'detail' => 'x64, X11 and Wayland'],
@@ -18,30 +22,30 @@ return [
     'downloads' => [
         [
             'id' => 'windows',
+            'rid' => 'win-x64',
             'label' => 'Windows',
             'detail' => 'Windows 10+ x64 · zip',
-            'url' => env('SMELTERWORKS_RELIC_DOWNLOAD_WINDOWS', 'https://github.com/SmelterWorks/Relic-Launcher/releases/latest'),
             'match' => ['windows', 'win'],
         ],
         [
             'id' => 'linux',
+            'rid' => 'linux-x64',
             'label' => 'Linux',
             'detail' => 'Linux x64 · AppImage, deb, rpm, and Arch packages on Releases',
-            'url' => env('SMELTERWORKS_RELIC_DOWNLOAD_LINUX', 'https://github.com/SmelterWorks/Relic-Launcher/releases/latest'),
             'match' => ['linux', 'x11', 'wayland'],
         ],
         [
             'id' => 'macos-arm',
+            'rid' => 'osx-arm64',
             'label' => 'macOS (Apple Silicon)',
             'detail' => 'macOS 13+ arm64 · app zip',
-            'url' => env('SMELTERWORKS_RELIC_DOWNLOAD_MACOS_ARM', 'https://github.com/SmelterWorks/Relic-Launcher/releases/latest'),
             'match' => ['mac-arm', 'macos-arm'],
         ],
         [
             'id' => 'macos-intel',
+            'rid' => 'osx-x64',
             'label' => 'macOS (Intel)',
             'detail' => 'macOS 13+ x64 · app zip',
-            'url' => env('SMELTERWORKS_RELIC_DOWNLOAD_MACOS_INTEL', 'https://github.com/SmelterWorks/Relic-Launcher/releases/latest'),
             'match' => ['mac-intel', 'macos-intel'],
         ],
     ],
