@@ -38,6 +38,9 @@ function staticBadge(badge) {
     const params = new URLSearchParams({
         style: 'flat-square',
         labelColor: theme.labelColor,
+        label: badge.label,
+        message: badge.message,
+        color: themeColor(badge.color ?? 'accent'),
     });
 
     if (badge.logo) {
@@ -45,11 +48,7 @@ function staticBadge(badge) {
         params.set('logoColor', 'white');
     }
 
-    const color = themeColor(badge.color ?? 'accent');
-    const label = encodeURIComponent(badge.label);
-    const message = encodeURIComponent(badge.message);
-
-    return `https://img.shields.io/badge/${label}-${message}-${color}?${params.toString()}`;
+    return `https://img.shields.io/badge/?${params.toString()}`;
 }
 
 function endpointBadge(badge) {
