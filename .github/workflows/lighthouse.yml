@@ -26,6 +26,8 @@ jobs:
     name: Lighthouse CI
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'write' || 'read' }}
 
     steps:
       - name: Checkout
@@ -66,6 +68,22 @@ jobs:
         env:
           APP_ENV: production
           APP_DEBUG: false
+
+      - name: Update Lighthouse score badge
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: npm run badges:lighthouse
+
+      - name: Commit Lighthouse score badge
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/badges/lighthouse.json
+          if git diff --staged --quiet; then
+            exit 0
+          fi
+          git commit -m "chore: update Lighthouse score badge"
+          git push
 
       - name: Upload Lighthouse reports
         if: always()

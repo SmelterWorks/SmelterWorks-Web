@@ -9,7 +9,10 @@
         "format": "blade-formatter --write \"resources/views/**/*.blade.php\"",
         "format:check": "blade-formatter --check-formatted \"resources/views/**/*.blade.php\"",
         "lint": "npm run format:check",
-        "lighthouse:ci": "lhci autorun"
+        "lighthouse:ci": "lhci autorun",
+        "badges": "node scripts/render-badges.mjs --write",
+        "badges:check": "node scripts/render-badges.mjs --check",
+        "badges:lighthouse": "node scripts/update-lighthouse-badge.mjs"
     },
     "devDependencies": {
         "@fontsource/fraunces": "^5.3.0",

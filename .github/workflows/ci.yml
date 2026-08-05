@@ -101,6 +101,9 @@ jobs:
       - name: Check Blade formatting
         run: npm run format:check
 
+      - name: Check README badges
+        run: npm run badges:check
+
       - name: Build assets
         run: npm run build
 

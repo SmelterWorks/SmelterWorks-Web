@@ -1,0 +1,84 @@
+{
+    "repository": "SmelterWorks/SmelterWorks-Web",
+    "branch": "main",
+    "theme": {
+        "labelColor": "1c1916",
+        "accent": "b45309",
+        "success": "3f5a4d",
+        "neutral": "3a342e"
+    },
+    "badges": [
+        {
+            "id": "ci",
+            "type": "workflow",
+            "label": "CI",
+            "workflow": "ci.yml",
+            "logo": "githubactions"
+        },
+        {
+            "id": "lighthouse",
+            "type": "workflow",
+            "label": "Lighthouse CI",
+            "workflow": "lighthouse.yml",
+            "logo": "lighthouse"
+        },
+        {
+            "id": "lighthouse-score",
+            "type": "endpoint",
+            "label": "Lighthouse",
+            "path": ".github/badges/lighthouse.json",
+            "workflow": "lighthouse.yml"
+        },
+        {
+            "id": "docker",
+            "type": "workflow",
+            "label": "Docker",
+            "workflow": "docker.yml",
+            "logo": "docker"
+        },
+        {
+            "id": "links",
+            "type": "workflow",
+            "label": "links",
+            "workflow": "links.yml"
+        },
+        {
+            "id": "codeql",
+            "type": "workflow",
+            "label": "CodeQL",
+            "workflow": "codeql.yml",
+            "logo": "github"
+        },
+        {
+            "id": "php",
+            "type": "static",
+            "label": "PHP",
+            "message": "8.4+",
+            "color": "neutral"
+        },
+        {
+            "id": "laravel",
+            "type": "static",
+            "label": "Laravel",
+            "message": "13",
+            "color": "accent"
+        },
+        {
+            "id": "ghcr",
+            "type": "static",
+            "label": "GHCR",
+            "message": "smelterworks-web",
+            "color": "success",
+            "logo": "docker",
+            "link": "https://github.com/SmelterWorks/SmelterWorks-Web/pkgs/container/smelterworks-web"
+        },
+        {
+            "id": "license",
+            "type": "static",
+            "label": "license",
+            "message": "Apache 2.0",
+            "color": "success",
+            "link": "LICENSE"
+        }
+    ]
+}
