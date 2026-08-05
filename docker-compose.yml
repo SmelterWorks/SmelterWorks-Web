@@ -42,7 +42,7 @@ services:
       MAIL_MAILER: log
     tmpfs:
       - /tmp:mode=1777,size=64m
-      - /var/lib/nginx:uid=65532,gid=65532,mode=0755,size=16m
+      - /var/lib/nginx/tmp:uid=65532,gid=65532,mode=0755,size=16m
     volumes:
       - app-storage:/var/www/html/storage
       - app-cache:/var/www/html/bootstrap/cache

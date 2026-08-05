@@ -88,8 +88,12 @@ RUN apk add --no-cache nginx sqlite-libs curl su-exec \
     && addgroup -g "${APP_GID}" -S app \
     && adduser -u "${APP_UID}" -S app -G app \
     && mkdir -p \
-        /tmp/nginx \
-        /var/lib/nginx/logs \
+        /tmp/nginx/client \
+        /tmp/nginx/proxy \
+        /tmp/nginx/fastcgi \
+        /tmp/nginx/uwsgi \
+        /tmp/nginx/scgi \
+        /tmp/nginx/logs \
         /var/lib/nginx/tmp \
         /var/www/html/storage/app/public \
         /var/www/html/storage/framework/cache/data \
@@ -97,6 +101,8 @@ RUN apk add --no-cache nginx sqlite-libs curl su-exec \
         /var/www/html/storage/framework/views \
         /var/www/html/storage/logs \
         /var/www/html/bootstrap/cache \
+    && rm -rf /var/lib/nginx/logs \
+    && ln -sfn /tmp/nginx/logs /var/lib/nginx/logs \
     && rm -rf /etc/nginx/http.d/default.conf \
     && chown -R app:app /tmp/nginx /var/www/html /var/lib/nginx /var/log/nginx
 
