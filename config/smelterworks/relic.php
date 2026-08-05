@@ -6,10 +6,8 @@ return [
     'summary' => 'Install the game, browse VS ModDB, add mods, and launch from one app. Works on Windows, Linux, and Mac.',
     'repo_url' => env('SMELTERWORKS_RELIC_REPO_URL', 'https://github.com/SmelterWorks/Relic-Launcher'),
     'releases_url' => env('SMELTERWORKS_RELIC_RELEASES_URL', 'https://github.com/SmelterWorks/Relic-Launcher/releases/latest'),
-    'preview_url' => env(
-        'SMELTERWORKS_RELIC_PREVIEW_URL',
-        'https://github.com/SmelterWorks/Relic-Launcher/raw/main/assets/screenshots/home-relic-default.png',
-    ),
+    'preview_url' => env('SMELTERWORKS_RELIC_PREVIEW_URL')
+        ?: 'https://github.com/SmelterWorks/Relic-Launcher/raw/main/assets/screenshots/home-relic-default.png',
     'preview_alt' => 'Relic Launcher home screen with game versions and news',
     'license' => '0BSD',
     'platforms' => [
