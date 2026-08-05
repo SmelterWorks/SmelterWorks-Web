@@ -14,7 +14,7 @@
         "@fortawesome/fontawesome-free": "^7.3.1",
         "@tailwindcss/vite": "^4.0.0",
         "blade-formatter": "^1.44.4",
-        "concurrently": "^9.0.1",
+        "concurrently": "^10.0.4",
         "country-flag-icons": "^1.6.20",
         "laravel-vite-plugin": "^3.1",
         "lucide-static": "^1.28.0",
