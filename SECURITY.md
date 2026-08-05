@@ -4,7 +4,7 @@ SmelterWorks Web is a community project and is not affiliated with Anego Studios
 
 ## Reporting a vulnerability
 
-Open a private security advisory on the GitHub repository, or email the maintainers through the repository contact options. Do not file a public issue for auth bypasses, secret exposure, or production access problems.
+Open a private security advisory on the GitHub repository, or email team [at] smelterworks.com. Do not file a public issue for auth bypasses, secret exposure, or production access problems.
 
 Include the affected route or feature, steps to reproduce, and impact.
 

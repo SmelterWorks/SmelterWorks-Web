@@ -17,7 +17,7 @@ This repo is open source under Apache 2.0 (`LICENSE`). Treat every commit as pub
 | Website | `/`, `/projects`, `/mods`, `/about`, `/contribute` | Catalog and copy from `config/smelterworks.php` |
 | Hosting | `/hosting` (+ purchase routes) | Plans and regions are public. Checkout is gated by `hosting.coming_soon` |
 | Relic | `/relic`, `/relic/download` | Download page auto-detects OS from User-Agent |
-| Contact | `/contact` | Email shown obfuscated (`[dot]`) when configured |
+| Contact | `/contact` | Email shown obfuscated (`[at]`, `[dot]`) when configured |
 | Donate | `/donate` | Ko-Fi link from env |
 | Panel | `/panel` | Placeholder in this app. Redirects away if `SMELTERWORKS_PANEL_URL` is set |
 | Legal | `/privacy`, `/terms` | No ads, no tracking, no telemetry. Functional cookies only |

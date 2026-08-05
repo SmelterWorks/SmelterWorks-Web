@@ -38,7 +38,7 @@ Do not invent live panel features in copy.
 - Never hardcode Fluxer invites, API keys, tokens, passwords, private hostnames, or deploy URLs in the repo
 - Use `.env` / `.env.example` keys such as `SMELTERWORKS_FLUXER_URL`, `SMELTERWORKS_PANEL_URL`, `SMELTERWORKS_LEGAL_CONTACT`, `SMELTERWORKS_CONTACT_EMAIL`
 - Hide empty optional links in Blade (`@if (filled(...))`)
-- Contact email display uses `App\Support\ContactEmail::obfuscate()` (`[dot]` in the visible text, real address in `mailto:`)
+- Contact email display uses `App\Support\ContactEmail::obfuscate()` (`[at]` and `[dot]` in the visible text, real address in `mailto:`)
 - Tests may set fake URLs in `phpunit.xml`. Production values stay in operator env or CI secrets
 
 ## Where content lives

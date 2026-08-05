@@ -60,7 +60,7 @@ class PageContentTest extends TestCase
     {
         $this->get(route('contact'))
             ->assertOk()
-            ->assertSee('contact@example[dot]test', false)
+            ->assertSee('contact [at] example[dot]test', false)
             ->assertSee('Questions about mods, Relic Launcher, contributions, or support.', false)
             ->assertDontSee('Questions about hosting', false);
     }

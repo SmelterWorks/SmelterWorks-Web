@@ -19,7 +19,7 @@ return [
     ],
 
     'contact' => [
-        'email' => env('SMELTERWORKS_CONTACT_EMAIL', 'smelterworks@fastmail.com'),
+        'email' => env('SMELTERWORKS_CONTACT_EMAIL', 'team@smelterworks.com'),
         'intro' => 'Questions about mods, Relic Launcher, contributions, or support.',
     ],
 

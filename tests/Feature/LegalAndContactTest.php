@@ -33,7 +33,7 @@ class LegalAndContactTest extends TestCase
         $this->get(route('contact'))
             ->assertOk()
             ->assertSee('Contact', false)
-            ->assertSee('contact@example[dot]test', false)
+            ->assertSee('contact [at] example[dot]test', false)
             ->assertSee('mailto:contact@example.test', false);
     }
 
