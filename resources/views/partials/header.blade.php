@@ -18,6 +18,8 @@
         </nav>
 
         <div class="site-header__actions" data-site-actions>
+            <x-theme-toggle />
+
             @if (filled(config('smelterworks.links.fluxer')))
                 <x-icon-link :href="config('smelterworks.links.fluxer')" label="Fluxer">
                     <x-icons.fluxer />
@@ -63,6 +65,8 @@
         </nav>
 
         <div class="mobile-nav__actions">
+            <x-theme-toggle />
+
             @if (filled(config('smelterworks.links.fluxer')))
                 <x-icon-link :href="config('smelterworks.links.fluxer')" label="Fluxer">
                     <x-icons.fluxer />

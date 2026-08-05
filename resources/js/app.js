@@ -1,3 +1,5 @@
+import './theme.js';
+
 const revealElements = document.querySelectorAll('[data-reveal]');
 
 if (revealElements.length > 0) {
@@ -141,4 +143,3 @@ document.querySelectorAll('[data-branding-mark]').forEach((mark) => {
         button.addEventListener('click', () => setFormat(button));
     });
 });
-

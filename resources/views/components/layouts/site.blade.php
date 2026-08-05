@@ -33,7 +33,7 @@
 @endphp
 
 <!DOCTYPE html>
-<html lang="{{ $locale }}">
+<html lang="{{ $locale }}" data-theme="light">
 
 <head>
     <meta charset="utf-8">
@@ -78,6 +78,8 @@
     @endif
 
     <script type="application/ld+json">{!! $jsonLdPayload !!}</script>
+
+    <script src="{{ asset('scripts/theme-init.js') }}"></script>
 
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])

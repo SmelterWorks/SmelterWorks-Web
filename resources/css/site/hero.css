@@ -99,7 +99,7 @@
 
     .hero .button--solid {
         background: #f2e7d8;
-        color: var(--color-iron);
+        color: #1c1916;
     }
 
     .hero .button--ghost {
@@ -125,7 +125,7 @@
     .hero__preview .relic-preview__image {
         border-color: color-mix(in oklab, #f2e7d8 18%, transparent);
         box-shadow:
-            0 1.5rem 3rem rgba(0, 0, 0, 0.42),
-            0 0.35rem 0.85rem rgba(0, 0, 0, 0.28);
+            0 1.15rem 2.35rem rgba(0, 0, 0, 0.34),
+            0 0.3rem 0.7rem rgba(0, 0, 0, 0.22);
     }
 }

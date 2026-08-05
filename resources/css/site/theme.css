@@ -1,0 +1,203 @@
+@layer base {
+    :root {
+        color-scheme: light;
+        --color-surface-elevated: #ffffff;
+        --theme-body-gradient:
+            radial-gradient(1200px 600px at 10% -10%, rgba(196, 92, 38, 0.14), transparent 55%),
+            radial-gradient(900px 500px at 90% 0%, rgba(63, 90, 77, 0.12), transparent 50%),
+            linear-gradient(180deg, #f3ebe0 0%, var(--color-ash) 40%, #e4dccf 100%);
+    }
+
+    [data-theme='dark'] {
+        color-scheme: dark;
+        --color-ash: #14110f;
+        --color-ash-deep: #1f1a16;
+        --color-iron: #f2e8dc;
+        --color-iron-soft: #b9aa98;
+        --color-slag: #7a9d8a;
+        --color-copper: #d97706;
+        --color-ember: #ea580c;
+        --color-smoke: rgba(242, 232, 220, 0.06);
+        --color-surface-elevated: #2a231c;
+        --theme-body-gradient:
+            radial-gradient(1200px 600px at 10% -10%, rgba(217, 119, 6, 0.14), transparent 55%),
+            radial-gradient(900px 500px at 90% 0%, rgba(122, 157, 138, 0.1), transparent 50%),
+            linear-gradient(180deg, #1a1612 0%, var(--color-ash) 40%, #100e0c 100%);
+    }
+
+    [data-theme='dark'] body {
+        background: var(--theme-body-gradient);
+    }
+
+    [data-theme='dark'] ::selection {
+        background: color-mix(in oklab, var(--color-copper) 45%, var(--color-iron));
+        color: #14110f;
+    }
+}
+
+@layer components {
+    .theme-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2.5rem;
+        min-width: 2rem;
+        min-height: 2.5rem;
+        padding: 0;
+        border: 0;
+        border-radius: 0.35rem;
+        background: transparent;
+        color: var(--color-iron);
+        opacity: 0.88;
+        cursor: pointer;
+        transition:
+            opacity 160ms ease,
+            color 160ms ease,
+            transform 160ms ease;
+    }
+
+    .theme-toggle:hover {
+        opacity: 1;
+        transform: translateY(-1px);
+    }
+
+    .theme-toggle__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .theme-toggle__icon--dark {
+        display: none;
+    }
+
+    [data-theme='dark'] .theme-toggle__icon--light {
+        display: none;
+    }
+
+    [data-theme='dark'] .theme-toggle__icon--dark {
+        display: inline-flex;
+    }
+
+    [data-theme='dark'] .site-header {
+        background: color-mix(in oklab, var(--color-ash-deep) 88%, transparent);
+        border-bottom-color: color-mix(in oklab, var(--color-iron) 10%, transparent);
+    }
+
+    [data-theme='dark'] .site-footer {
+        background: color-mix(in oklab, var(--color-ash-deep) 72%, transparent);
+    }
+
+    [data-theme='dark'] .page-hero {
+        background: linear-gradient(180deg, color-mix(in oklab, var(--color-ash-deep) 75%, transparent), transparent);
+    }
+
+    [data-theme='dark'] .button--solid {
+        background: var(--color-copper);
+        color: #14110f;
+    }
+
+    [data-theme='dark'] .button--solid:hover {
+        background: color-mix(in oklab, var(--color-copper) 86%, var(--color-ember));
+    }
+
+    [data-theme='dark'] .button--ghost:hover {
+        background: color-mix(in oklab, var(--color-iron) 8%, transparent);
+    }
+
+    [data-theme='dark'] .pill {
+        background: color-mix(in oklab, var(--color-ember) 22%, var(--color-ash-deep));
+        color: color-mix(in oklab, var(--color-ember) 55%, var(--color-iron));
+    }
+
+    [data-theme='dark'] .pill--muted {
+        background: color-mix(in oklab, var(--color-slag) 18%, var(--color-ash-deep));
+        color: var(--color-slag);
+    }
+
+    [data-theme='dark'] .empty-state {
+        background: color-mix(in oklab, var(--color-ash-deep) 65%, transparent);
+    }
+
+    [data-theme='dark'] .feature-grid__item {
+        background: color-mix(in oklab, var(--color-surface-elevated) 55%, transparent);
+    }
+
+    [data-theme='dark'] .feature-grid--muted .feature-grid__item {
+        background: color-mix(in oklab, var(--color-ash-deep) 75%, transparent);
+    }
+
+    [data-theme='dark'] .feature-grid__link:hover {
+        color: color-mix(in oklab, var(--color-copper) 78%, var(--color-iron));
+    }
+
+    [data-theme='dark'] .plan-card {
+        background: color-mix(in oklab, var(--color-surface-elevated) 42%, transparent);
+    }
+
+    [data-theme='dark'] .plan-card--featured {
+        background: linear-gradient(
+            180deg,
+            color-mix(in oklab, var(--color-ember) 14%, var(--color-ash-deep)),
+            color-mix(in oklab, var(--color-surface-elevated) 35%, transparent)
+        );
+    }
+
+    [data-theme='dark'] .flash-message {
+        background: color-mix(in oklab, var(--color-slag) 16%, var(--color-ash-deep));
+    }
+
+    [data-theme='dark'] .flash-message--warn {
+        background: color-mix(in oklab, var(--color-ember) 18%, var(--color-ash-deep));
+    }
+
+    [data-theme='dark'] .field input,
+    [data-theme='dark'] .field select {
+        background: color-mix(in oklab, var(--color-surface-elevated) 55%, transparent);
+    }
+
+    [data-theme='dark'] .region-map__frame {
+        background: color-mix(in oklab, var(--color-ash-deep) 55%, var(--color-surface-elevated));
+        box-shadow:
+            0 0.85rem 1.75rem color-mix(in oklab, black 28%, transparent),
+            inset 0 1px 0 color-mix(in oklab, var(--color-iron) 8%, transparent);
+    }
+
+    [data-theme='dark'] .currency-toggle.is-active {
+        background: var(--color-copper);
+        border-color: var(--color-copper);
+        color: #14110f;
+    }
+
+    [data-theme='dark'] .branding-mark {
+        background: color-mix(in oklab, var(--color-surface-elevated) 55%, var(--color-ash));
+    }
+
+    [data-theme='dark'] .branding-mark__format {
+        background: color-mix(in oklab, var(--color-surface-elevated) 70%, var(--color-ash));
+    }
+
+    [data-theme='dark'] .branding-mark__format.is-active {
+        background: color-mix(in oklab, var(--color-ember) 18%, var(--color-ash-deep));
+    }
+
+    [data-theme='dark'] .branding-mark__preview--checker {
+        background-color: #2a231c;
+        background-image:
+            linear-gradient(45deg, #352c24 25%, transparent 25%),
+            linear-gradient(-45deg, #352c24 25%, transparent 25%),
+            linear-gradient(45deg, transparent 75%, #352c24 75%),
+            linear-gradient(-45deg, transparent 75%, #352c24 75%);
+    }
+
+    [data-theme='dark'] .relic-preview__image {
+        box-shadow:
+            0 0.9rem 1.75rem rgba(0, 0, 0, 0.28),
+            0 0.22rem 0.5rem rgba(0, 0, 0, 0.18);
+    }
+
+    [data-theme='dark'] .donate-link {
+        background: color-mix(in oklab, var(--color-ash-deep) 65%, transparent);
+    }
+}

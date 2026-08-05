@@ -36,6 +36,8 @@ const lucideNames = [
     'x',
     'leaf',
     'upload',
+    'sun',
+    'moon',
 ];
 
 function resetDir(path) {

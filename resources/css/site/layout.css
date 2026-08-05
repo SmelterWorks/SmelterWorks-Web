@@ -40,7 +40,7 @@
 
     .button--ghost:hover {
         border-color: var(--color-iron);
-        background: color-mix(in oklab, white 40%, transparent);
+        background: color-mix(in oklab, var(--color-surface-elevated) 40%, transparent);
     }
 
     .button:disabled,

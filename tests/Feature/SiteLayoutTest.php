@@ -14,6 +14,8 @@ class SiteLayoutTest extends TestCase
     {
         $this->get(route('home'))
             ->assertOk()
+            ->assertSee('data-theme-toggle', false)
+            ->assertSee('aria-label="Switch to dark theme"', false)
             ->assertSee('images/brand/fluxer.png', false)
             ->assertSee(config('smelterworks.links.fluxer'), false)
             ->assertSee(config('smelterworks.links.github'), false)
@@ -118,6 +120,13 @@ class SiteLayoutTest extends TestCase
             ->assertSee('Website is under construction', false)
             ->assertSee('--site-banner-bg: #b45309', false)
             ->assertSee('--site-banner-fg: #ebe4d8', false);
+    }
+
+    public function test_html_includes_theme_bootstrap_script(): void
+    {
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee(asset('scripts/theme-init.js'), false);
     }
 
     public function test_site_banner_hides_when_disabled(): void

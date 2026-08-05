@@ -17,8 +17,8 @@
         border-radius: 0.75rem;
         border: 1px solid color-mix(in oklab, var(--color-iron) 14%, transparent);
         box-shadow:
-            0 1.5rem 3rem color-mix(in oklab, var(--color-iron) 12%, transparent),
-            0 0.35rem 0.85rem color-mix(in oklab, var(--color-iron) 8%, transparent);
+            0 1.1rem 2.2rem rgba(28, 25, 22, 0.1),
+            0 0.28rem 0.65rem rgba(28, 25, 22, 0.07);
         background: color-mix(in oklab, var(--color-ash-deep) 70%, transparent);
     }
 
