@@ -1,0 +1,103 @@
+@layer components {
+
+    .download-hero {
+        margin-bottom: 1.75rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid color-mix(in oklab, var(--color-iron) 12%, transparent);
+    }
+
+    .download-hero__label {
+        margin: 0 0 0.35rem;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--color-slag);
+    }
+
+    .download-hero__title {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 3vw, 2.1rem);
+        letter-spacing: -0.02em;
+        color: var(--color-iron);
+    }
+
+    .download-hero__heading {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .download-hero__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 0.75rem;
+        background: color-mix(in oklab, var(--color-ash-deep) 70%, transparent);
+        color: var(--color-iron);
+    }
+
+    .download-hero__detail {
+        margin: 0 0 1rem;
+        color: var(--color-iron-soft);
+    }
+
+    .download-grid {
+        display: grid;
+        gap: 0.85rem;
+    }
+
+    .download-card {
+        display: grid;
+        gap: 0.85rem;
+        padding: 1rem 0;
+        border-top: 1px solid color-mix(in oklab, var(--color-iron) 12%, transparent);
+    }
+
+    .download-card:last-child {
+        border-bottom: 1px solid color-mix(in oklab, var(--color-iron) 12%, transparent);
+    }
+
+    .download-card__head {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.85rem;
+    }
+
+    .download-card__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 0.65rem;
+        background: color-mix(in oklab, var(--color-ash-deep) 70%, transparent);
+        color: var(--color-iron);
+        flex-shrink: 0;
+    }
+
+    .download-card__title {
+        margin: 0 0 0.2rem;
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        color: var(--color-iron);
+    }
+
+    .download-card__detail {
+        margin: 0;
+        color: var(--color-iron-soft);
+    }
+}
+@layer components {
+
+    @media (min-width: 768px) {
+        .download-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem 1.5rem;
+        }
+    }
+}

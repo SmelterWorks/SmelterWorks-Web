@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+export PHP_BINARY="$ROOT/bin/php"
+exec "$ROOT/bin/php" "$ROOT/artisan" serve "$@"

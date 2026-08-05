@@ -1,0 +1,139 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Sora', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Fraunces', ui-serif, Georgia, serif;
+    --color-ash: #ebe4d8;
+    --color-ash-deep: #d8cfc0;
+    --color-iron: #1c1916;
+    --color-iron-soft: #3a342e;
+    --color-slag: #3f5a4d;
+    --color-copper: #b45309;
+    --color-ember: #c45c26;
+    --color-smoke: rgba(28, 25, 22, 0.08);
+}
+
+@layer base {
+    :root {
+        color-scheme: light;
+    }
+
+    body {
+        font-family: var(--font-sans);
+        background:
+            radial-gradient(1200px 600px at 10% -10%, rgba(196, 92, 38, 0.14), transparent 55%),
+            radial-gradient(900px 500px at 90% 0%, rgba(63, 90, 77, 0.12), transparent 50%),
+            linear-gradient(180deg, #f3ebe0 0%, var(--color-ash) 40%, #e4dccf 100%);
+        background-attachment: fixed;
+    }
+
+    ::selection {
+        background: color-mix(in oklab, var(--color-ember) 35%, white);
+        color: var(--color-iron);
+    }
+}
+
+@import './site/header.css';
+@import './site/banner.css';
+@import './site/features.css';
+@import './site/hosting.css';
+@import './site/download.css';
+@import './site/hero.css';
+@import './site/layout.css';
+@import './site/relic.css';
+@import './site/footer.css';
+@import './site/motion.css';
+
+@media (min-width: 768px) {
+    .site-nav,
+    .site-header__actions {
+        display: flex;
+    }
+
+    .menu-toggle,
+    .mobile-nav,
+    .mobile-nav.is-open {
+        display: none;
+    }
+
+    .feature-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .plan-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        align-items: stretch;
+    }
+
+    .project-row {
+        grid-template-columns: 9rem 1fr auto;
+        align-items: center;
+        gap: 1.25rem;
+    }
+
+    .site-footer__top {
+        grid-template-columns: minmax(14rem, 1fr) minmax(0, 2fr);
+        align-items: start;
+    }
+
+    .site-footer__columns {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .relic-hero {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+        gap: 2.5rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .site-header__inner {
+        justify-content: space-between;
+        gap: 0.75rem;
+    }
+
+    .site-nav,
+    .site-header__actions {
+        display: none;
+    }
+
+    .site-header {
+        margin-bottom: 0;
+    }
+}
+
+@keyframes heat-rise {
+    from {
+        opacity: 0.7;
+        transform: translateY(8px) scaleY(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+    }
+}
+
+@keyframes grain-drift {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-2%, -3%, 0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero__heat,
+    .hero__grain,
+    .reveal {
+        animation: none !important;
+        transition: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}

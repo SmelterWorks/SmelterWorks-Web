@@ -1,0 +1,283 @@
+@layer components {
+
+    .plan-grid {
+        display: grid;
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .plan-card {
+        display: grid;
+        gap: 0.65rem;
+        padding: 1.35rem 1.25rem;
+        border: 1px solid color-mix(in oklab, var(--color-iron) 14%, transparent);
+        border-radius: 0.45rem;
+        background: color-mix(in oklab, white 42%, transparent);
+    }
+
+    .plan-card--featured {
+        border-color: color-mix(in oklab, var(--color-ember) 55%, var(--color-iron));
+        background:
+            linear-gradient(180deg, color-mix(in oklab, var(--color-ember) 10%, white), color-mix(in oklab, white 50%, transparent));
+    }
+
+    .plan-card__badge {
+        margin: 0;
+        width: fit-content;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: color-mix(in oklab, var(--color-ember) 70%, black);
+    }
+
+    .plan-card__name {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: 1.55rem;
+        letter-spacing: -0.02em;
+        color: var(--color-iron);
+    }
+
+    .plan-card__flavor {
+        margin: -0.25rem 0 0;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: color-mix(in oklab, var(--color-iron-soft) 85%, var(--color-ember));
+    }
+
+    .plan-card__price {
+        margin: 0;
+        display: flex;
+        align-items: baseline;
+        gap: 0.35rem;
+    }
+
+    .plan-card__amount {
+        font-family: var(--font-display);
+        font-size: 2.2rem;
+        font-weight: 650;
+        letter-spacing: -0.03em;
+        color: var(--color-iron);
+    }
+
+    .plan-card__period,
+    .plan-card__yearly,
+    .plan-card__blurb {
+        margin: 0;
+        color: var(--color-iron-soft);
+    }
+
+    .plan-card__yearly {
+        font-size: 0.92rem;
+    }
+
+    .plan-card__specs {
+        margin: 0.35rem 0 0.5rem;
+        padding-left: 1.1rem;
+        color: var(--color-iron-soft);
+        line-height: 1.55;
+    }
+
+    .plan-card__badge--sold {
+        color: color-mix(in oklab, #8b1e1e 80%, black);
+        background: transparent;
+    }
+
+    .plan-card--sold-out {
+        opacity: 0.72;
+    }
+
+    .plan-card__stock {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--color-iron-soft);
+    }
+
+    .flash-message {
+        margin: 0 0 1.25rem;
+        padding: 0.75rem 0.9rem;
+        border-radius: 0.35rem;
+        background: color-mix(in oklab, var(--color-slag) 12%, white);
+        color: var(--color-iron);
+    }
+
+    .flash-message--warn {
+        background: color-mix(in oklab, var(--color-ember) 16%, white);
+    }
+
+    .purchase-layout {
+        display: grid;
+        gap: 2rem;
+        max-width: 42rem;
+    }
+
+    .purchase-form {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .field {
+        display: grid;
+        gap: 0.4rem;
+    }
+
+    .field__label {
+        font-weight: 650;
+        color: var(--color-iron);
+    }
+
+    .field input,
+    .field select {
+        min-height: 2.6rem;
+        padding: 0.55rem 0.7rem;
+        border: 1px solid color-mix(in oklab, var(--color-iron) 18%, transparent);
+        border-radius: 0.35rem;
+        background: color-mix(in oklab, white 55%, transparent);
+        color: var(--color-iron);
+        font: inherit;
+    }
+
+    .field__error {
+        color: #8b1e1e;
+        font-size: 0.9rem;
+    }
+
+    .choice {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.35rem;
+    }
+
+    .form-note {
+        margin: 0;
+        color: var(--color-iron-soft);
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .hosting-details {
+        max-width: 42rem;
+    }
+
+    .region-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1rem;
+        display: grid;
+        gap: 0.55rem;
+    }
+
+    .region-list__row {
+        display: inline-flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 0.55rem;
+        line-height: 1.2;
+    }
+
+    .region-list__name {
+        display: inline;
+    }
+
+    .region-flag {
+        display: inline-block;
+        width: 1.25rem;
+        max-width: 1.25rem;
+        min-width: 1.25rem;
+        height: 0.85rem;
+        object-fit: cover;
+        border-radius: 0.12rem;
+        box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-iron) 14%, transparent);
+        flex: none;
+        vertical-align: middle;
+    }
+
+    .prose-block .region-list {
+        padding-left: 0;
+    }
+
+    .currency-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid color-mix(in oklab, var(--color-iron) 12%, transparent);
+    }
+
+    .currency-bar__label {
+        margin: 0;
+        font-weight: 600;
+        color: var(--color-iron);
+    }
+
+    .currency-bar__controls {
+        display: inline-flex;
+        gap: 0.35rem;
+    }
+
+    .currency-toggle {
+        min-height: 2.1rem;
+        padding: 0.35rem 0.8rem;
+        border-radius: 0.3rem;
+        border: 1px solid color-mix(in oklab, var(--color-iron) 18%, transparent);
+        background: transparent;
+        color: var(--color-iron-soft);
+        font-weight: 650;
+        cursor: pointer;
+    }
+
+    .currency-toggle.is-active {
+        background: var(--color-iron);
+        border-color: var(--color-iron);
+        color: var(--color-ash);
+    }
+
+    .currency-toggle:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+    .currency-bar__rate {
+        margin: 0;
+        width: 100%;
+        color: var(--color-iron-soft);
+        font-size: 0.92rem;
+    }
+
+    .spec-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1rem;
+        display: grid;
+        gap: 0.45rem;
+    }
+
+    .spec-list strong {
+        color: var(--color-iron);
+    }
+
+    .rss-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: var(--color-iron);
+        text-decoration: none;
+        font-weight: 650;
+        font-size: 0.95rem;
+    }
+
+    .rss-link:hover {
+        color: var(--color-copper);
+    }
+
+    .rss-link .icon {
+        color: currentColor;
+    }
+}

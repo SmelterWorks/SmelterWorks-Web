@@ -1,0 +1,27 @@
+@layer components {
+
+    .reveal {
+        opacity: 0;
+        transform: translateY(14px);
+        transition:
+            opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+            transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal.is-visible {
+        opacity: 1;
+        transform: none;
+    }
+
+    .reveal:nth-child(2) {
+        transition-delay: 80ms;
+    }
+
+    .reveal:nth-child(3) {
+        transition-delay: 160ms;
+    }
+
+    .reveal:nth-child(4) {
+        transition-delay: 240ms;
+    }
+}

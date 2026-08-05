@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# Absolute path so artisan serve workers can re-exec this wrapper with -c.
+exec /usr/bin/php -c "$ROOT/php-local.ini" "$@"

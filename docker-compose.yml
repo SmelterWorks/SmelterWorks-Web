@@ -1,0 +1,64 @@
+name: smelterworks-web
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        OCI_VERSION: ${OCI_VERSION:-dev}
+        OCI_REVISION: ${OCI_REVISION:-unknown}
+    image: smelterworks/web:${OCI_VERSION:-dev}
+    init: true
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    user: "65532:65532"
+    ports:
+      - "${WEB_PORT:-8080}:8080"
+    environment:
+      APP_NAME: SmelterWorks
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_URL: ${APP_URL:-http://localhost:8080}
+      APP_KEY: ${APP_KEY:?Set APP_KEY in .env or the environment}
+      LOG_CHANNEL: stderr
+      LOG_LEVEL: warning
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /var/www/html/storage/database.sqlite
+      SESSION_DRIVER: file
+      SESSION_SECURE_COOKIE: ${SESSION_SECURE_COOKIE:-false}
+      CACHE_STORE: file
+      QUEUE_CONNECTION: sync
+      BROADCAST_CONNECTION: log
+      FILESYSTEM_DISK: local
+      MAIL_MAILER: log
+    tmpfs:
+      - /tmp:mode=1777,size=64m
+    volumes:
+      - app-storage:/var/www/html/storage
+      - app-cache:/var/www/html/bootstrap/cache
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          memory: 128M
+    pids_limit: 128
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/up"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+    restart: unless-stopped
+    cpus: 1.0
+    mem_limit: 512m
+    mem_reservation: 128m
+
+volumes:
+  app-storage:
+  app-cache:

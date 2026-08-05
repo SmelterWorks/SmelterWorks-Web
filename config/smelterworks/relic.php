@@ -1,0 +1,67 @@
+<?php
+
+return [
+    'name' => 'Relic Launcher',
+    'tagline' => 'Unofficial desktop launcher for Vintage Story',
+    'summary' => 'Install the game, browse VS ModDB, add mods, and launch from one app. Works on Windows, Linux, and Mac.',
+    'repo_url' => env('SMELTERWORKS_RELIC_REPO_URL', 'https://github.com/SmelterWorks/Relic-Launcher'),
+    'releases_url' => env('SMELTERWORKS_RELIC_RELEASES_URL', 'https://github.com/SmelterWorks/Relic-Launcher/releases/latest'),
+    'preview_url' => env(
+        'SMELTERWORKS_RELIC_PREVIEW_URL',
+        'https://github.com/SmelterWorks/Relic-Launcher/raw/main/assets/screenshots/home-relic-default.png',
+    ),
+    'preview_alt' => 'Relic Launcher home screen with game versions and news',
+    'license' => '0BSD',
+    'platforms' => [
+        ['icon' => 'windows', 'label' => 'Windows', 'detail' => '10+ x64'],
+        ['icon' => 'linux', 'label' => 'Linux', 'detail' => 'x64, X11 and Wayland'],
+        ['icon' => 'macos', 'label' => 'macOS', 'detail' => '13+ Intel and Apple Silicon'],
+    ],
+    'downloads' => [
+        [
+            'id' => 'windows',
+            'label' => 'Windows',
+            'detail' => 'Windows 10+ x64 · zip',
+            'url' => env('SMELTERWORKS_RELIC_DOWNLOAD_WINDOWS', 'https://github.com/SmelterWorks/Relic-Launcher/releases/latest'),
+            'match' => ['windows', 'win'],
+        ],
+        [
+            'id' => 'linux',
+            'label' => 'Linux',
+            'detail' => 'Linux x64 · AppImage, deb, rpm, and Arch packages on Releases',
+            'url' => env('SMELTERWORKS_RELIC_DOWNLOAD_LINUX', 'https://github.com/SmelterWorks/Relic-Launcher/releases/latest'),
+            'match' => ['linux', 'x11', 'wayland'],
+        ],
+        [
+            'id' => 'macos-arm',
+            'label' => 'macOS (Apple Silicon)',
+            'detail' => 'macOS 13+ arm64 · app zip',
+            'url' => env('SMELTERWORKS_RELIC_DOWNLOAD_MACOS_ARM', 'https://github.com/SmelterWorks/Relic-Launcher/releases/latest'),
+            'match' => ['mac-arm', 'macos-arm'],
+        ],
+        [
+            'id' => 'macos-intel',
+            'label' => 'macOS (Intel)',
+            'detail' => 'macOS 13+ x64 · app zip',
+            'url' => env('SMELTERWORKS_RELIC_DOWNLOAD_MACOS_INTEL', 'https://github.com/SmelterWorks/Relic-Launcher/releases/latest'),
+            'match' => ['mac-intel', 'macos-intel'],
+        ],
+    ],
+    'features' => [
+        ['icon' => 'log-in', 'text' => 'Sign in with your Vintage Story account'],
+        ['icon' => 'layers', 'text' => 'Install multiple game versions'],
+        ['icon' => 'store', 'text' => 'Browse VS ModDB and install or manage mods'],
+        ['icon' => 'folder-open', 'text' => 'Local mods support'],
+        ['icon' => 'shield-alert', 'text' => 'Optional warning when a mod is on the official blocked-mods list'],
+        ['icon' => 'circle-play', 'text' => 'One-click play with mods, saves, and worlds in one shared folder'],
+        ['icon' => 'newspaper', 'text' => 'Game news and custom themes'],
+        ['icon' => 'book-open', 'text' => 'In-app Vintage Story wiki browser'],
+    ],
+    'upcoming' => [
+        ['icon' => 'archive', 'text' => 'Backup mods, worlds, and game versions'],
+        ['icon' => 'shield', 'text' => 'Launcher sandboxing (the app itself, not the game)'],
+        ['icon' => 'box', 'text' => 'Flatpak packaging'],
+        ['icon' => 'type', 'text' => 'Custom fonts support'],
+        ['icon' => 'key-round', 'text' => 'Avoid logging in twice (launcher then game)'],
+    ],
+];

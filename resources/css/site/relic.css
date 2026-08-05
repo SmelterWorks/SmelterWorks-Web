@@ -1,0 +1,70 @@
+@layer components {
+
+    .relic-hero {
+        display: grid;
+        gap: 1.75rem;
+        align-items: center;
+    }
+
+    .relic-preview {
+        margin: 0;
+    }
+
+    .relic-preview__image {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 0.75rem;
+        border: 1px solid color-mix(in oklab, var(--color-iron) 14%, transparent);
+        box-shadow:
+            0 1.5rem 3rem color-mix(in oklab, var(--color-iron) 12%, transparent),
+            0 0.35rem 0.85rem color-mix(in oklab, var(--color-iron) 8%, transparent);
+        background: color-mix(in oklab, var(--color-ash-deep) 70%, transparent);
+    }
+
+    .platform-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        margin-top: 1rem;
+    }
+
+    .platform-list--compact {
+        margin-top: 1.25rem;
+    }
+
+    .platform-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.55rem 0.85rem 0.55rem 0.65rem;
+        border: 1px solid color-mix(in oklab, var(--color-iron) 12%, transparent);
+        border-radius: 999px;
+        background: color-mix(in oklab, var(--color-ash-deep) 45%, transparent);
+    }
+
+    .platform-chip__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-iron);
+    }
+
+    .platform-chip__text {
+        display: grid;
+        gap: 0.05rem;
+    }
+
+    .platform-chip__label {
+        font-weight: 600;
+        color: var(--color-iron);
+        font-size: 0.92rem;
+        line-height: 1.2;
+    }
+
+    .platform-chip__detail {
+        color: var(--color-iron-soft);
+        font-size: 0.78rem;
+        line-height: 1.2;
+    }
+}

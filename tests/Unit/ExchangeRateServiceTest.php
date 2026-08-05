@@ -1,0 +1,53 @@
+<?php
+
+namespace Tests\Unit;
+
+use App\Support\Currency\ExchangeRateService;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Tests\TestCase;
+
+class ExchangeRateServiceTest extends TestCase
+{
+    protected bool $fakeFrankfurterRates = false;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Cache::flush();
+    }
+
+    public function test_it_fetches_and_caches_usd_to_eur_rate(): void
+    {
+        Http::fake([
+            'api.frankfurter.app/*' => Http::response([
+                'amount' => 1.0,
+                'base' => 'USD',
+                'date' => '2026-08-04',
+                'rates' => ['EUR' => 0.86843],
+            ], 200),
+        ]);
+
+        $service = app(ExchangeRateService::class);
+
+        $this->assertSame(0.86843, $service->usdToEur());
+        $this->assertSame(8.68, $service->convertUsdToEur(10));
+
+        $service->usdToEur();
+
+        Http::assertSentCount(1);
+    }
+
+    public function test_quote_marks_unavailable_when_request_fails(): void
+    {
+        Http::fake([
+            'api.frankfurter.app/*' => Http::response('nope', 503),
+        ]);
+
+        $quote = app(ExchangeRateService::class)->quote();
+
+        $this->assertFalse($quote['available']);
+        $this->assertSame(0.0, $quote['rate']);
+    }
+}

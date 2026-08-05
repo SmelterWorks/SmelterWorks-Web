@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Vintage Story official site
+    url: https://www.vintagestory.at/
+    about: SmelterWorks is unofficial. Game purchase and official support stay with Anego Studios.
+  - name: Relic Launcher issues
+    url: https://github.com/SmelterWorks/Relic-Launcher/issues
+    about: Bugs and features for the desktop launcher belong in that repository.

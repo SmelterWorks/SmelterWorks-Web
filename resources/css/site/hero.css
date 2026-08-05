@@ -1,0 +1,107 @@
+@layer components {
+
+    .hero {
+        position: relative;
+        min-height: min(100dvh, 52rem);
+        display: grid;
+        align-items: end;
+        overflow: clip;
+        color: #f4ebe1;
+    }
+
+    .hero__atmosphere {
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(180deg, rgba(20, 16, 13, 0.25) 0%, rgba(20, 16, 13, 0.55) 55%, rgba(20, 16, 13, 0.82) 100%),
+            linear-gradient(120deg, #3a271c 0%, #1c1713 45%, #243229 100%);
+    }
+
+    .hero__forge {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.95;
+    }
+
+    .hero__grain {
+        position: absolute;
+        inset: 0;
+        opacity: 0.22;
+        background-image:
+            radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px),
+            radial-gradient(circle at 80% 40%, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px);
+        background-size: 3px 3px, 5px 5px;
+        mix-blend-mode: soft-light;
+        animation: grain-drift 12s linear infinite;
+    }
+
+    .hero__heat {
+        position: absolute;
+        inset: auto 0 0 0;
+        height: 45%;
+        background: radial-gradient(60% 80% at 50% 100%, rgba(196, 92, 38, 0.45), transparent 70%);
+        animation: heat-rise 5.5s ease-in-out infinite alternate;
+    }
+
+    .hero__content {
+        position: relative;
+        z-index: 1;
+        width: min(1120px, calc(100% - 2rem));
+        margin: 0 auto;
+        padding: clamp(6rem, 14vw, 9rem) 0 clamp(3.5rem, 8vw, 5rem);
+    }
+
+    .hero__brand {
+        margin: 0 0 1.25rem;
+    }
+
+    .brand-logo--hero {
+        --brand-logo-size: clamp(3rem, 7vw, 4.5rem);
+    }
+
+    .brand-logo--hero .brand-logo__mark {
+        filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.45));
+    }
+
+    .hero__headline {
+        max-width: 16ch;
+        margin: 0 0 1rem;
+        font-family: var(--font-display);
+        font-size: clamp(1.5rem, 3.4vw, 2.35rem);
+        font-weight: 550;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        color: color-mix(in oklab, #f4ebe1 92%, var(--color-ember));
+    }
+
+    .hero__lede {
+        max-width: 38rem;
+        margin: 0 0 1.75rem;
+        font-size: clamp(1rem, 1.5vw, 1.15rem);
+        line-height: 1.6;
+        color: color-mix(in oklab, #f4ebe1 86%, transparent);
+    }
+
+    .hero__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .hero .button--solid {
+        background: #f2e7d8;
+        color: var(--color-iron);
+    }
+
+    .hero .button--ghost {
+        color: #f2e7d8;
+        border-color: color-mix(in oklab, #f2e7d8 45%, transparent);
+    }
+
+    .hero .button--ghost:hover {
+        background: color-mix(in oklab, #f2e7d8 12%, transparent);
+        border-color: #f2e7d8;
+    }
+}

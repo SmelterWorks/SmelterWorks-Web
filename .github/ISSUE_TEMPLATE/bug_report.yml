@@ -1,0 +1,62 @@
+name: Bug report
+description: Something broke on the site or in local setup
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fill in the fields below. Include the page URL and browser when the bug is visible on the site.
+  - type: input
+    id: page
+    attributes:
+      label: Page or route
+      placeholder: /hosting, /relic, local setup, CI, etc.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Public page content or layout
+        - Hosting catalog or purchase flow
+        - Relic download or catalog copy
+        - Local development setup
+        - CI or Docker
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS (if UI bug)
+      placeholder: Firefox 141 on Linux, or N/A
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open /hosting
+        2. Switch currency to EUR
+        3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Paste relevant CLI output or describe what you saw. Redact secrets and invite links.
+      render: text

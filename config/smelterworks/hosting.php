@@ -1,0 +1,96 @@
+<?php
+
+return [
+    'coming_soon' => true,
+    'summary' => 'Vintage Story servers in the US and Germany. Coming soon.',
+    'tagline' => 'Affordable and friendly but limited hosting.',
+    'regions' => [
+        ['code' => 'us', 'label' => 'United States', 'flag' => 'US'],
+        ['code' => 'eu-de', 'label' => 'Europe (Germany)', 'flag' => 'DE'],
+    ],
+    // Sellable capacity per region and plan. Tune in private deploy config if needed.
+    'stock' => [
+        'us' => [
+            'friends' => 4,
+            'modded' => 3,
+            'heavy' => 1,
+        ],
+        'eu-de' => [
+            'friends' => 4,
+            'modded' => 3,
+            'heavy' => 1,
+        ],
+    ],
+    'hardware' => [
+        'cpu' => 'AMD EPYC 4344P',
+        'cpu_detail' => '8 cores / 16 threads, up to 5.3 GHz',
+        'memory' => 'DDR5 ECC',
+        'storage' => 'NVMe SSD',
+    ],
+    'features' => [
+        ['icon' => 'archive', 'text' => 'Automated backups'],
+        ['icon' => 'cog', 'text' => 'Mod browser with one-click installs'],
+        ['icon' => 'file-code', 'text' => 'File browser and editor'],
+        ['icon' => 'package', 'text' => 'Unlimited mods'],
+        ['icon' => 'users', 'text' => 'Player count limited by RAM and CPU, not an artificial slot cap'],
+        ['icon' => 'globe', 'text' => 'US and Germany locations'],
+        ['icon' => 'container', 'text' => 'Easy migration to your own servers to self-host (Docker)'],
+        ['icon' => 'badge-check', 'text' => 'No lock-in or hidden fees'],
+    ],
+    'plans' => [
+        [
+            'slug' => 'friends',
+            'name' => 'Friends',
+            'flavor' => 'Ember',
+            'price_monthly' => 10,
+            'price_yearly' => 100,
+            'yearly_savings' => 20,
+            'ram_gb' => 4,
+            'storage_gb' => 25,
+            'comfort' => 'Good for a small group on light or vanilla play',
+            'blurb' => 'A small world with friends. Light mods, not a huge pack.',
+            'recommended' => false,
+        ],
+        [
+            'slug' => 'modded',
+            'name' => 'Modded',
+            'flavor' => 'Forge',
+            'price_monthly' => 15,
+            'price_yearly' => 150,
+            'yearly_savings' => 30,
+            'ram_gb' => 8,
+            'storage_gb' => 50,
+            'comfort' => 'Good for normal ModDB packs and growing worlds',
+            'blurb' => 'The usual pick for modded Vintage Story.',
+            'recommended' => true,
+        ],
+        [
+            'slug' => 'heavy',
+            'name' => 'Heavy',
+            'flavor' => 'Crucible',
+            'price_monthly' => 25,
+            'price_yearly' => 250,
+            'yearly_savings' => 50,
+            'ram_gb' => 16,
+            'storage_gb' => 100,
+            'comfort' => 'For big packs and busier worlds',
+            'blurb' => 'More RAM when the mod list and player load get thick.',
+            'recommended' => false,
+        ],
+    ],
+    'refund' => [
+        'intro' => 'We would rather refund a bad fit than keep the money. Export your world from the panel before you cancel if you want to keep it.',
+        'points' => [
+            'First monthly charge: full refund within 7 days if hosting is not working for you. Message us on Fluxer or email support.',
+            'Annual plan: full refund within 14 days of purchase. After that, unused whole months in the first year are refunded at the monthly rate for time already used.',
+            'Refunds go back to the original payment method.',
+            'Cancel anytime. Service stops at the end of the paid period unless you ask for an immediate shutdown with a refund that still qualifies.',
+            'Repeated buy-and-refund cycles or abuse can void future refunds on that account.',
+        ],
+    ],
+    'notes' => [
+        'List prices are USD. EUR uses the ECB rate via Frankfurter and refreshes about every six hours.',
+        'Annual plans are two months free versus paying monthly.',
+        'Export your world and mods anytime, including a Docker setup for self-hosting.',
+    ],
+];
