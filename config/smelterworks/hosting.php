@@ -5,8 +5,8 @@ return [
     'summary' => 'Vintage Story servers in the US and Germany. Coming soon.',
     'tagline' => 'Affordable and friendly but limited hosting.',
     'regions' => [
-        ['code' => 'us', 'label' => 'United States', 'flag' => 'US'],
-        ['code' => 'eu-de', 'label' => 'Europe (Germany)', 'flag' => 'DE'],
+        ['code' => 'us', 'label' => 'United States', 'flag' => 'US', 'lat' => 39.5, 'lng' => -98.35],
+        ['code' => 'eu-de', 'label' => 'Europe (Germany)', 'flag' => 'DE', 'lat' => 51.16, 'lng' => 10.45],
     ],
     // Sellable capacity per region and plan. Tune in private deploy config if needed.
     'stock' => [

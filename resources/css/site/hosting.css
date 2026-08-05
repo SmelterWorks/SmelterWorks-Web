@@ -165,19 +165,58 @@
 
     .region-map {
         margin: 0 0 1.5rem;
-        max-width: 40rem;
+        max-width: 42rem;
     }
 
-    .region-map__svg {
-        display: block;
-        width: 100%;
-        height: auto;
+    .region-map__frame {
+        height: min(22rem, 58vw);
+        min-height: 16rem;
         border-radius: 0.75rem;
         border: 1px solid color-mix(in oklab, var(--color-iron) 12%, transparent);
+        overflow: hidden;
         box-shadow:
             0 0.85rem 1.75rem color-mix(in oklab, var(--color-iron) 8%, transparent),
             inset 0 1px 0 color-mix(in oklab, white 55%, transparent);
-        background: color-mix(in oklab, var(--color-ash-deep) 40%, transparent);
+        background: color-mix(in oklab, var(--color-ash-deep) 55%, white);
+        position: relative;
+    }
+
+    .region-map__frame .ol-viewport {
+        border-radius: inherit;
+    }
+
+    .region-map__frame .ol-layer {
+        image-rendering: auto;
+    }
+
+    .region-map__frame .ol-attribution {
+        background: color-mix(in oklab, var(--color-ash) 88%, transparent);
+        color: var(--color-iron-soft);
+        font-size: 0.68rem;
+        border-radius: 0.25rem 0 0 0;
+    }
+
+    .region-map__frame .ol-attribution a {
+        color: var(--color-copper);
+    }
+
+    .region-map__tip {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.3rem;
+        background: color-mix(in oklab, var(--color-iron) 92%, black);
+        color: var(--color-ash);
+        font-size: 0.78rem;
+        font-weight: 600;
+        white-space: nowrap;
+        pointer-events: none;
+        box-shadow: 0 0.25rem 0.6rem rgba(0, 0, 0, 0.2);
+    }
+
+    .region-map__caption {
+        margin: 0.65rem 0 0;
+        color: color-mix(in oklab, var(--color-iron-soft) 82%, transparent);
+        font-size: 0.88rem;
+        line-height: 1.45;
     }
 
     .note-list {

@@ -42,6 +42,8 @@
             <ul>
                 <li>GitHub for source and release files.</li>
                 <li>Frankfurter / European Central Bank reference rates for USD to EUR display on hosting.</li>
+                <li>CARTO / OpenStreetMap tiles via OpenLayers on the hosting regions map. No account, no tracker
+                    scripts.</li>
                 <li>Fluxer for community chat if you join the invite.</li>
                 <li>Payment processors when checkout is enabled (details will be listed here before charges go live).
                 </li>
