@@ -2,7 +2,8 @@
 # Use this file as the Coolify Docker Compose build pack.
 # Image: ghcr.io/smelterworks/smelterworks-web (see .github/workflows/docker.yml).
 # Proxy via SERVICE_URL_WEB_8080 (container listens on 8080). No host port publish.
-# Set APP_KEY before deploy. IMAGE_TAG defaults to latest.
+# Set APP_KEY (full base64:... value) before deploy. IMAGE_TAG defaults to latest.
+# APP_URL comes from SERVICE_URL_WEB and must be https://your.domain.
 # Do not set user: on the service. Entrypoint chowns volumes then drops to app.
 
 name: smelterworks-web
@@ -31,7 +32,8 @@ services:
       - APP_ENV=production
       - APP_DEBUG=false
       - LOG_CHANNEL=stderr
-      - LOG_LEVEL=${LOG_LEVEL:-warning}
+      - LOG_LEVEL=${LOG_LEVEL:-error}
+      - LOG_STACK=stderr
       - DB_CONNECTION=sqlite
       - DB_DATABASE=/var/www/html/storage/database.sqlite
       - SESSION_DRIVER=file

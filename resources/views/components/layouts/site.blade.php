@@ -72,6 +72,7 @@
 
     <script type="application/ld+json">{!! $jsonLdPayload !!}</script>
 
+    @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 

@@ -51,6 +51,15 @@ if [ -z "${APP_KEY:-}" ]; then
     exit 1
 fi
 
+case "${APP_KEY}" in
+    base64:*)
+        ;;
+    *)
+        echo "APP_KEY must use the full Laravel value including the base64: prefix" >&2
+        exit 1
+        ;;
+esac
+
 php artisan config:cache --no-ansi
 php artisan route:cache --no-ansi
 php artisan view:cache --no-ansi

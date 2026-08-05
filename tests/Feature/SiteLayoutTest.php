@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 class SiteLayoutTest extends TestCase
@@ -39,7 +40,20 @@ class SiteLayoutTest extends TestCase
             ->assertHeader('X-Content-Type-Options', 'nosniff')
             ->assertHeader('X-Frame-Options', 'DENY')
             ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
-            ->assertHeader('Content-Security-Policy');
+            ->assertHeader('Content-Security-Policy')
+            ->assertDontSee('fonts.bunny.net', false);
+    }
+
+    public function test_https_app_url_forces_https_asset_urls(): void
+    {
+        config(['app.url' => 'https://smelterworks.com']);
+        URL::forceRootUrl('https://smelterworks.com');
+        URL::forceScheme('https');
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('https://smelterworks.com/images/brand/', false)
+            ->assertDontSee('http://smelterworks.com/images/brand/', false);
     }
 
     public function test_site_banner_shows_when_enabled(): void

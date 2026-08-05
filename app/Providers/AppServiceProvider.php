@@ -9,6 +9,7 @@ use App\Support\Hosting\HostingPurchaseService;
 use App\Support\Hosting\HostingStockService;
 use App\Support\Relic\RelicCatalog;
 use App\Support\Relic\RelicGitHubReleases;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -32,6 +33,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $appUrl = (string) config('app.url');
+
+        if (str_starts_with($appUrl, 'https://')) {
+            URL::forceScheme('https');
+        }
     }
 }

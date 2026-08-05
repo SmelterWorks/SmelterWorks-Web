@@ -28,8 +28,8 @@ class SecurityHeaders
             ."frame-ancestors 'none'; "
             ."object-src 'none'; "
             ."script-src 'self'; "
-            ."style-src 'self' 'unsafe-inline' https://fonts.bunny.net; "
-            ."font-src 'self' https://fonts.bunny.net data:; "
+            ."style-src 'self' 'unsafe-inline'; "
+            ."font-src 'self' data:; "
             ."img-src 'self' data: https:; "
             ."connect-src 'self'",
         );
