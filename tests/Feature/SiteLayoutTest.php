@@ -18,6 +18,8 @@ class SiteLayoutTest extends TestCase
             ->assertSee(config('smelterworks.links.fluxer'), false)
             ->assertSee('data-menu-toggle', false)
             ->assertSee('mobile-nav', false)
+            ->assertSee(route('donate'), false)
+            ->assertSee('>Donate<', false)
             ->assertDontSee('Join in', false)
             ->assertDontSee('>Panel<', false);
     }

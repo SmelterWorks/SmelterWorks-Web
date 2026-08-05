@@ -33,10 +33,11 @@ return [
 
     'nav' => [
         ['label' => 'Hosting', 'route' => 'hosting'],
-        ['label' => 'Mods', 'route' => 'mods'],
         ['label' => 'Relic', 'route' => 'relic'],
+        ['label' => 'Mods', 'route' => 'mods'],
         ['label' => 'Projects', 'route' => 'projects.index'],
         ['label' => 'About', 'route' => 'about'],
+        ['label' => 'Donate', 'route' => 'donate'],
     ],
 
     'banner' => [
