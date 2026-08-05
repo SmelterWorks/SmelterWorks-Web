@@ -84,7 +84,7 @@ WORKDIR /var/www/html
 
 RUN apk add --no-cache nginx sqlite-libs curl su-exec \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS sqlite-dev \
-    && docker-php-ext-install -j"$(nproc)" opcache pdo_sqlite \
+    && docker-php-ext-install -j"$(nproc)" pdo_sqlite \
     && apk del --no-network .build-deps \
     && rm -rf /tmp/pear /usr/src/php* /var/cache/apk/* \
     && addgroup -g "${APP_GID}" -S app \
