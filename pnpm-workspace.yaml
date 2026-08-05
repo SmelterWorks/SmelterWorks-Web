@@ -1,0 +1,12 @@
+minimumReleaseAge: 10080
+minimumReleaseAgeExclude:
+  - '@fortawesome/fontawesome-free'
+  - country-flag-icons
+  - lucide-static
+  - simple-icons
+trustPolicy: no-downgrade
+trustPolicyIgnoreAfter: 10080
+blockExoticSubdeps: true
+strictDepBuilds: true
+allowBuilds:
+  core-js-pure: false

@@ -25,6 +25,7 @@
                         <li><a href="{{ route('about') }}">About</a></li>
                         <li><a href="{{ route('donate') }}">Donate</a></li>
                         <li><a href="{{ route('contribute') }}">Contribute</a></li>
+                        <li><a href="{{ route('branding') }}">Branding</a></li>
                         <li><a href="{{ route('contact') }}">Contact</a></li>
                     </ul>
                 </div>

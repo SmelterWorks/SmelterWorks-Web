@@ -111,7 +111,7 @@ function checkReadme(markdown) {
     const expected = `${beginMarker}\n${markdown}\n${endMarker}`;
 
     if (!readme.includes(expected)) {
-        throw new Error('README badges are out of date. Run: npm run badges');
+        throw new Error('README badges are out of date. Run: pnpm run badges');
     }
 }
 

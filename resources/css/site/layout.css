@@ -123,6 +123,20 @@
         line-height: 1.6;
     }
 
+    .error-page__code {
+        margin: 0 0 0.75rem;
+        font-family: var(--font-display);
+        font-size: clamp(3rem, 8vw, 4.5rem);
+        font-weight: 600;
+        line-height: 1;
+        letter-spacing: -0.04em;
+        color: color-mix(in oklab, var(--color-ember) 72%, var(--color-iron));
+    }
+
+    .error-page__content {
+        max-width: 42rem;
+    }
+
     .section {
         padding: clamp(3rem, 7vw, 5rem) 0;
     }

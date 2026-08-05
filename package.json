@@ -2,13 +2,18 @@
     "$schema": "https://www.schemastore.org/package.json",
     "private": true,
     "type": "module",
+    "packageManager": "pnpm@11.20.0",
+    "engines": {
+        "node": ">=22"
+    },
     "scripts": {
         "icons:sync": "node scripts/sync-icons.mjs",
-        "build": "npm run icons:sync && vite build && node scripts/strip-woff-fallbacks.mjs",
+        "brand:sync": "node scripts/sync-brand-assets.mjs",
+        "build": "pnpm run icons:sync && vite build && node scripts/strip-woff-fallbacks.mjs",
         "dev": "vite",
         "format": "blade-formatter --write \"resources/views/**/*.blade.php\"",
         "format:check": "blade-formatter --check-formatted \"resources/views/**/*.blade.php\"",
-        "lint": "npm run format:check",
+        "lint": "pnpm run format:check",
         "lighthouse:ci": "lhci autorun",
         "badges": "node scripts/render-badges.mjs --write",
         "badges:check": "node scripts/render-badges.mjs --check",

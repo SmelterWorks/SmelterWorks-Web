@@ -2,12 +2,12 @@
 
 ## Before you open a PR
 
-1. Run `composer format` and `npm run format` if you changed PHP or Blade
-2. Run `composer lint` and `npm run lint`
+1. Run `composer format` and `pnpm run format` if you changed PHP or Blade
+2. Run `composer lint` and `pnpm run lint`
 3. Run `composer test`
-4. Run `npm run build`
+4. Run `pnpm run build`
 5. Do not commit secrets, tokens, invite links, or production `.env` values
-6. Do not hand-draw icon SVGs. Add pack names to `scripts/sync-icons.mjs` and run `npm run icons:sync`
+6. Do not hand-draw icon SVGs. Add pack names to `scripts/sync-icons.mjs` and run `pnpm run icons:sync`
 
 ## Branch and PR shape
 
@@ -29,7 +29,7 @@ Keep controllers thin. Push content into config or services until a database is 
 
 - PHP: Laravel Pint (`composer format` / `composer lint`)
 - Static analysis: Larastan / PHPStan (`composer analyse`)
-- Blade: blade-formatter (`npm run format` / `npm run lint`)
+- Blade: blade-formatter (`pnpm run format` / `pnpm run lint`)
 - Match existing Laravel and Blade conventions in the repo
 - Comments only where the why is non-obvious. No TODO markers
 - User-facing prose follows `.agents/skills/no-ai-slop/` and `.agents/skills/rossmann-voice/`

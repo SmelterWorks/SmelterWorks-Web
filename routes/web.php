@@ -32,6 +32,7 @@ Route::get('/relic/download', [RelicController::class, 'download'])->name('relic
 Route::get('/panel', [PageController::class, 'panel'])->name('panel');
 
 Route::get('/about', [PageController::class, 'about'])->name('about');
+Route::get('/branding', [PageController::class, 'branding'])->name('branding');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::get('/donate', [PageController::class, 'donate'])->name('donate');
 Route::get('/contribute', [PageController::class, 'contribute'])->name('contribute');

@@ -24,6 +24,7 @@ final class SitemapBuilder
             $this->entry(route('mods'), 'weekly', '0.8'),
             $this->entry(route('projects.index'), 'weekly', '0.8'),
             $this->entry(route('about'), 'monthly', '0.6'),
+            $this->entry(route('branding'), 'monthly', '0.5'),
             $this->entry(route('contact'), 'monthly', '0.5'),
             $this->entry(route('donate'), 'monthly', '0.5'),
             $this->entry(route('contribute'), 'monthly', '0.5'),

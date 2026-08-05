@@ -10,13 +10,15 @@ class SiteLayoutTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_header_shows_fluxer_and_forgejo_without_panel_button(): void
+    public function test_header_shows_fluxer_github_and_forgejo_without_panel_button(): void
     {
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('images/brand/fluxer.png', false)
             ->assertSee(config('smelterworks.links.fluxer'), false)
+            ->assertSee(config('smelterworks.links.github'), false)
             ->assertSee(config('smelterworks.links.forgejo'), false)
+            ->assertSee('aria-label="GitHub"', false)
             ->assertSee('aria-label="Forgejo"', false)
             ->assertSee('data-menu-toggle', false)
             ->assertSee('mobile-nav', false)

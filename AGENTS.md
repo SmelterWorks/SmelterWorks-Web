@@ -39,7 +39,8 @@ The panel product (login, provisioning, mod browser, backups, file editor) is in
 - `config/smelterworks/hosting.php`, `relic.php`, `projects.php` focused catalogs
 - Site banner under the navbar from `smelterworks.banner` / `<x-site-banner>` (toggle and colors via env)
 - `public/icons` synced SVGs from Simple Icons, Font Awesome brands, and Lucide
-- `scripts/sync-icons.mjs` icon sync (runs under `npm run build`)
+- `scripts/sync-icons.mjs` icon sync (runs under `pnpm run build`)
+- `scripts/sync-brand-assets.mjs` raster mark sizes (run `pnpm run brand:sync` after master PNG changes)
 - `resources/css/site/` CSS modules imported from `resources/css/app.css`
 - `docker/` + `Dockerfile` + `docker-compose.yml` rootless production image
 - `docker-compose.coolify.yml` Coolify stack pulling `ghcr.io/smelterworks/smelterworks-web`
@@ -61,19 +62,19 @@ The panel product (login, provisioning, mod browser, backups, file editor) is in
 
 ```bash
 composer install
-npm ci
-npm run build
+pnpm install
+pnpm run build
 composer format
-npm run format
+pnpm run format
 composer lint
-npm run lint
+pnpm run lint
 composer test
 ./bin/serve
 ```
 
 CI uses system `php` on Ubuntu with required extensions. Local Arch/CachyOS setups use `./bin/php` and `php-local.ini` so SQLite loads. Prefer `./bin/serve` over bare `php artisan serve`.
 
-Composer script `composer test` runs PHPUnit with `php-local.ini`. Format/lint: Pint + Larastan (`composer format` / `composer lint`), Blade via blade-formatter (`npm run format` / `npm run lint`).
+Composer script `composer test` runs PHPUnit with `php-local.ini`. Format/lint: Pint + Larastan (`composer format` / `composer lint`), Blade via blade-formatter (`pnpm run format` / `pnpm run lint`).
 
 ## Writing rules for site copy
 
@@ -93,13 +94,13 @@ Self-check prose before returning it. No emdashes, no AI filler, no dramatic hea
 - Match existing Laravel and Blade conventions in the repo
 - Keep controllers thin, push content into config or services until a database is needed
 - Run `./bin/php vendor/bin/phpunit` (or `composer test`) after PHP changes
-- Run `npm run build` after asset or icon-pack changes
+- Run `pnpm run build` after asset or icon-pack changes
 - Do not invent affiliation with Anego Studios / Vintage Story
 - Keep security headers middleware, icon path allowlisting, and HTTPS-only external redirects intact
 
 ## CI/CD
 
-GitHub Actions workflows live in `.github/workflows/`. Actions are pinned to full commit SHAs. Dependabot opens update PRs for Composer, npm, and Actions.
+GitHub Actions workflows live in `.github/workflows/`. Actions are pinned to full commit SHAs. Dependabot opens update PRs for Composer, pnpm, and Actions.
 
 | Workflow | Purpose |
 | --- | --- |

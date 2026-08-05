@@ -25,6 +25,7 @@ class PublicRoutesTest extends TestCase
             'projects index' => ['projects.index'],
             'project show' => ['projects.show', ['slug' => 'relic-launcher']],
             'about' => ['about'],
+            'branding' => ['branding'],
             'contact' => ['contact'],
             'donate' => ['donate'],
             'contribute' => ['contribute'],

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\Content\BrandingCatalog;
 use App\Support\Content\ProjectCatalog;
 use App\Support\Url\SafeExternalUrl;
 use Illuminate\Http\RedirectResponse;
@@ -22,6 +23,11 @@ class PageController extends Controller
             'contact' => config('smelterworks.contact'),
             'links' => config('smelterworks.links'),
         ]);
+    }
+
+    public function branding(BrandingCatalog $branding): View
+    {
+        return view('pages.branding', $branding->forPage());
     }
 
     public function contribute(): View

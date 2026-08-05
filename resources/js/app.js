@@ -113,3 +113,32 @@ if (currencySwitcher) {
     });
 }
 
+document.querySelectorAll('[data-branding-mark]').forEach((mark) => {
+    const preview = mark.querySelector('[data-branding-preview]');
+    const download = mark.querySelector('[data-branding-download]');
+    const buttons = mark.querySelectorAll('[data-branding-format]');
+
+    if (!preview || !download || buttons.length === 0) {
+        return;
+    }
+
+    const setFormat = (button) => {
+        const format = button.dataset.brandingFormat;
+
+        buttons.forEach((entry) => {
+            const active = entry === button;
+            entry.classList.toggle('is-active', active);
+            entry.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+
+        preview.src = button.dataset.url;
+        download.href = button.dataset.url;
+        download.download = button.dataset.filename;
+        download.textContent = `Download ${format.toUpperCase()}`;
+    };
+
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => setFormat(button));
+    });
+});
+

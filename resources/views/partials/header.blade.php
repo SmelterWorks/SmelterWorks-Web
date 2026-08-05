@@ -24,6 +24,12 @@
                 </x-icon-link>
             @endif
 
+            @if (filled(config('smelterworks.links.github')))
+                <x-icon-link :href="config('smelterworks.links.github')" label="GitHub">
+                    <x-icons.github />
+                </x-icon-link>
+            @endif
+
             @if (filled(config('smelterworks.links.forgejo')))
                 <x-icon-link :href="config('smelterworks.links.forgejo')" label="Forgejo">
                     <x-icons.forgejo />
@@ -60,6 +66,12 @@
             @if (filled(config('smelterworks.links.fluxer')))
                 <x-icon-link :href="config('smelterworks.links.fluxer')" label="Fluxer">
                     <x-icons.fluxer />
+                </x-icon-link>
+            @endif
+
+            @if (filled(config('smelterworks.links.github')))
+                <x-icon-link :href="config('smelterworks.links.github')" label="GitHub">
+                    <x-icons.github />
                 </x-icon-link>
             @endif
 

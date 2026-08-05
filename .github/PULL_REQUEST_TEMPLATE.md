@@ -6,7 +6,7 @@
 
 - [ ] `composer test`
 - [ ] `vendor/bin/pint --test`
-- [ ] `npm run build`
+- [ ] `pnpm run build`
 - [ ] Spot-check affected pages in the browser (if UI or copy changed)
 
 ## Notes

@@ -30,10 +30,15 @@ class PanelPageTest extends TestCase
             ->assertSee('Panel', false);
     }
 
-    public function test_contribute_page_is_successful(): void
+    public function test_contribute_page_links_to_github(): void
     {
+        $github = rtrim(config('smelterworks.links.github'), '/');
+
         $this->get(route('contribute'))
             ->assertOk()
-            ->assertSee('Contribute', false);
+            ->assertSee('Contribute', false)
+            ->assertSee($github, false)
+            ->assertSee($github.'/SmelterWorks-Web/blob/main/CONTRIBUTING.md', false)
+            ->assertSee('>GitHub<', false);
     }
 }

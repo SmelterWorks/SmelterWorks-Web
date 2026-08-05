@@ -14,7 +14,7 @@ Stack: PHP 8.4+, Laravel 13, Blade, Vite, Tailwind CSS 4. Apache License 2.0.
 
 - PHP 8.4+ with pdo_sqlite / sqlite3
 - Composer 2
-- Node.js 22+ (Vite build and icon sync)
+- Node.js 22+ and pnpm 11+ (Vite build and icon sync). Enable Corepack once: `corepack enable`
 
 ## Build and run
 
@@ -23,8 +23,8 @@ composer install
 cp .env.example .env
 ./bin/php artisan key:generate
 ./bin/php artisan migrate
-npm ci
-npm run build
+pnpm install
+pnpm run build
 ./bin/serve
 ```
 
@@ -33,7 +33,7 @@ Tests, format, lint:
 ```bash
 composer test
 composer format && composer lint
-npm run format && npm run lint
+pnpm run format && pnpm run lint
 ```
 
 Set SMELTERWORKS_* URLs in .env for Fluxer, panel, contact, and related links. Leave blank to hide. Do not commit secrets. This repo is public.
@@ -68,9 +68,9 @@ Catalog entries live under config/smelterworks. Use page_route when an entry sho
 
 ## CI
 
-Workflows under .github/workflows: PHP tests (8.4/8.5), Pint, PHPStan, Blade format, Vite build, Lighthouse CI, GHCR publish, link check, CodeQL, dependency review. Actions are SHA-pinned. Dependabot updates Composer, npm, and Actions weekly.
+Workflows under .github/workflows: PHP tests (8.4/8.5), Pint, PHPStan, Blade format, Vite build, Lighthouse CI, GHCR publish, link check, CodeQL, dependency review. Actions are SHA-pinned. Dependabot updates Composer, pnpm, and Actions weekly.
 
-README badges are generated from `docs/badges.json`. After changing badge config, run `npm run badges`. Lighthouse score badge updates from CI on `main` pushes.
+README badges are generated from `docs/badges.json`. After changing badge config, run `pnpm run badges`. Lighthouse score badge updates from CI on `main` pushes.
 
 ## Contributing
 
