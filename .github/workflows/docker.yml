@@ -1,5 +1,5 @@
 # Pinned action SHAs. Update via Dependabot github-actions PRs, then refresh comments.
-# actions/checkout@v4 -> 11d5960a326750d5838078e36cf38b85af677262
+# actions/checkout@v7.0.1 -> 3d3c42e5aac5ba805825da76410c181273ba90b1
 # docker/setup-buildx-action@v3 -> 8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
 # docker/login-action@v3 -> c94ce9fb468520275223c153574b00df6fe4bcc9
 # docker/metadata-action@v5 -> c299e40c65443455700f0fdfc63efafe5b349051
@@ -58,7 +58,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3

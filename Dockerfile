@@ -81,7 +81,9 @@ LABEL org.opencontainers.image.title="${OCI_TITLE}" \
 WORKDIR /var/www/html
 
 RUN apk add --no-cache nginx sqlite-libs curl \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS sqlite-dev \
     && docker-php-ext-install -j"$(nproc)" opcache pdo_sqlite \
+    && apk del --no-network .build-deps \
     && rm -rf /tmp/pear /usr/src/php* /var/cache/apk/* \
     && addgroup -g "${APP_GID}" -S app \
     && adduser -u "${APP_UID}" -S app -G app \
