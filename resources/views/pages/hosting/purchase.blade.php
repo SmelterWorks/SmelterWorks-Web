@@ -1,5 +1,4 @@
-<x-layouts.site :title="'Purchase ' . $plan['name']" description="Buy SmelterWorks Vintage Story hosting."
-    robots="noindex, nofollow">
+<x-layouts.site :title="'Purchase ' . $plan['name']" description="Buy SmelterWorks Vintage Story hosting." robots="noindex, nofollow">
     <section class="page-hero">
         <div class="page-hero__inner">
             <h1 class="page-hero__title">Purchase {{ $plan['name'] }}</h1>
