@@ -37,11 +37,11 @@ class SmelterworksConfigTest extends TestCase
         }
     }
 
-    public function test_banner_defaults_to_under_construction(): void
+    public function test_banner_is_disabled_by_default(): void
     {
         $banner = config('smelterworks.banner');
 
-        $this->assertTrue((bool) $banner['enabled']);
+        $this->assertFalse((bool) $banner['enabled']);
         $this->assertSame('Website is under construction', $banner['message']);
         $this->assertSame('#b45309', $banner['background']);
         $this->assertSame('#ebe4d8', $banner['color']);

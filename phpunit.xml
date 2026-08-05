@@ -38,7 +38,7 @@
         <env name="SMELTERWORKS_KOFI_URL" value="https://ko-fi.com/smelterworks"/>
         <env name="SMELTERWORKS_LEGAL_CONTACT" value="https://example.test/fluxer"/>
         <env name="SMELTERWORKS_CONTACT_EMAIL" value="contact@example.test"/>
-        <env name="SMELTERWORKS_BANNER_ENABLED" value="true"/>
+        <env name="SMELTERWORKS_BANNER_ENABLED" value="false"/>
         <env name="SMELTERWORKS_BANNER_MESSAGE" value="Website is under construction"/>
         <env name="SMELTERWORKS_BANNER_BACKGROUND" value="#b45309"/>
         <env name="SMELTERWORKS_BANNER_COLOR" value="#ebe4d8"/>
