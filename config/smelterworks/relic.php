@@ -19,6 +19,12 @@ return [
     'nightly' => [
         'enabled' => filter_var(env('SMELTERWORKS_RELIC_NIGHTLY_ENABLED', true), FILTER_VALIDATE_BOOLEAN),
     ],
+    'releases' => [
+        'cache_seconds' => (int) env('SMELTERWORKS_RELIC_RELEASES_CACHE_SECONDS', 3600),
+        'stale_seconds' => (int) env('SMELTERWORKS_RELIC_RELEASES_STALE_SECONDS', 86400),
+        'github_token' => env('SMELTERWORKS_GITHUB_TOKEN'),
+        'forgejo_repo_url' => env('SMELTERWORKS_RELIC_FORGEJO_REPO_URL'),
+    ],
     'platforms' => [
         ['icon' => 'windows', 'label' => 'Windows', 'detail' => '10+ x64'],
         ['icon' => 'linux', 'label' => 'Linux', 'detail' => 'x64, X11 and Wayland'],

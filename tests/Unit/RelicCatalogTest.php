@@ -8,6 +8,36 @@ use Tests\TestCase;
 
 class RelicCatalogTest extends TestCase
 {
+    public function test_for_view_includes_stable_tag_when_release_exists(): void
+    {
+        Http::fake([
+            'api.github.com/repos/SmelterWorks/Relic-Launcher/releases*' => Http::response([
+                [
+                    'tag_name' => 'v0.1.0',
+                    'prerelease' => false,
+                    'html_url' => 'https://github.com/SmelterWorks/Relic-Launcher/releases/tag/v0.1.0',
+                    'published_at' => '2026-08-01T00:00:00Z',
+                    'assets' => [],
+                ],
+            ], 200),
+        ]);
+
+        $relic = app(RelicCatalog::class)->forView();
+
+        $this->assertSame('v0.1.0', $relic['stable_tag']);
+    }
+
+    public function test_for_view_leaves_stable_tag_null_without_release(): void
+    {
+        Http::fake([
+            'api.github.com/repos/SmelterWorks/Relic-Launcher/releases*' => Http::response([], 200),
+        ]);
+
+        $relic = app(RelicCatalog::class)->forView();
+
+        $this->assertNull($relic['stable_tag']);
+    }
+
     public function test_stable_downloads_use_github_release_assets_when_available(): void
     {
         Http::fake([

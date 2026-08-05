@@ -41,8 +41,11 @@
                     @endforeach
                 </div>
                 <div class="action-row" style="margin-top: 1.25rem;">
-                    <x-button :href="route('relic.download')">
+                    <x-button :href="route('relic.download')" class="button--badged">
                         Download
+                        @if (filled($relic['stable_tag'] ?? null))
+                            <span class="button__badge button__badge--version">{{ $relic['stable_tag'] }}</span>
+                        @endif
                     </x-button>
                     <x-button :href="$relic['repo_url']" variant="ghost" rel="noopener noreferrer" target="_blank">
                         Source

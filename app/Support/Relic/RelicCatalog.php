@@ -18,6 +18,7 @@ class RelicCatalog
         $relic['platforms'] = $this->normalizePlatforms($relic['platforms'] ?? []);
         $relic = $this->withReleaseUrls($relic);
         $relic = $this->withPreviewAssets($relic);
+        $relic = $this->withStableTag($relic);
 
         return $relic;
     }
@@ -126,6 +127,30 @@ class RelicCatalog
     private function parsedReleasesRepo(array $relic): ?array
     {
         return $this->releases->parseRepo((string) ($relic['releases_repo_url'] ?? ''));
+    }
+
+    /**
+     * @param  array<string, mixed>  $relic
+     * @return array<string, mixed>
+     */
+    private function withStableTag(array $relic): array
+    {
+        $relic['stable_tag'] = null;
+
+        $parsed = $this->parsedReleasesRepo($relic);
+
+        if ($parsed === null) {
+            return $relic;
+        }
+
+        $stable = $this->releases->latestStable($parsed['owner'], $parsed['repo']);
+        $tag = $stable['tag'] ?? null;
+
+        if (filled($tag)) {
+            $relic['stable_tag'] = (string) $tag;
+        }
+
+        return $relic;
     }
 
     /**

@@ -2,7 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Support\Relic\RelicCatalog;
+use App\Support\Relic\RelicGitHubReleases;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -11,13 +14,25 @@ class RelicPageTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Cache::flush();
+        app()->forgetInstance(RelicGitHubReleases::class);
+        app()->forgetInstance(RelicCatalog::class);
+    }
+
     public function test_relic_page_renders_with_default_config(): void
     {
+        $this->fakeEmptyReleases();
+
         $this->get(route('relic'))
             ->assertOk()
             ->assertSee('Relic Launcher', false)
             ->assertSee(route('relic.download'), false)
             ->assertSee('Download', false)
+            ->assertDontSee('button__badge--version', false)
             ->assertSee('Install the game, browse VS ModDB', false)
             ->assertSee('platform-chip', false)
             ->assertSee('home-relic-default.webp', false)
@@ -27,6 +42,16 @@ class RelicPageTest extends TestCase
             ->assertDontSee('Avalonia', false);
     }
 
+    public function test_relic_page_shows_stable_version_badge_on_download_button(): void
+    {
+        $this->fakeStableRelease();
+
+        $this->get(route('relic'))
+            ->assertOk()
+            ->assertSee('button__badge--version', false)
+            ->assertSee('>v1.0.0<', false);
+    }
+
     public function test_relic_page_renders_with_legacy_string_platform_config(): void
     {
         Config::set('smelterworks.relic.platforms', [
@@ -34,6 +59,8 @@ class RelicPageTest extends TestCase
             'Linux x64 (X11 and native Wayland)',
             'macOS 13+ (x64 and arm64)',
         ]);
+
+        $this->fakeEmptyReleases();
 
         $this->get(route('relic'))
             ->assertOk()
@@ -73,9 +100,7 @@ class RelicPageTest extends TestCase
 
     public function test_relic_download_page_shows_empty_state_without_releases(): void
     {
-        Http::fake([
-            'api.github.com/repos/SmelterWorks/Relic-Launcher/releases*' => Http::response([], 200),
-        ]);
+        $this->fakeEmptyReleases();
 
         $this->get(route('relic.download'))
             ->assertOk()
@@ -99,6 +124,8 @@ class RelicPageTest extends TestCase
 
     public function test_relic_pages_do_not_promote_hosting(): void
     {
+        $this->fakeEmptyReleases();
+
         $this->get(route('relic'))
             ->assertDontSee('View hosting', false)
             ->assertDontSee('Buy hosting', false)
@@ -111,23 +138,36 @@ class RelicPageTest extends TestCase
             ->assertDontSee('Buy hosting', false);
     }
 
-    private function fakeStableRelease(): void
+    private function fakeEmptyReleases(): void
     {
         Http::fake([
-            'api.github.com/repos/SmelterWorks/Relic-Launcher/releases*' => Http::response([
+            'api.github.com/repos/SmelterWorks/Relic-Launcher/releases*' => Http::response([], 200),
+            'git.smelterworks.com/api/v1/repos/smelter/Relic-Launcher/releases*' => Http::response([], 200),
+        ]);
+    }
+
+    private function fakeStableRelease(): void
+    {
+        Cache::flush();
+        app()->forgetInstance(RelicGitHubReleases::class);
+        app()->forgetInstance(RelicCatalog::class);
+
+        $release = [
+            'tag_name' => 'v1.0.0',
+            'prerelease' => false,
+            'html_url' => 'https://github.com/SmelterWorks/Relic-Launcher/releases/tag/v1.0.0',
+            'published_at' => '2026-08-01T00:00:00Z',
+            'assets' => [
                 [
-                    'tag_name' => 'v1.0.0',
-                    'prerelease' => false,
-                    'html_url' => 'https://github.com/SmelterWorks/Relic-Launcher/releases/tag/v1.0.0',
-                    'published_at' => '2026-08-01T00:00:00Z',
-                    'assets' => [
-                        [
-                            'name' => 'relic-launcher-v1.0.0-win-x64.zip',
-                            'browser_download_url' => 'https://example.test/stable-win.zip',
-                        ],
-                    ],
+                    'name' => 'relic-launcher-v1.0.0-win-x64.zip',
+                    'browser_download_url' => 'https://example.test/stable-win.zip',
                 ],
-            ], 200),
+            ],
+        ];
+
+        Http::fake([
+            'api.github.com/repos/SmelterWorks/Relic-Launcher/releases*' => Http::response([$release], 200),
+            'git.smelterworks.com/api/v1/repos/smelter/Relic-Launcher/releases*' => Http::response([$release], 200),
         ]);
     }
 }

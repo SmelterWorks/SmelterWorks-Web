@@ -78,6 +78,13 @@
         box-shadow: 0 0.15rem 0.4rem rgba(0, 0, 0, 0.2);
     }
 
+    .button__badge--version {
+        text-transform: none;
+        letter-spacing: 0;
+        font-size: 0.68rem;
+        font-variant-numeric: tabular-nums;
+    }
+
     .page-hero {
         border-bottom: 1px solid color-mix(in oklab, var(--color-iron) 12%, transparent);
         background:
