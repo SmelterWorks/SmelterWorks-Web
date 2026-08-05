@@ -93,7 +93,6 @@ RUN apk add --no-cache nginx sqlite-libs curl su-exec \
         /tmp/nginx/fastcgi \
         /tmp/nginx/uwsgi \
         /tmp/nginx/scgi \
-        /tmp/nginx/logs \
         /var/lib/nginx/logs \
         /var/lib/nginx/tmp \
         /var/www/html/storage/app/public \

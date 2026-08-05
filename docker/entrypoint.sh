@@ -17,7 +17,6 @@ if [ "$(id -u)" = "0" ]; then
         /tmp/nginx/fastcgi \
         /tmp/nginx/uwsgi \
         /tmp/nginx/scgi \
-        /tmp/nginx/logs \
         /var/lib/nginx/logs \
         /var/lib/nginx/tmp
     chown -R app:app \
@@ -40,7 +39,6 @@ mkdir -p \
     /tmp/nginx/fastcgi \
     /tmp/nginx/uwsgi \
     /tmp/nginx/scgi \
-    /tmp/nginx/logs \
     /var/lib/nginx/logs \
     /var/lib/nginx/tmp
 
@@ -60,4 +58,6 @@ php artisan view:cache --no-ansi
 php artisan migrate --force --no-interaction --no-ansi || true
 
 php-fpm -D
-exec nginx -g 'daemon off;'
+# -e /dev/null skips nginx's compiled-in default error log (opened before
+# nginx.conf is even read), which otherwise logs a startup alert here.
+exec nginx -e /dev/null -g 'daemon off;'
