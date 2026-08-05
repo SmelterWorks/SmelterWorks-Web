@@ -9,8 +9,8 @@
     <div class="project-row__body">
         <{{ $titleTag }} class="project-row__title">
             <a href="{{ $project->url() }}">{{ $project->name }}</a>
-        </{{ $titleTag }}>
-        <p class="project-row__summary">{{ $project->summary }}</p>
+            </{{ $titleTag }}>
+            <p class="project-row__summary">{{ $project->summary }}</p>
     </div>
 
     <a class="project-row__action" href="{{ $project->url() }}">

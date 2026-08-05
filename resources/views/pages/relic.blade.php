@@ -23,7 +23,8 @@
     ];
 @endphp
 
-<x-layouts.site :title="$relic['name']" :description="$relic['summary']" :image="$relic['preview_url'] ?? null" :image-alt="$relic['preview_alt'] ?? $relic['name']" :json-ld="$relicJsonLd" :preload-image="$relic['preview_webp'] ?? null">
+<x-layouts.site :title="$relic['name']" :description="$relic['summary']" :image="$relic['preview_url'] ?? null" :image-alt="$relic['preview_alt'] ?? $relic['name']" :json-ld="$relicJsonLd"
+    :preload-image="$relic['preview_webp'] ?? null">
     <section class="page-hero page-hero--split">
         <div class="page-hero__inner relic-hero">
             <div class="relic-hero__copy">

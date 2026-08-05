@@ -73,7 +73,8 @@
     @endif
 
     @if (filled($preloadImage))
-        <link rel="preload" as="image" href="{{ $preloadImage }}" type="{{ $preloadImageType }}" fetchpriority="high">
+        <link rel="preload" as="image" href="{{ $preloadImage }}" type="{{ $preloadImageType }}"
+            fetchpriority="high">
     @endif
 
     <script type="application/ld+json">{!! $jsonLdPayload !!}</script>
