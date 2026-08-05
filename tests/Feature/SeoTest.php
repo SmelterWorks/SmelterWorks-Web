@@ -31,7 +31,7 @@ class SeoTest extends TestCase
     {
         $this->get(route('relic'))
             ->assertOk()
-            ->assertSee('home-relic-default.png', false)
+            ->assertSee('home-relic-default.webp', false)
             ->assertSee('"@type":"SoftwareApplication"', false)
             ->assertSee('Relic Launcher', false);
     }

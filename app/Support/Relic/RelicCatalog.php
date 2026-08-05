@@ -17,6 +17,7 @@ class RelicCatalog
         $relic ??= config('smelterworks.relic');
         $relic['platforms'] = $this->normalizePlatforms($relic['platforms'] ?? []);
         $relic = $this->withReleaseUrls($relic);
+        $relic = $this->withPreviewAssets($relic);
         $relic['downloads'] = $this->stableDownloads($relic);
 
         return $relic;
@@ -99,6 +100,35 @@ class RelicCatalog
             ->filter(fn (array $platform): bool => $platform['label'] !== '')
             ->values()
             ->all();
+    }
+
+    /**
+     * @param  array<string, mixed>  $relic
+     * @return array<string, mixed>
+     */
+    private function withPreviewAssets(array $relic): array
+    {
+        if (filled($relic['preview_url'] ?? null)) {
+            $url = (string) $relic['preview_url'];
+
+            if (! str_starts_with($url, 'http://') && ! str_starts_with($url, 'https://')) {
+                $relic['preview_url'] = asset($url);
+            }
+
+            return $relic;
+        }
+
+        /** @var array{webp: string, jpg: string} $assets */
+        $assets = $relic['preview_assets'] ?? [
+            'webp' => 'images/relic/home-relic-default.webp',
+            'jpg' => 'images/relic/home-relic-default.jpg',
+        ];
+
+        $relic['preview_webp'] = asset($assets['webp']);
+        $relic['preview_fallback'] = asset($assets['jpg']);
+        $relic['preview_url'] = $relic['preview_webp'];
+
+        return $relic;
     }
 
     /**

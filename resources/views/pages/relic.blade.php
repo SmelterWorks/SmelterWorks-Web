@@ -23,7 +23,7 @@
     ];
 @endphp
 
-<x-layouts.site :title="$relic['name']" :description="$relic['summary']" :image="$relic['preview_url'] ?? null" :image-alt="$relic['preview_alt'] ?? $relic['name']" :json-ld="$relicJsonLd">
+<x-layouts.site :title="$relic['name']" :description="$relic['summary']" :image="$relic['preview_url'] ?? null" :image-alt="$relic['preview_alt'] ?? $relic['name']" :json-ld="$relicJsonLd" :preload-image="$relic['preview_webp'] ?? null">
     <section class="page-hero page-hero--split">
         <div class="page-hero__inner relic-hero">
             <div class="relic-hero__copy">
@@ -51,9 +51,15 @@
 
             @if (filled($relic['preview_url'] ?? null))
                 <figure class="relic-preview">
-                    <img class="relic-preview__image" src="{{ $relic['preview_url'] }}"
-                        alt="{{ $relic['preview_alt'] ?? $relic['name'] }}" width="1280" height="720"
-                        loading="eager" decoding="async">
+                    <picture>
+                        @if (filled($relic['preview_webp'] ?? null))
+                            <source srcset="{{ $relic['preview_webp'] }}" type="image/webp">
+                        @endif
+                        <img class="relic-preview__image"
+                            src="{{ $relic['preview_fallback'] ?? $relic['preview_url'] }}"
+                            alt="{{ $relic['preview_alt'] ?? $relic['name'] }}" width="1280" height="720"
+                            fetchpriority="high" loading="eager" decoding="async">
+                    </picture>
                 </figure>
             @endif
         </div>

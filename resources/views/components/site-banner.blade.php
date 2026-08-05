@@ -12,7 +12,7 @@
     $show = $enabled ?? (bool) ($config['enabled'] ?? false);
     $text = $message ?? ($config['message'] ?? '');
     $bg = $background ?? ($config['background'] ?? '#b45309');
-    $fg = $color ?? ($config['color'] ?? '#ebe4d8');
+    $fg = $color ?? ($config['color'] ?? '#ffffff');
     $link = $href ?? ($config['href'] ?? null);
     $linkText = $linkLabel ?? ($config['link_label'] ?? null);
 @endphp

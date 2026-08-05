@@ -9,6 +9,8 @@
     'jsonLd' => [],
     'rssUrl' => null,
     'rssTitle' => null,
+    'preloadImage' => null,
+    'preloadImageType' => 'image/webp',
 ])
 
 @php
@@ -68,6 +70,10 @@
     @if (filled($rssUrl))
         <link rel="alternate" type="application/rss+xml" title="{{ $rssTitle ?? $title . ' feed' }}"
             href="{{ $rssUrl }}">
+    @endif
+
+    @if (filled($preloadImage))
+        <link rel="preload" as="image" href="{{ $preloadImage }}" type="{{ $preloadImageType }}" fetchpriority="high">
     @endif
 
     <script type="application/ld+json">{!! $jsonLdPayload !!}</script>

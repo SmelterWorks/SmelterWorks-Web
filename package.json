@@ -4,20 +4,23 @@
     "type": "module",
     "scripts": {
         "icons:sync": "node scripts/sync-icons.mjs",
-        "build": "npm run icons:sync && vite build",
+        "build": "npm run icons:sync && vite build && node scripts/strip-woff-fallbacks.mjs",
         "dev": "vite",
         "format": "blade-formatter --write \"resources/views/**/*.blade.php\"",
         "format:check": "blade-formatter --check-formatted \"resources/views/**/*.blade.php\"",
-        "lint": "npm run format:check"
+        "lint": "npm run format:check",
+        "lighthouse:ci": "lhci autorun"
     },
     "devDependencies": {
         "@fontsource/fraunces": "^5.3.0",
         "@fontsource/sora": "^5.3.0",
         "@fortawesome/fontawesome-free": "^7.3.1",
+        "@lhci/cli": "^0.15.1",
         "@tailwindcss/vite": "^4.0.0",
         "blade-formatter": "^1.44.4",
         "concurrently": "^10.0.4",
         "country-flag-icons": "^1.6.20",
+        "fontaine": "^0.8.0",
         "laravel-vite-plugin": "^3.1",
         "lucide-static": "^1.28.0",
         "simple-icons": "^16.28.0",

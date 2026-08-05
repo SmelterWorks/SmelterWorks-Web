@@ -44,7 +44,7 @@ return [
         'enabled' => filter_var(env('SMELTERWORKS_BANNER_ENABLED', true), FILTER_VALIDATE_BOOLEAN),
         'message' => env('SMELTERWORKS_BANNER_MESSAGE', 'Website is under construction'),
         'background' => env('SMELTERWORKS_BANNER_BACKGROUND', '#b45309'),
-        'color' => env('SMELTERWORKS_BANNER_COLOR', '#ebe4d8'),
+        'color' => env('SMELTERWORKS_BANNER_COLOR', '#ffffff'),
         'href' => env('SMELTERWORKS_BANNER_HREF'),
         'link_label' => env('SMELTERWORKS_BANNER_LINK_LABEL'),
     ],

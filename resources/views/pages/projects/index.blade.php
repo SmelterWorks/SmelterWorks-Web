@@ -12,7 +12,7 @@
         <div class="section__inner">
             <div class="project-list">
                 @forelse ($projects as $project)
-                    <x-project-row :project="$project" />
+                    <x-project-row :project="$project" title-tag="h2" />
                 @empty
                     <x-empty-state title="No projects yet">
                         <p>Published software and mods will appear here.</p>

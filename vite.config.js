@@ -11,11 +11,9 @@ export default defineConfig({
             fonts: [
                 fontsource('Sora', {
                     weights: [400, 500, 600, 700],
-                    optimizedFallbacks: false,
                 }),
                 fontsource('Fraunces', {
                     weights: [500, 600, 700],
-                    optimizedFallbacks: false,
                 }),
             ],
         }),

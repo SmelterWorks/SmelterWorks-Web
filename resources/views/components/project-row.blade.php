@@ -1,4 +1,4 @@
-@props(['project'])
+@props(['project', 'titleTag' => 'h3'])
 
 <article class="project-row">
     <div class="project-row__meta">
@@ -7,9 +7,9 @@
     </div>
 
     <div class="project-row__body">
-        <h3 class="project-row__title">
+        <{{ $titleTag }} class="project-row__title">
             <a href="{{ $project->url() }}">{{ $project->name }}</a>
-        </h3>
+        </{{ $titleTag }}>
         <p class="project-row__summary">{{ $project->summary }}</p>
     </div>
 

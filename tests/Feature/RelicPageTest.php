@@ -19,7 +19,7 @@ class RelicPageTest extends TestCase
             ->assertSee('Download', false)
             ->assertSee('Install the game, browse VS ModDB', false)
             ->assertSee('platform-chip', false)
-            ->assertSee('home-relic-default.png', false)
+            ->assertSee('home-relic-default.webp', false)
             ->assertSee('not affiliated with Anego Studios', false)
             ->assertDontSee('Source lives at', false)
             ->assertDontSee('.NET', false)

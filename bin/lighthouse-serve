@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+export PHP_BINARY="$ROOT/bin/php"
+HOST="${LIGHTHOUSE_HOST:-127.0.0.1}"
+PORT="${LIGHTHOUSE_PORT:-8765}"
+exec "$ROOT/bin/php" -S "${HOST}:${PORT}" -t "$ROOT/public" "$ROOT/scripts/lighthouse-router.php"

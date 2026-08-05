@@ -34,7 +34,7 @@ class ProjectsPageTest extends TestCase
             ->assertOk()
             ->assertSee('Relic Launcher', false)
             ->assertSee(route('relic'), false)
-            ->assertSee('images/brand/SmelterWorks-transparent.png', false)
+            ->assertSee('images/brand/SmelterWorks-64.webp', false)
             ->assertDontSee('brand-logo--hero', false);
     }
 }

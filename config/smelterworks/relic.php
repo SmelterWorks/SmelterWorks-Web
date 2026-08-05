@@ -7,8 +7,11 @@ return [
     'repo_url' => env('SMELTERWORKS_RELIC_REPO_URL', 'https://github.com/SmelterWorks/Relic-Launcher'),
     // Blank derives {repo_url}/releases/latest. Stable download buttons always use this URL.
     'releases_url' => env('SMELTERWORKS_RELIC_RELEASES_URL'),
-    'preview_url' => env('SMELTERWORKS_RELIC_PREVIEW_URL')
-        ?: 'https://github.com/SmelterWorks/Relic-Launcher/raw/main/assets/screenshots/home-relic-default.png',
+    'preview_url' => env('SMELTERWORKS_RELIC_PREVIEW_URL'),
+    'preview_assets' => [
+        'webp' => 'images/relic/home-relic-default.webp',
+        'jpg' => 'images/relic/home-relic-default.jpg',
+    ],
     'preview_alt' => 'Relic Launcher home screen with game versions and news',
     'license' => '0BSD',
     'nightly' => [

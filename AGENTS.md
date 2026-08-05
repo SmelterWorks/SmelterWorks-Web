@@ -104,6 +104,7 @@ GitHub Actions workflows live in `.github/workflows/`. Actions are pinned to ful
 | Workflow | Purpose |
 | --- | --- |
 | `ci.yml` | PHP tests, Pint, Vite build |
+| `lighthouse.yml` | Lighthouse CI (performance, accessibility, best practices, SEO) |
 | `docker.yml` | GHCR image build and publish |
 | `links.yml` | Lychee dead-link check |
 | `codeql.yml` | CodeQL |
