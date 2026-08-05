@@ -22,6 +22,7 @@ RUN npm ci --ignore-scripts \
     && rm -rf /root/.npm
 
 COPY vite.config.js ./
+COPY scripts ./scripts
 COPY resources ./resources
 COPY public ./public
 
