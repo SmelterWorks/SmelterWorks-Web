@@ -27,6 +27,7 @@ Keep controllers thin. Push content into config or services until a database is 
 
 ## Code style
 
+- PHP 8.5+ (`composer.json` requires `^8.5`)
 - PHP: Laravel Pint (`composer format` / `composer lint`)
 - Static analysis: Larastan / PHPStan (`composer analyse`)
 - Blade: blade-formatter (`pnpm run format` / `pnpm run lint`)

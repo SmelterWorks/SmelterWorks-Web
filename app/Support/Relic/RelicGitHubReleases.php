@@ -5,6 +5,7 @@ namespace App\Support\Relic;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Uri\Rfc3986\Uri;
 
 final class RelicGitHubReleases
 {
@@ -15,21 +16,21 @@ final class RelicGitHubReleases
      */
     public function parseRepo(string $repoUrl): ?array
     {
-        $path = parse_url(trim($repoUrl), PHP_URL_PATH);
-
-        if (! is_string($path) || $path === '') {
+        try {
+            $uri = Uri::parse(trim($repoUrl));
+        } catch (\Throwable) {
             return null;
         }
 
-        $parts = array_values(array_filter(explode('/', trim($path, '/'))));
+        $segments = array_values(array_filter(explode('/', trim($uri->getPath(), '/'))));
 
-        if (count($parts) < 2) {
+        if (count($segments) < 2) {
             return null;
         }
 
         return [
-            'owner' => $parts[0],
-            'repo' => $parts[1],
+            'owner' => $segments[0],
+            'repo' => $segments[1],
         ];
     }
 

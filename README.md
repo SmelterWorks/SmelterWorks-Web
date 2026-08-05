@@ -1,18 +1,18 @@
 # SmelterWorks Web
 
 <!-- BADGES:BEGIN -->
-[![CI](https://img.shields.io/github/actions/workflow/status/SmelterWorks/SmelterWorks-Web/ci.yml?branch=main&label=CI&labelColor=1c1916&color=b45309&logo=githubactions)](https://github.com/SmelterWorks/SmelterWorks-Web/actions/workflows/ci.yml) [![Lighthouse CI](https://img.shields.io/github/actions/workflow/status/SmelterWorks/SmelterWorks-Web/lighthouse.yml?branch=main&label=Lighthouse+CI&labelColor=1c1916&color=b45309&logo=lighthouse)](https://github.com/SmelterWorks/SmelterWorks-Web/actions/workflows/lighthouse.yml) [![Lighthouse](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FSmelterWorks%2FSmelterWorks-Web%2Fmain%2F.github%2Fbadges%2Flighthouse.json)](https://github.com/SmelterWorks/SmelterWorks-Web/actions/workflows/lighthouse.yml) [![Docker](https://img.shields.io/github/actions/workflow/status/SmelterWorks/SmelterWorks-Web/docker.yml?branch=main&label=Docker&labelColor=1c1916&color=b45309&logo=docker)](https://github.com/SmelterWorks/SmelterWorks-Web/actions/workflows/docker.yml) [![links](https://img.shields.io/github/actions/workflow/status/SmelterWorks/SmelterWorks-Web/links.yml?branch=main&label=links&labelColor=1c1916&color=b45309)](https://github.com/SmelterWorks/SmelterWorks-Web/actions/workflows/links.yml) [![CodeQL](https://img.shields.io/github/actions/workflow/status/SmelterWorks/SmelterWorks-Web/codeql.yml?branch=main&label=CodeQL&labelColor=1c1916&color=b45309&logo=github)](https://github.com/SmelterWorks/SmelterWorks-Web/actions/workflows/codeql.yml) [![PHP](https://img.shields.io/badge/?style=flat-square&labelColor=1c1916&label=PHP&message=8.4%2B&color=3a342e)](https://github.com/SmelterWorks/SmelterWorks-Web) [![Laravel](https://img.shields.io/badge/?style=flat-square&labelColor=1c1916&label=Laravel&message=13&color=b45309)](https://github.com/SmelterWorks/SmelterWorks-Web) [![GHCR](https://img.shields.io/badge/?style=flat-square&labelColor=1c1916&label=GHCR&message=smelterworks-web&color=3f5a4d&logo=docker&logoColor=white)](https://github.com/SmelterWorks/SmelterWorks-Web/pkgs/container/smelterworks-web) [![license](https://img.shields.io/badge/?style=flat-square&labelColor=1c1916&label=license&message=Apache+2.0&color=3f5a4d)](https://github.com/SmelterWorks/SmelterWorks-Web/blob/main/LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/SmelterWorks/SmelterWorks-Web/ci.yml?branch=main&label=CI&labelColor=1c1916&color=b45309&logo=githubactions)](https://github.com/SmelterWorks/SmelterWorks-Web/actions/workflows/ci.yml) [![Lighthouse CI](https://img.shields.io/github/actions/workflow/status/SmelterWorks/SmelterWorks-Web/lighthouse.yml?branch=main&label=Lighthouse+CI&labelColor=1c1916&color=b45309&logo=lighthouse)](https://github.com/SmelterWorks/SmelterWorks-Web/actions/workflows/lighthouse.yml) [![Lighthouse](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FSmelterWorks%2FSmelterWorks-Web%2Fmain%2F.github%2Fbadges%2Flighthouse.json)](https://github.com/SmelterWorks/SmelterWorks-Web/actions/workflows/lighthouse.yml) [![Docker](https://img.shields.io/github/actions/workflow/status/SmelterWorks/SmelterWorks-Web/docker.yml?branch=main&label=Docker&labelColor=1c1916&color=b45309&logo=docker)](https://github.com/SmelterWorks/SmelterWorks-Web/actions/workflows/docker.yml) [![links](https://img.shields.io/github/actions/workflow/status/SmelterWorks/SmelterWorks-Web/links.yml?branch=main&label=links&labelColor=1c1916&color=b45309)](https://github.com/SmelterWorks/SmelterWorks-Web/actions/workflows/links.yml) [![CodeQL](https://img.shields.io/github/actions/workflow/status/SmelterWorks/SmelterWorks-Web/codeql.yml?branch=main&label=CodeQL&labelColor=1c1916&color=b45309&logo=github)](https://github.com/SmelterWorks/SmelterWorks-Web/actions/workflows/codeql.yml) [![PHP](https://img.shields.io/badge/?style=flat-square&labelColor=1c1916&label=PHP&message=8.5%2B&color=3a342e)](https://github.com/SmelterWorks/SmelterWorks-Web) [![Laravel](https://img.shields.io/badge/?style=flat-square&labelColor=1c1916&label=Laravel&message=13&color=b45309)](https://github.com/SmelterWorks/SmelterWorks-Web) [![GHCR](https://img.shields.io/badge/?style=flat-square&labelColor=1c1916&label=GHCR&message=smelterworks-web&color=3f5a4d&logo=docker&logoColor=white)](https://github.com/SmelterWorks/SmelterWorks-Web/pkgs/container/smelterworks-web) [![license](https://img.shields.io/badge/?style=flat-square&labelColor=1c1916&label=license&message=Apache+2.0&color=3f5a4d)](https://github.com/SmelterWorks/SmelterWorks-Web/blob/main/LICENSE)
 <!-- BADGES:END -->
 
 Public site for [SmelterWorks](https://github.com/SmelterWorks): Vintage Story tools, mods, [Relic Launcher](https://github.com/SmelterWorks/Relic-Launcher), and hosting catalog.
 
 SmelterWorks is not affiliated with Anego Studios.
 
-Stack: PHP 8.4+, Laravel 13, Blade, Vite, Tailwind CSS 4. Apache License 2.0.
+Stack: PHP 8.5+, Laravel 13, Blade, Vite, Tailwind CSS 4. Apache License 2.0.
 
 ## Requirements
 
-- PHP 8.4+ with pdo_sqlite / sqlite3
+- PHP 8.5+ with pdo_sqlite / sqlite3
 - Composer 2
 - Node.js 22+ and pnpm 11+ (Vite build and icon sync). Enable Corepack once: `corepack enable`
 
@@ -68,7 +68,7 @@ Catalog entries live under config/smelterworks. Use page_route when an entry sho
 
 ## CI
 
-Workflows under .github/workflows: PHP tests (8.4/8.5), Pint, PHPStan, Blade format, Vite build, Lighthouse CI, GHCR publish, link check, CodeQL, dependency review. Actions are SHA-pinned. Dependabot updates Composer, pnpm, and Actions weekly.
+Workflows under .github/workflows: PHP 8.5 tests, Pint, PHPStan, Blade format, Vite build, Lighthouse CI, GHCR publish, link check, CodeQL, dependency review. Actions are SHA-pinned. Dependabot updates Composer, pnpm, and Actions weekly.
 
 README badges are generated from `docs/badges.json`. After changing badge config, run `pnpm run badges`. Lighthouse score badge updates from CI on `main` pushes.
 

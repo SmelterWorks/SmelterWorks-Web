@@ -72,7 +72,7 @@ composer test
 ./bin/serve
 ```
 
-CI uses system `php` on Ubuntu with required extensions. Local Arch/CachyOS setups use `./bin/php` and `php-local.ini` so SQLite loads. Prefer `./bin/serve` over bare `php artisan serve`.
+CI uses PHP 8.5 on Ubuntu with required extensions. Local Arch/CachyOS setups use `./bin/php` and `php-local.ini` so SQLite loads. Prefer `./bin/serve` over bare `php artisan serve`.
 
 Composer script `composer test` runs PHPUnit with `php-local.ini`. Format/lint: Pint + Larastan (`composer format` / `composer lint`), Blade via blade-formatter (`pnpm run format` / `pnpm run lint`).
 

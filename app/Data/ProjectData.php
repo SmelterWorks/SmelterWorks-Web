@@ -39,6 +39,11 @@ readonly class ProjectData
         );
     }
 
+    public function withPageRoute(string $pageRoute): self
+    {
+        return clone ($this, ['pageRoute' => $pageRoute]);
+    }
+
     public function url(): string
     {
         if (filled($this->pageRoute)) {

@@ -2,6 +2,8 @@
 
 namespace App\Support\Url;
 
+use Uri\Rfc3986\Uri;
+
 final class SafeExternalUrl
 {
     public static function httpsOrNull(?string $url): ?string
@@ -10,25 +12,19 @@ final class SafeExternalUrl
             return null;
         }
 
-        $url = trim($url);
-
-        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+        try {
+            $uri = Uri::parse(trim($url));
+        } catch (\Throwable) {
             return null;
         }
 
-        $parts = parse_url($url);
-
-        if (! is_array($parts)) {
-            return null;
-        }
-
-        $scheme = strtolower((string) ($parts['scheme'] ?? ''));
-        $host = (string) ($parts['host'] ?? '');
+        $scheme = strtolower($uri->getScheme());
+        $host = $uri->getHost();
 
         if ($scheme !== 'https' || $host === '') {
             return null;
         }
 
-        return $url;
+        return $uri->toString();
     }
 }

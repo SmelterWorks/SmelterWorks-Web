@@ -2,7 +2,7 @@
 
 ARG NODE_IMAGE=node:24-alpine@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43
 ARG COMPOSER_IMAGE=composer:2@sha256:4d71c3c2109c61d5415544264b59ad4087e4c5b7244481723664138fd36d5040
-ARG PHP_IMAGE=php:8.4-fpm-alpine@sha256:5992f8b7433fe7fa96dfbf67746c86d6c41bc91e686eac38fe531c72a02e40e4
+ARG PHP_IMAGE=php:8.5-fpm-alpine@sha256:41848df84031c4fe6e898f79461ec62edc4c7008e9a5e361e552859b0482b9d7
 
 ARG OCI_TITLE=SmelterWorks Web
 ARG OCI_DESCRIPTION=Public marketing and catalog site for SmelterWorks Vintage Story software, mods, Relic Launcher, and hosting.

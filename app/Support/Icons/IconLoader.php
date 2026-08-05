@@ -35,6 +35,7 @@ final class IconLoader
         return $resolved;
     }
 
+    #[\NoDiscard(message: 'Check for an empty string before rendering icon markup.')]
     public function contents(string $pack, string $name): string
     {
         $path = $this->path($pack, $name);

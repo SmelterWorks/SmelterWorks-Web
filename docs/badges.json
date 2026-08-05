@@ -53,7 +53,7 @@
             "id": "php",
             "type": "static",
             "label": "PHP",
-            "message": "8.4+",
+            "message": "8.5+",
             "color": "neutral"
         },
         {
