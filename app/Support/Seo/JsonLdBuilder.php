@@ -37,6 +37,7 @@ final class JsonLdBuilder
         $siteId = $base.'/#website';
 
         $sameAs = array_values(array_filter([
+            config('smelterworks.links.forgejo'),
             config('smelterworks.links.github'),
             config('smelterworks.donate.kofi_url'),
             config('smelterworks.links.fluxer'),

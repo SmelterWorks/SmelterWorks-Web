@@ -31,6 +31,7 @@ class RelicController extends Controller
         return view('pages.relic.download', [
             'relic' => $page['relic'],
             'downloads' => $page['downloads'],
+            'stable' => $page['stable'],
             'nightly' => $page['nightly'],
             'detected' => $detected,
             'suggested' => $suggested,

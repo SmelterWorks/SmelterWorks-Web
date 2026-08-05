@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class RelicPageTest extends TestCase
@@ -44,6 +45,8 @@ class RelicPageTest extends TestCase
 
     public function test_relic_download_page_detects_windows(): void
     {
+        $this->fakeStableRelease();
+
         $this->withHeader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36')
             ->get(route('relic.download'))
             ->assertOk()
@@ -52,13 +55,15 @@ class RelicPageTest extends TestCase
             ->assertSee('Suggested for you', false)
             ->assertSee('Download Windows', false)
             ->assertSee('download-card__icon', false)
-            ->assertSee('releases/latest', false)
+            ->assertSee('v1.0.0', false)
             ->assertSee('Nightly pre-release', false)
             ->assertSee('Pre-release', false);
     }
 
     public function test_relic_download_page_detects_linux(): void
     {
+        $this->fakeStableRelease();
+
         $this->withHeader('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36')
             ->get(route('relic.download'))
             ->assertOk()
@@ -66,13 +71,29 @@ class RelicPageTest extends TestCase
             ->assertSee('Download Linux', false);
     }
 
+    public function test_relic_download_page_shows_empty_state_without_releases(): void
+    {
+        Http::fake([
+            'api.github.com/repos/SmelterWorks/Relic-Launcher/releases*' => Http::response([], 200),
+        ]);
+
+        $this->get(route('relic.download'))
+            ->assertOk()
+            ->assertSee('No stable release is published yet', false)
+            ->assertSee('No nightly pre-release is published right now', false)
+            ->assertSee('Not available', false)
+            ->assertSee('No nightly yet', false)
+            ->assertDontSee('releases/latest', false);
+    }
+
     public function test_relic_download_page_can_hide_nightly_channel(): void
     {
+        $this->fakeStableRelease();
         Config::set('smelterworks.relic.nightly.enabled', false);
 
         $this->get(route('relic.download'))
             ->assertOk()
-            ->assertSee('releases/latest', false)
+            ->assertSee('v1.0.0', false)
             ->assertDontSee('Nightly pre-release', false);
     }
 
@@ -83,8 +104,30 @@ class RelicPageTest extends TestCase
             ->assertDontSee('Buy hosting', false)
             ->assertDontSee('Server hosting integration', false);
 
+        $this->fakeStableRelease();
+
         $this->get(route('relic.download'))
             ->assertDontSee('View hosting', false)
             ->assertDontSee('Buy hosting', false);
+    }
+
+    private function fakeStableRelease(): void
+    {
+        Http::fake([
+            'api.github.com/repos/SmelterWorks/Relic-Launcher/releases*' => Http::response([
+                [
+                    'tag_name' => 'v1.0.0',
+                    'prerelease' => false,
+                    'html_url' => 'https://github.com/SmelterWorks/Relic-Launcher/releases/tag/v1.0.0',
+                    'published_at' => '2026-08-01T00:00:00Z',
+                    'assets' => [
+                        [
+                            'name' => 'relic-launcher-v1.0.0-win-x64.zip',
+                            'browser_download_url' => 'https://example.test/stable-win.zip',
+                        ],
+                    ],
+                ],
+            ], 200),
+        ]);
     }
 }

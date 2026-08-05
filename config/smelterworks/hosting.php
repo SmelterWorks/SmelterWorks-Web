@@ -36,7 +36,47 @@ return [
         ['icon' => 'globe', 'text' => 'US and Germany locations'],
         ['icon' => 'container', 'text' => 'Easy migration to your own servers to self-host (Docker)'],
         ['icon' => 'badge-check', 'text' => 'No lock-in or hidden fees'],
+        ['icon' => 'leaf', 'text' => 'Quality servers with efficient, lower-waste hosting'],
+        ['icon' => 'upload', 'text' => 'SFTP and HTTP file uploads'],
     ],
+    'home_highlights' => [
+        [
+            'icon' => 'badge-check',
+            'title' => 'Consumer friendly',
+            'text' => 'Fair prices, a clear refund policy, and an easy path to migrate off.',
+        ],
+        [
+            'icon' => 'users',
+            'title' => 'Unlimited slots',
+            'text' => 'Player count follows your plan hardware. No fake slot caps.',
+        ],
+        [
+            'icon' => 'package',
+            'title' => 'One-click mods',
+            'text' => 'Install from VS ModDB in one click. Add as many as your storage allows.',
+            'link' => [
+                'label' => 'VS ModDB',
+                'href' => 'https://mods.vintagestory.at/',
+                'external' => true,
+            ],
+        ],
+        [
+            'icon' => 'file-code',
+            'title' => 'File browser and editor',
+            'text' => 'Browse and edit server files from the panel.',
+        ],
+        [
+            'icon' => 'archive',
+            'title' => 'Automatic and manual backups',
+            'text' => 'Scheduled backups, plus backup now when you need it.',
+        ],
+        [
+            'icon' => 'globe',
+            'title' => 'US and EU',
+            'text' => 'Servers in the United States and Germany.',
+        ],
+    ],
+    'home_note' => 'Limited availability when we open. First come, first served.',
     'plans' => [
         [
             'slug' => 'friends',
@@ -79,18 +119,19 @@ return [
         ],
     ],
     'refund' => [
-        'intro' => 'We would rather refund a bad fit than keep the money. Export your world from the panel before you cancel if you want to keep it.',
+        'intro' => 'We would rather refund a bad fit than keep the money. Export your world before you cancel if you want to keep it.',
         'points' => [
-            'First monthly charge: full refund within 7 days if hosting is not working for you. Message us on Fluxer or email support.',
-            'Annual plan: full refund within 14 days of purchase. After that, unused whole months in the first year are refunded at the monthly rate for time already used.',
-            'Refunds go back to the original payment method.',
-            'Cancel anytime. Service stops at the end of the paid period unless you ask for an immediate shutdown with a refund that still qualifies.',
-            'Repeated buy-and-refund cycles or abuse can void future refunds on that account.',
+            'Monthly plans: full refund within 7 days',
+            'Annual plans: full refund within 14 days. After that, unused whole months in year one are refunded at the monthly rate',
+            'Refunds go back to the original payment method',
+            'Cancel anytime. Service ends at the paid period unless you ask to shut down sooner',
+            'Refund abuse can close refunds on that account',
         ],
     ],
     'notes' => [
-        'List prices are USD. EUR uses the ECB rate via Frankfurter and refreshes about every six hours.',
-        'Annual plans are two months free versus paying monthly.',
-        'Export your world and mods anytime, including a Docker setup for self-hosting.',
+        'Prices are USD. EUR follows the ECB rate and updates about every six hours',
+        'Annual billing saves two months versus monthly',
+        'Export your world and mods anytime, including a Docker setup for self-hosting',
     ],
+    'change_note' => 'Features and plans are subject to change until we are open.',
 ];

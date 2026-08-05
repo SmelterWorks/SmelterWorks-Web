@@ -14,7 +14,7 @@ class JsonLdBuilderTest extends TestCase
         $this->assertSame('Organization', $graph[0]['@type']);
         $this->assertSame('WebSite', $graph[1]['@type']);
         $this->assertSame(config('app.name'), $graph[0]['name']);
-        $this->assertContains(config('smelterworks.links.github'), $graph[0]['sameAs']);
+        $this->assertContains(config('smelterworks.links.forgejo'), $graph[0]['sameAs']);
     }
 
     public function test_encode_merges_extra_nodes(): void

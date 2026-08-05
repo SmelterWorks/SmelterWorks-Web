@@ -24,9 +24,9 @@
                 </x-icon-link>
             @endif
 
-            @if (filled(config('smelterworks.links.github')))
-                <x-icon-link :href="config('smelterworks.links.github')" label="GitHub">
-                    <x-icon name="github" pack="simple" :size="20" />
+            @if (filled(config('smelterworks.links.forgejo')))
+                <x-icon-link :href="config('smelterworks.links.forgejo')" label="Forgejo">
+                    <x-icons.forgejo />
                 </x-icon-link>
             @endif
         </div>
@@ -63,9 +63,9 @@
                 </x-icon-link>
             @endif
 
-            @if (filled(config('smelterworks.links.github')))
-                <x-icon-link :href="config('smelterworks.links.github')" label="GitHub">
-                    <x-icon name="github" pack="simple" :size="20" />
+            @if (filled(config('smelterworks.links.forgejo')))
+                <x-icon-link :href="config('smelterworks.links.forgejo')" label="Forgejo">
+                    <x-icons.forgejo />
                 </x-icon-link>
             @endif
         </div>

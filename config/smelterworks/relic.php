@@ -4,8 +4,10 @@ return [
     'name' => 'Relic Launcher',
     'tagline' => 'Unofficial desktop launcher for Vintage Story',
     'summary' => 'Install the game, browse VS ModDB, add mods, and launch from one app. Works on Windows, Linux, and Mac.',
-    'repo_url' => env('SMELTERWORKS_RELIC_REPO_URL', 'https://github.com/SmelterWorks/Relic-Launcher'),
-    // Blank derives {repo_url}/releases/latest. Stable download buttons always use this URL.
+    'repo_url' => env('SMELTERWORKS_RELIC_REPO_URL', 'https://git.smelterworks.com/smelter/Relic-Launcher'),
+    // GitHub mirror used for release binaries and nightly API lookups.
+    'releases_repo_url' => env('SMELTERWORKS_RELIC_RELEASES_REPO_URL', 'https://github.com/SmelterWorks/Relic-Launcher'),
+    // Blank derives {releases_repo_url}/releases/latest when a stable release exists.
     'releases_url' => env('SMELTERWORKS_RELIC_RELEASES_URL'),
     'preview_url' => env('SMELTERWORKS_RELIC_PREVIEW_URL'),
     'preview_assets' => [

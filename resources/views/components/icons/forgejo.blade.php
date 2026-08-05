@@ -1,0 +1,10 @@
+<svg class="icon-forgejo" width="20" height="20" viewBox="0 0 212 212" aria-hidden="true" focusable="false"
+    xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(6,6)">
+        <path d="M58 168 v-98 a50 50 0 0 1 50-50 h20" fill="none" stroke="#ff6600" stroke-width="15" />
+        <path d="M58 168 v-30 a50 50 0 0 1 50-50 h20" fill="none" stroke="#d40000" stroke-width="25" />
+        <circle cx="142" cy="20" r="18" fill="none" stroke="#ff6600" stroke-width="15" />
+        <circle cx="142" cy="88" r="18" fill="none" stroke="#d40000" stroke-width="15" />
+        <circle cx="58" cy="180" r="18" fill="none" stroke="#d40000" stroke-width="15" />
+    </g>
+</svg>

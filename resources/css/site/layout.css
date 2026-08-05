@@ -43,6 +43,41 @@
         background: color-mix(in oklab, white 40%, transparent);
     }
 
+    .button:disabled,
+    .button[disabled] {
+        cursor: not-allowed;
+        opacity: 0.55;
+        transform: none;
+    }
+
+    .button:disabled:hover,
+    .button[disabled]:hover {
+        transform: none;
+    }
+
+    .button--badged {
+        position: relative;
+        overflow: visible;
+    }
+
+    .button__badge {
+        position: absolute;
+        top: -0.45rem;
+        right: -0.55rem;
+        padding: 0.12rem 0.4rem;
+        border-radius: 0.25rem;
+        background: var(--color-copper);
+        color: #f4ebe1;
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        line-height: 1.2;
+        white-space: nowrap;
+        pointer-events: none;
+        box-shadow: 0 0.15rem 0.4rem rgba(0, 0, 0, 0.2);
+    }
+
     .page-hero {
         border-bottom: 1px solid color-mix(in oklab, var(--color-iron) 12%, transparent);
         background:
@@ -96,12 +131,51 @@
         padding-top: clamp(2rem, 4vw, 3rem);
     }
 
+    .section--compact-bottom {
+        padding-bottom: clamp(1.25rem, 3vw, 2rem);
+    }
+
+    .section--near {
+        padding-top: clamp(1.25rem, 3vw, 2rem);
+    }
+
     .section__intro {
         margin-bottom: 1.75rem;
     }
 
+    .section__intro--row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
     .section__title {
         font-size: clamp(1.8rem, 3vw, 2.4rem);
+    }
+
+    .section__note {
+        margin: 1.1rem 0 0;
+        max-width: 40rem;
+        color: color-mix(in oklab, var(--color-iron-soft) 78%, transparent);
+        font-size: 0.88rem;
+        line-height: 1.5;
+    }
+
+    .section__note + .section__note {
+        margin-top: 0.45rem;
+    }
+
+    .section__note-link {
+        color: inherit;
+        text-decoration: underline;
+        text-underline-offset: 0.12em;
+        text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+    }
+
+    .section__note-link:hover {
+        color: var(--color-iron-soft);
+        text-decoration-color: currentColor;
     }
 
     .section__footer {

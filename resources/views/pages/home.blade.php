@@ -1,4 +1,4 @@
-<x-layouts.site>
+<x-layouts.site :preload-image="$relic['preview_webp'] ?? null">
     <section class="hero">
         <div class="hero__atmosphere" aria-hidden="true">
             <div class="hero__grain"></div>
@@ -22,21 +22,69 @@
         </div>
 
         <div class="hero__content">
-            <h1 class="hero__headline reveal" data-reveal>
-                Open-source tools, mods, and hosting for Vintage Story
-            </h1>
-            <p class="hero__lede reveal" data-reveal>
-                {{ config('smelterworks.mission') }}
+            <div class="hero__copy">
+                <h1 class="hero__headline reveal" data-reveal>
+                    Open-source tools, mods, and hosting for Vintage Story
+                </h1>
+                <p class="hero__lede reveal" data-reveal>
+                    {{ config('smelterworks.mission') }}
+                </p>
+                <div class="hero__actions reveal" data-reveal>
+                    <x-button href="{{ route('hosting') }}" class="button--badged">
+                        Hosting
+                        @if ($hostingComingSoon)
+                            <span class="button__badge">Soon</span>
+                        @endif
+                    </x-button>
+                    <x-button href="{{ route('relic') }}" variant="ghost">Relic Launcher</x-button>
+                    <x-button href="{{ route('mods') }}" variant="ghost">Mods</x-button>
+                </div>
+            </div>
+
+            @if (filled($relic['preview_url'] ?? null))
+                <figure class="hero__preview relic-preview reveal" data-reveal>
+                    <picture>
+                        @if (filled($relic['preview_webp'] ?? null))
+                            <source srcset="{{ $relic['preview_webp'] }}" type="image/webp">
+                        @endif
+                        <img class="relic-preview__image"
+                            src="{{ $relic['preview_fallback'] ?? $relic['preview_url'] }}"
+                            alt="{{ $relic['preview_alt'] ?? $relic['name'] }}" width="1280" height="720"
+                            fetchpriority="high" loading="eager" decoding="async">
+                    </picture>
+                </figure>
+            @endif
+        </div>
+    </section>
+
+    <section class="section section--near section--compact-bottom">
+        <div class="section__inner">
+            <div class="section__intro section__intro--row">
+                <h2 class="section__title">Hosting</h2>
+                @if ($hostingComingSoon)
+                    <span class="pill">Coming soon</span>
+                @endif
+            </div>
+
+            <x-feature-grid :items="$hostingHighlights" />
+
+            <p class="section__note">
+                VS =
+                <a href="{{ config('smelterworks.links.vintage_story') }}" class="section__note-link"
+                    rel="noopener noreferrer" target="_blank">Vintage Story</a>
             </p>
-            <div class="hero__actions reveal" data-reveal>
-                <x-button href="{{ route('hosting') }}">Hosting</x-button>
-                <x-button href="{{ route('relic') }}" variant="ghost">Relic Launcher</x-button>
-                <x-button href="{{ route('mods') }}" variant="ghost">Mods</x-button>
+
+            @if (filled($hostingNote))
+                <p class="section__note">{{ $hostingNote }}</p>
+            @endif
+
+            <div class="section__footer">
+                <x-button href="{{ route('hosting') }}" variant="ghost">View plans</x-button>
             </div>
         </div>
     </section>
 
-    <section class="section">
+    <section class="section section--near">
         <div class="section__inner">
             <div class="section__intro">
                 <h2 class="section__title">Projects</h2>

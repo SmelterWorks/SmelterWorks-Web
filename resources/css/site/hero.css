@@ -2,9 +2,9 @@
 
     .hero {
         position: relative;
-        min-height: min(100dvh, 52rem);
+        min-height: 0;
         display: grid;
-        align-items: end;
+        align-items: center;
         overflow: clip;
         color: #f4ebe1;
     }
@@ -50,7 +50,14 @@
         z-index: 1;
         width: min(1120px, calc(100% - 2rem));
         margin: 0 auto;
-        padding: clamp(6rem, 14vw, 9rem) 0 clamp(3.5rem, 8vw, 5rem);
+        padding: clamp(2rem, 4vw, 3rem) 0 clamp(1.25rem, 3vw, 2rem);
+        display: grid;
+        gap: clamp(1.25rem, 3vw, 2rem);
+        align-items: center;
+    }
+
+    .hero__copy {
+        min-width: 0;
     }
 
     .hero__brand {
@@ -103,5 +110,22 @@
     .hero .button--ghost:hover {
         background: color-mix(in oklab, #f2e7d8 12%, transparent);
         border-color: #f2e7d8;
+    }
+
+    .hero .button__badge {
+        background: #c45c26;
+        color: #f4ebe1;
+    }
+
+    .hero__preview {
+        margin: 0;
+        min-width: 0;
+    }
+
+    .hero__preview .relic-preview__image {
+        border-color: color-mix(in oklab, #f2e7d8 18%, transparent);
+        box-shadow:
+            0 1.5rem 3rem rgba(0, 0, 0, 0.42),
+            0 0.35rem 0.85rem rgba(0, 0, 0, 0.28);
     }
 }

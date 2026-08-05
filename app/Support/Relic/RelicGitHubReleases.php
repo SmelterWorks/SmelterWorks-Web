@@ -71,6 +71,43 @@ final class RelicGitHubReleases
     }
 
     /**
+     * Newest GitHub stable release (non-prerelease).
+     *
+     * @return array{
+     *     tag: string,
+     *     html_url: string,
+     *     published_at: string|null,
+     *     assets: list<array{name: string, browser_download_url: string}>
+     * }|null
+     */
+    public function latestStable(string $owner, string $repo): ?array
+    {
+        $cacheKey = "relic.github.stable.{$owner}.{$repo}";
+
+        /** @var array{tag: string, html_url: string, published_at: string|null, assets: list<array{name: string, browser_download_url: string}>}|null|false $cached */
+        $cached = Cache::get($cacheKey);
+
+        if ($cached !== null) {
+            return $cached === false ? null : $cached;
+        }
+
+        try {
+            $stable = $this->fetchLatestStable($owner, $repo);
+        } catch (\Throwable $exception) {
+            Log::warning('Relic stable release lookup failed.', [
+                'owner' => $owner,
+                'repo' => $repo,
+                'message' => $exception->getMessage(),
+            ]);
+            $stable = null;
+        }
+
+        Cache::put($cacheKey, $stable ?? false, now()->addSeconds(self::CACHE_SECONDS));
+
+        return $stable;
+    }
+
+    /**
      * @param  list<array{name: string, browser_download_url: string}>  $assets
      */
     public function assetUrlForRid(array $assets, string $rid): ?string
@@ -138,24 +175,11 @@ final class RelicGitHubReleases
      */
     private function fetchLatestNightly(string $owner, string $repo): ?array
     {
-        $response = Http::timeout(8)
-            ->connectTimeout(3)
-            ->retry(2, 150)
-            ->acceptJson()
-            ->withHeaders([
-                'User-Agent' => 'SmelterWorks-Web',
-                'X-GitHub-Api-Version' => '2022-11-28',
-            ])
-            ->get("https://api.github.com/repos/{$owner}/{$repo}/releases", [
-                'per_page' => 30,
-            ]);
+        $releases = $this->fetchReleases($owner, $repo);
 
-        if (! $response->successful()) {
+        if ($releases === null) {
             return null;
         }
-
-        /** @var list<array<string, mixed>> $releases */
-        $releases = $response->json() ?? [];
 
         $nightlies = collect($releases)
             ->filter(function (array $release): bool {
@@ -176,8 +200,88 @@ final class RelicGitHubReleases
             return null;
         }
 
+        return $this->normalizeRelease($latest);
+    }
+
+    /**
+     * @return array{
+     *     tag: string,
+     *     html_url: string,
+     *     published_at: string|null,
+     *     assets: list<array{name: string, browser_download_url: string}>
+     * }|null
+     */
+    private function fetchLatestStable(string $owner, string $repo): ?array
+    {
+        $releases = $this->fetchReleases($owner, $repo);
+
+        if ($releases === null) {
+            return null;
+        }
+
+        $stable = collect($releases)
+            ->filter(fn (array $release): bool => ! ($release['prerelease'] ?? false))
+            ->sortByDesc(fn (array $release): string => (string) ($release['published_at'] ?? ''))
+            ->first();
+
+        if (! is_array($stable)) {
+            return null;
+        }
+
+        return $this->normalizeRelease($stable);
+    }
+
+    /**
+     * @return list<array<string, mixed>>|null
+     */
+    private function fetchReleases(string $owner, string $repo): ?array
+    {
+        $response = Http::timeout(8)
+            ->connectTimeout(3)
+            ->retry(2, 150)
+            ->acceptJson()
+            ->withHeaders([
+                'User-Agent' => 'SmelterWorks-Web',
+                'X-GitHub-Api-Version' => '2022-11-28',
+            ])
+            ->get("https://api.github.com/repos/{$owner}/{$repo}/releases", [
+                'per_page' => 30,
+            ]);
+
+        if (! $response->successful()) {
+            return null;
+        }
+
+        $payload = $response->json();
+
+        if (! is_array($payload)) {
+            return null;
+        }
+
+        $releases = [];
+
+        foreach ($payload as $item) {
+            if (is_array($item)) {
+                $releases[] = $item;
+            }
+        }
+
+        return $releases;
+    }
+
+    /**
+     * @param  array<string, mixed>  $release
+     * @return array{
+     *     tag: string,
+     *     html_url: string,
+     *     published_at: string|null,
+     *     assets: list<array{name: string, browser_download_url: string}>
+     * }
+     */
+    private function normalizeRelease(array $release): array
+    {
         $assets = [];
-        foreach ($latest['assets'] ?? [] as $asset) {
+        foreach ($release['assets'] ?? [] as $asset) {
             if (! is_array($asset)) {
                 continue;
             }
@@ -196,9 +300,9 @@ final class RelicGitHubReleases
         }
 
         return [
-            'tag' => (string) $latest['tag_name'],
-            'html_url' => (string) ($latest['html_url'] ?? ''),
-            'published_at' => isset($latest['published_at']) ? (string) $latest['published_at'] : null,
+            'tag' => (string) $release['tag_name'],
+            'html_url' => (string) ($release['html_url'] ?? ''),
+            'published_at' => isset($release['published_at']) ? (string) $release['published_at'] : null,
             'assets' => $assets,
         ];
     }

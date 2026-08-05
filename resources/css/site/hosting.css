@@ -163,6 +163,49 @@
         max-width: 42rem;
     }
 
+    .region-map {
+        margin: 0 0 1.5rem;
+        max-width: 40rem;
+    }
+
+    .region-map__svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 0.75rem;
+        border: 1px solid color-mix(in oklab, var(--color-iron) 12%, transparent);
+        box-shadow:
+            0 0.85rem 1.75rem color-mix(in oklab, var(--color-iron) 8%, transparent),
+            inset 0 1px 0 color-mix(in oklab, white 55%, transparent);
+        background: color-mix(in oklab, var(--color-ash-deep) 40%, transparent);
+    }
+
+    .note-list {
+        list-style: none;
+        padding: 0;
+        margin: 0.65rem 0 0;
+        display: grid;
+        gap: 0.55rem;
+    }
+
+    .note-list li {
+        position: relative;
+        padding-left: 1.1rem;
+        color: var(--color-iron-soft);
+        line-height: 1.5;
+    }
+
+    .note-list li::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.55rem;
+        width: 0.35rem;
+        height: 0.35rem;
+        border-radius: 999px;
+        background: color-mix(in oklab, var(--color-copper) 70%, var(--color-iron));
+    }
+
     .region-list {
         list-style: none;
         padding: 0;

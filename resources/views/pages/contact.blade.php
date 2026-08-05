@@ -27,16 +27,16 @@
                 </p>
             @endif
 
-            @if (filled($links['github']))
+            @if (filled($links['forgejo']))
                 <h2>Code and bug reports</h2>
                 <p>
                     Open an issue on
-                    <a href="{{ $links['github'] }}" rel="noopener noreferrer" target="_blank">GitHub</a>
+                    <a href="{{ $links['forgejo'] }}" rel="noopener noreferrer" target="_blank">Forgejo</a>
                     for bugs, docs, and pull requests.
                 </p>
             @endif
 
-            @unless (filled($contact['email']) || filled($links['fluxer']) || filled($links['github']))
+            @unless (filled($contact['email']) || filled($links['fluxer']) || filled($links['forgejo']))
                 <p>Contact details are not configured for this deployment yet.</p>
             @endunless
 

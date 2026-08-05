@@ -12,9 +12,9 @@ class SecurityHelpersTest extends TestCase
     {
         $loader = new IconLoader;
 
-        $this->assertSame('', $loader->contents('lucide', '../simple/github'));
-        $this->assertSame('', $loader->contents('evil', 'github'));
-        $this->assertNotSame('', $loader->contents('simple', 'github'));
+        $this->assertSame('', $loader->contents('lucide', '../simple/forgejo'));
+        $this->assertSame('', $loader->contents('evil', 'forgejo'));
+        $this->assertNotSame('', $loader->contents('simple', 'forgejo'));
     }
 
     public function test_icon_loader_resolves_known_flag(): void

@@ -8,19 +8,49 @@ use Tests\TestCase;
 
 class RelicCatalogTest extends TestCase
 {
-    public function test_stable_downloads_all_point_at_releases_latest(): void
+    public function test_stable_downloads_use_github_release_assets_when_available(): void
     {
-        $relic = app(RelicCatalog::class)->forView();
+        Http::fake([
+            'api.github.com/repos/SmelterWorks/Relic-Launcher/releases*' => Http::response([
+                [
+                    'tag_name' => 'v1.0.0',
+                    'prerelease' => false,
+                    'html_url' => 'https://github.com/SmelterWorks/Relic-Launcher/releases/tag/v1.0.0',
+                    'published_at' => '2026-08-01T00:00:00Z',
+                    'assets' => [
+                        [
+                            'name' => 'relic-launcher-v1.0.0-win-x64.zip',
+                            'browser_download_url' => 'https://example.test/stable-win.zip',
+                        ],
+                    ],
+                ],
+            ], 200),
+        ]);
 
-        $this->assertSame(
-            'https://github.com/SmelterWorks/Relic-Launcher/releases/latest',
-            $relic['releases_url'],
-        );
+        $page = app(RelicCatalog::class)->forDownloadPage();
 
-        foreach ($relic['downloads'] as $download) {
-            $this->assertSame($relic['releases_url'], $download['url']);
+        $this->assertTrue($page['stable']['available']);
+        $this->assertSame('v1.0.0', $page['stable']['tag']);
+
+        $windows = collect($page['downloads'])->firstWhere('id', 'windows');
+        $this->assertTrue($windows['available']);
+        $this->assertSame('https://example.test/stable-win.zip', $windows['url']);
+    }
+
+    public function test_stable_downloads_empty_when_no_release_exists(): void
+    {
+        Http::fake([
+            'api.github.com/repos/SmelterWorks/Relic-Launcher/releases*' => Http::response([], 200),
+        ]);
+
+        $page = app(RelicCatalog::class)->forDownloadPage();
+
+        $this->assertFalse($page['stable']['available']);
+
+        foreach ($page['downloads'] as $download) {
+            $this->assertFalse($download['available']);
+            $this->assertSame('', $download['url']);
             $this->assertSame('stable', $download['channel']);
-            $this->assertNotSame('', $download['rid']);
         }
     }
 
@@ -34,6 +64,13 @@ class RelicCatalogTest extends TestCase
                 'rates' => ['EUR' => 0.86843],
             ], 200),
             'api.github.com/repos/SmelterWorks/Relic-Launcher/releases*' => Http::response([
+                [
+                    'tag_name' => 'v1.0.0',
+                    'prerelease' => false,
+                    'html_url' => 'https://github.com/SmelterWorks/Relic-Launcher/releases/tag/v1.0.0',
+                    'published_at' => '2026-08-01T00:00:00Z',
+                    'assets' => [],
+                ],
                 [
                     'tag_name' => 'nightly-20260804',
                     'prerelease' => true,

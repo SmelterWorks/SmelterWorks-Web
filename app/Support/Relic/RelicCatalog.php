@@ -18,7 +18,6 @@ class RelicCatalog
         $relic['platforms'] = $this->normalizePlatforms($relic['platforms'] ?? []);
         $relic = $this->withReleaseUrls($relic);
         $relic = $this->withPreviewAssets($relic);
-        $relic['downloads'] = $this->stableDownloads($relic);
 
         return $relic;
     }
@@ -27,6 +26,12 @@ class RelicCatalog
      * @return array{
      *     relic: array<string, mixed>,
      *     downloads: list<array<string, mixed>>,
+     *     stable: array{
+     *         available: bool,
+     *         tag: string|null,
+     *         html_url: string|null,
+     *         published_at: string|null
+     *     },
      *     nightly: array{
      *         enabled: bool,
      *         available: bool,
@@ -40,8 +45,23 @@ class RelicCatalog
     public function forDownloadPage(?array $relic = null): array
     {
         $relic = $this->forView($relic);
-        $downloads = $relic['downloads'];
-        /** @var list<array<string, mixed>> $downloads */
+        $parsed = $this->parsedReleasesRepo($relic);
+
+        $stableRelease = $parsed === null
+            ? null
+            : $this->releases->latestStable($parsed['owner'], $parsed['repo']);
+
+        $stable = [
+            'available' => $stableRelease !== null,
+            'tag' => $stableRelease['tag'] ?? null,
+            'html_url' => $stableRelease !== null
+                ? ($stableRelease['html_url'] !== '' ? $stableRelease['html_url'] : (string) $relic['releases_url'])
+                : null,
+            'published_at' => $stableRelease['published_at'] ?? null,
+        ];
+
+        $downloads = $this->stableDownloads($relic, $stableRelease);
+
         $nightlyEnabled = (bool) data_get($relic, 'nightly.enabled', true);
         $nightly = [
             'enabled' => $nightlyEnabled,
@@ -52,11 +72,8 @@ class RelicCatalog
             'downloads' => [],
         ];
 
-        if ($nightlyEnabled) {
-            $parsed = $this->releases->parseRepo((string) $relic['repo_url']);
-            $latest = $parsed === null
-                ? null
-                : $this->releases->latestNightly($parsed['owner'], $parsed['repo']);
+        if ($nightlyEnabled && $parsed !== null) {
+            $latest = $this->releases->latestNightly($parsed['owner'], $parsed['repo']);
 
             if ($latest !== null) {
                 $nightly['available'] = true;
@@ -67,7 +84,6 @@ class RelicCatalog
                 $nightly['published_at'] = $latest['published_at'];
                 $nightly['downloads'] = $this->nightlyDownloads($relic, $latest);
             } else {
-                $nightly['html_url'] = (string) $relic['nightly_list_url'];
                 $nightly['downloads'] = $this->nightlyFallbackDownloads($relic);
             }
         }
@@ -75,6 +91,7 @@ class RelicCatalog
         return [
             'relic' => $relic,
             'downloads' => $downloads,
+            'stable' => $stable,
             'nightly' => $nightly,
         ];
     }
@@ -100,6 +117,15 @@ class RelicCatalog
             ->filter(fn (array $platform): bool => $platform['label'] !== '')
             ->values()
             ->all();
+    }
+
+    /**
+     * @param  array<string, mixed>  $relic
+     * @return array{owner: string, repo: string}|null
+     */
+    private function parsedReleasesRepo(array $relic): ?array
+    {
+        return $this->releases->parseRepo((string) ($relic['releases_repo_url'] ?? ''));
     }
 
     /**
@@ -137,33 +163,61 @@ class RelicCatalog
      */
     private function withReleaseUrls(array $relic): array
     {
-        $repo = rtrim((string) ($relic['repo_url'] ?? ''), '/');
+        $releasesRepo = rtrim((string) ($relic['releases_repo_url'] ?? ''), '/');
         $releasesUrl = filled($relic['releases_url'] ?? null)
             ? (string) $relic['releases_url']
-            : ($repo !== '' ? $repo.'/releases/latest' : '');
+            : ($releasesRepo !== '' ? $releasesRepo.'/releases/latest' : '');
 
         $relic['releases_url'] = $releasesUrl;
-        $relic['nightly_list_url'] = $repo !== '' ? $repo.'/releases' : $releasesUrl;
+        $relic['nightly_list_url'] = $releasesRepo !== '' ? $releasesRepo.'/releases' : '';
 
         return $relic;
     }
 
     /**
      * @param  array<string, mixed>  $relic
+     * @param  array{
+     *     tag: string,
+     *     html_url: string,
+     *     published_at: string|null,
+     *     assets: list<array{name: string, browser_download_url: string}>
+     * }|null  $stable
      * @return list<array<string, mixed>>
      */
-    private function stableDownloads(array $relic): array
+    private function stableDownloads(array $relic, ?array $stable): array
     {
-        $releasesUrl = (string) ($relic['releases_url'] ?? '');
-
         /** @var list<array<string, mixed>> $downloads */
         $downloads = $relic['downloads'] ?? [];
 
+        if ($stable === null) {
+            return collect($downloads)
+                ->map(function (array $download): array {
+                    $download['channel'] = 'stable';
+                    $download['available'] = false;
+                    $download['url'] = '';
+                    $download['rid'] = (string) ($download['rid'] ?? '');
+
+                    return $download;
+                })
+                ->values()
+                ->all();
+        }
+
+        $fallback = $stable['html_url'] !== ''
+            ? $stable['html_url']
+            : (string) $relic['releases_url'];
+
         return collect($downloads)
-            ->map(function (array $download) use ($releasesUrl): array {
+            ->map(function (array $download) use ($stable, $fallback): array {
+                $rid = (string) ($download['rid'] ?? '');
+                $assetUrl = $rid !== ''
+                    ? $this->releases->assetUrlForRid($stable['assets'], $rid)
+                    : null;
+
                 $download['channel'] = 'stable';
-                $download['url'] = $releasesUrl;
-                $download['rid'] = (string) ($download['rid'] ?? '');
+                $download['available'] = $assetUrl !== null || $fallback !== '';
+                $download['url'] = $assetUrl ?? $fallback;
+                $download['rid'] = $rid;
 
                 return $download;
             })
@@ -191,14 +245,15 @@ class RelicCatalog
         $downloads = $relic['downloads'] ?? [];
 
         return collect($downloads)
-            ->map(function (array $download) use ($nightly, $fallback): array {
+            ->map(function (array $download) use ($nightly): array {
                 $rid = (string) ($download['rid'] ?? '');
                 $assetUrl = $rid !== ''
                     ? $this->releases->assetUrlForRid($nightly['assets'], $rid)
                     : null;
 
                 $download['channel'] = 'nightly';
-                $download['url'] = $assetUrl ?? $fallback;
+                $download['available'] = $assetUrl !== null;
+                $download['url'] = $assetUrl ?? '';
                 $download['rid'] = $rid;
                 $download['detail'] = $this->nightlyDetail($download, $assetUrl !== null);
 
@@ -214,15 +269,14 @@ class RelicCatalog
      */
     private function nightlyFallbackDownloads(array $relic): array
     {
-        $fallback = (string) $relic['nightly_list_url'];
-
         /** @var list<array<string, mixed>> $downloads */
         $downloads = $relic['downloads'] ?? [];
 
         return collect($downloads)
-            ->map(function (array $download) use ($fallback): array {
+            ->map(function (array $download): array {
                 $download['channel'] = 'nightly';
-                $download['url'] = $fallback;
+                $download['available'] = false;
+                $download['url'] = '';
                 $download['rid'] = (string) ($download['rid'] ?? '');
                 $download['detail'] = $this->nightlyDetail($download, false);
 
@@ -243,7 +297,7 @@ class RelicCatalog
             return $base.' · nightly pre-release';
         }
 
-        return $base.' · open nightly on GitHub';
+        return $base.' · no nightly build yet';
     }
 
     /**

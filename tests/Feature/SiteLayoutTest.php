@@ -10,12 +10,14 @@ class SiteLayoutTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_header_shows_fluxer_and_github_without_panel_button(): void
+    public function test_header_shows_fluxer_and_forgejo_without_panel_button(): void
     {
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('images/brand/fluxer.png', false)
             ->assertSee(config('smelterworks.links.fluxer'), false)
+            ->assertSee(config('smelterworks.links.forgejo'), false)
+            ->assertSee('aria-label="Forgejo"', false)
             ->assertSee('data-menu-toggle', false)
             ->assertSee('mobile-nav', false)
             ->assertSee(route('donate'), false)
@@ -44,6 +46,47 @@ class SiteLayoutTest extends TestCase
             ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
             ->assertHeader('Content-Security-Policy')
             ->assertDontSee('fonts.bunny.net', false);
+    }
+
+    public function test_content_security_policy_allows_vite_when_hot(): void
+    {
+        $hotFile = public_path('hot');
+        file_put_contents($hotFile, 'http://127.0.0.1:5173');
+
+        try {
+            $csp = (string) $this->get(route('home'))->headers->get('Content-Security-Policy');
+
+            $this->assertStringContainsString(
+                "script-src 'self' http://127.0.0.1:5173 ws://127.0.0.1:5173",
+                $csp,
+            );
+            $this->assertStringContainsString(
+                "style-src 'self' 'unsafe-inline' http://127.0.0.1:5173",
+                $csp,
+            );
+            $this->assertStringContainsString(
+                "font-src 'self' data: http://127.0.0.1:5173",
+                $csp,
+            );
+        } finally {
+            if (is_file($hotFile)) {
+                unlink($hotFile);
+            }
+        }
+    }
+
+    public function test_content_security_policy_restricts_scripts_without_vite_hot(): void
+    {
+        $hotFile = public_path('hot');
+
+        if (is_file($hotFile)) {
+            unlink($hotFile);
+        }
+
+        $csp = (string) $this->get(route('home'))->headers->get('Content-Security-Policy');
+
+        $this->assertStringContainsString("script-src 'self';", $csp);
+        $this->assertStringNotContainsString('5173', $csp);
     }
 
     public function test_https_app_url_forces_https_asset_urls(): void

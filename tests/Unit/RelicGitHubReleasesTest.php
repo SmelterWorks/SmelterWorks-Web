@@ -88,4 +88,40 @@ class RelicGitHubReleasesTest extends TestCase
             app(RelicGitHubReleases::class)->assetUrlForRid($nightly['assets'], 'osx-arm64'),
         );
     }
+
+    public function test_latest_stable_picks_newest_non_prerelease(): void
+    {
+        Http::fake([
+            'api.github.com/repos/SmelterWorks/Relic-Launcher/releases*' => Http::response([
+                [
+                    'tag_name' => 'v0.9.0',
+                    'prerelease' => false,
+                    'html_url' => 'https://github.com/SmelterWorks/Relic-Launcher/releases/tag/v0.9.0',
+                    'published_at' => '2026-07-01T00:00:00Z',
+                    'assets' => [],
+                ],
+                [
+                    'tag_name' => 'v1.0.0',
+                    'prerelease' => false,
+                    'html_url' => 'https://github.com/SmelterWorks/Relic-Launcher/releases/tag/v1.0.0',
+                    'published_at' => '2026-08-01T00:00:00Z',
+                    'assets' => [
+                        [
+                            'name' => 'relic-launcher-v1.0.0-win-x64.zip',
+                            'browser_download_url' => 'https://example.test/stable-win.zip',
+                        ],
+                    ],
+                ],
+            ], 200),
+        ]);
+
+        $stable = app(RelicGitHubReleases::class)->latestStable('SmelterWorks', 'Relic-Launcher');
+
+        $this->assertNotNull($stable);
+        $this->assertSame('v1.0.0', $stable['tag']);
+        $this->assertSame(
+            'https://example.test/stable-win.zip',
+            app(RelicGitHubReleases::class)->assetUrlForRid($stable['assets'], 'win-x64'),
+        );
+    }
 }

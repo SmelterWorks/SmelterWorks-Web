@@ -12,8 +12,9 @@
         <div class="section__inner prose-block">
             <h2>Start here</h2>
             <ol class="steps">
-                <li>Browse Projects or open Relic Launcher on GitHub.</li>
-                <li>Read <a href="https://github.com/SmelterWorks/SmelterWorks-Web/blob/main/CONTRIBUTING.md"
+                <li>Browse Projects or open Relic Launcher on Forgejo.</li>
+                <li>Read <a
+                        href="{{ rtrim(config('smelterworks.links.forgejo'), '/') }}/SmelterWorks-Web/src/branch/main/CONTRIBUTING.md"
                         rel="noopener noreferrer" target="_blank">CONTRIBUTING.md</a> in this repository.</li>
                 <li>Ship a focused pull request. Prefer clarity over cleverness.</li>
             </ol>
@@ -27,10 +28,10 @@
             </ul>
 
             <div class="action-row">
-                @if (filled(config('smelterworks.links.github')))
-                    <x-button href="{{ config('smelterworks.links.github') }}" rel="noopener noreferrer"
+                @if (filled(config('smelterworks.links.forgejo')))
+                    <x-button href="{{ config('smelterworks.links.forgejo') }}" rel="noopener noreferrer"
                         target="_blank">
-                        GitHub
+                        Forgejo
                     </x-button>
                 @endif
                 @if (filled(config('smelterworks.links.fluxer')))

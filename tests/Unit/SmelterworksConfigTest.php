@@ -21,6 +21,22 @@ class SmelterworksConfigTest extends TestCase
         $this->assertTrue((bool) config('smelterworks.hosting.coming_soon'));
     }
 
+    public function test_hosting_home_highlights_has_six_cards(): void
+    {
+        $highlights = config('smelterworks.hosting.home_highlights');
+
+        $this->assertIsArray($highlights);
+        $this->assertCount(6, $highlights);
+
+        foreach ($highlights as $item) {
+            $this->assertArrayHasKey('icon', $item);
+            $this->assertArrayHasKey('title', $item);
+            $this->assertArrayHasKey('text', $item);
+            $this->assertNotSame('', $item['title']);
+            $this->assertNotSame('', $item['text']);
+        }
+    }
+
     public function test_banner_defaults_to_under_construction(): void
     {
         $banner = config('smelterworks.banner');

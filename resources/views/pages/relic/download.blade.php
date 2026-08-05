@@ -38,7 +38,7 @@
                 @else
                     Pick a build for your system.
                 @endif
-                Stable builds open the latest GitHub release. Nightly builds are pre-releases.
+                Stable builds ship from GitHub Releases. Nightly builds are pre-releases from the same mirror.
             </p>
             <div class="platform-list platform-list--compact">
                 <x-platform-chip platform="windows" label="Windows" detail="10+ x64" />
@@ -50,7 +50,7 @@
 
     <section class="section section--tight">
         <div class="section__inner">
-            @if ($suggested)
+            @if ($suggested && ($suggested['available'] ?? false) && filled($suggested['url']))
                 <div class="download-hero">
                     <p class="download-hero__label">Suggested for you</p>
                     <div class="download-hero__heading">
@@ -64,19 +64,32 @@
                         <x-button :href="$suggested['url']" rel="noopener noreferrer" target="_blank">
                             Download {{ $suggested['label'] }}
                         </x-button>
-                        <x-button :href="$relic['releases_url']" variant="ghost" rel="noopener noreferrer" target="_blank">
-                            Latest release
-                        </x-button>
+                        @if ($stable['available'] && filled($stable['html_url']))
+                            <x-button :href="$stable['html_url']" variant="ghost" rel="noopener noreferrer" target="_blank">
+                                Latest release
+                            </x-button>
+                        @endif
                     </div>
                 </div>
             @endif
 
             <h2 class="download-channel__title">Latest release</h2>
-            <p class="download-channel__lede">
-                Buttons open
-                <a href="{{ $relic['releases_url'] }}" rel="noopener noreferrer" target="_blank">releases/latest</a>
-                on GitHub. Pick the asset for your OS there.
-            </p>
+            @if ($stable['available'])
+                <p class="download-channel__lede">
+                    @if (filled($stable['tag']))
+                        Current stable:
+                        <a href="{{ $stable['html_url'] }}" rel="noopener noreferrer"
+                            target="_blank">{{ $stable['tag'] }}</a>.
+                    @else
+                        Stable release files are on GitHub Releases.
+                    @endif
+                    Pick the asset for your OS below.
+                </p>
+            @else
+                <p class="download-channel__lede">
+                    No stable release is published yet. Check back after the first GitHub release ships.
+                </p>
+            @endif
 
             <div class="download-grid">
                 @foreach ($downloads as $download)
@@ -94,9 +107,13 @@
                                 <p class="download-card__detail">{{ $download['detail'] }}</p>
                             </div>
                         </div>
-                        <x-button :href="$download['url']" variant="ghost" rel="noopener noreferrer" target="_blank">
-                            Download
-                        </x-button>
+                        @if (($download['available'] ?? false) && filled($download['url']))
+                            <x-button :href="$download['url']" variant="ghost" rel="noopener noreferrer" target="_blank">
+                                Download
+                            </x-button>
+                        @else
+                            <x-button disabled aria-disabled="true">Not available</x-button>
+                        @endif
                     </article>
                 @endforeach
             </div>
@@ -114,10 +131,7 @@
                             <a href="{{ $nightly['html_url'] }}" rel="noopener noreferrer"
                                 target="_blank">{{ $nightly['tag'] }}</a>.
                         @else
-                            No nightly is published right now. Check
-                            <a href="{{ $nightly['html_url'] }}" rel="noopener noreferrer" target="_blank">GitHub
-                                Releases</a>
-                            later.
+                            No nightly pre-release is published right now.
                         @endif
                     </p>
 
@@ -133,9 +147,14 @@
                                         <p class="download-card__detail">{{ $download['detail'] }}</p>
                                     </div>
                                 </div>
-                                <x-button :href="$download['url']" variant="ghost" rel="noopener noreferrer" target="_blank">
-                                    {{ $nightly['available'] ? 'Download nightly' : 'View nightlies' }}
-                                </x-button>
+                                @if (($download['available'] ?? false) && filled($download['url']))
+                                    <x-button :href="$download['url']" variant="ghost" rel="noopener noreferrer"
+                                        target="_blank">
+                                        Download nightly
+                                    </x-button>
+                                @else
+                                    <x-button disabled aria-disabled="true">No nightly yet</x-button>
+                                @endif
                             </article>
                         @endforeach
                     </div>
@@ -144,9 +163,10 @@
 
             <div class="prose-block" style="margin-top: 2rem;">
                 <p>
-                    Source and issue tracker:
+                    Source and issue tracker on Forgejo:
                     <a href="{{ $relic['repo_url'] }}" rel="noopener noreferrer"
                         target="_blank">{{ $relic['repo_url'] }}</a>.
+                    Release binaries are mirrored on GitHub.
                 </p>
                 <div class="action-row">
                     <x-button :href="route('relic')" variant="ghost">Back to Relic</x-button>

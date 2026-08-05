@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const publicIcons = join(root, 'public', 'icons');
 
-const simpleSlugs = ['github', 'kofi', 'rss'];
+const simpleSlugs = ['forgejo', 'kofi', 'rss'];
 const brandIcons = ['windows', 'apple', 'linux'];
 const flagCodes = ['US', 'DE'];
 const lucideNames = [
@@ -34,6 +34,8 @@ const lucideNames = [
     'message-circle',
     'menu',
     'x',
+    'leaf',
+    'upload',
 ];
 
 function resetDir(path) {

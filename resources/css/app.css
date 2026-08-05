@@ -89,6 +89,11 @@
         grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
         gap: 2.5rem;
     }
+
+    .hero__content {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+        align-items: center;
+    }
 }
 
 @media (max-width: 767px) {

@@ -33,6 +33,7 @@
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
         <env name="SMELTERWORKS_FLUXER_URL" value="https://example.test/fluxer"/>
+        <env name="SMELTERWORKS_FORGEJO_URL" value="https://git.smelterworks.com/smelter"/>
         <env name="SMELTERWORKS_GITHUB_URL" value="https://github.com/SmelterWorks"/>
         <env name="SMELTERWORKS_KOFI_URL" value="https://ko-fi.com/smelterworks"/>
         <env name="SMELTERWORKS_LEGAL_CONTACT" value="https://example.test/fluxer"/>

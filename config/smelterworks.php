@@ -9,10 +9,12 @@ return [
     'links' => [
         // Set invite and deploy URLs in .env. Do not commit real invites or secrets.
         'fluxer' => env('SMELTERWORKS_FLUXER_URL'),
+        'forgejo' => env('SMELTERWORKS_FORGEJO_URL', 'https://git.smelterworks.com/smelter'),
         'github' => env('SMELTERWORKS_GITHUB_URL', 'https://github.com/SmelterWorks'),
-        'relic_repo' => env('SMELTERWORKS_RELIC_REPO_URL', 'https://github.com/SmelterWorks/Relic-Launcher'),
+        'relic_repo' => env('SMELTERWORKS_RELIC_REPO_URL', 'https://git.smelterworks.com/smelter/Relic-Launcher'),
         'wiki' => env('SMELTERWORKS_WIKI_URL'),
         'vintage_story' => 'https://www.vintagestory.at/',
+        'moddb' => 'https://mods.vintagestory.at/',
         'panel' => env('SMELTERWORKS_PANEL_URL'),
     ],
 

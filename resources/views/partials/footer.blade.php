@@ -46,10 +46,10 @@
                                     target="_blank">Fluxer</a>
                             </li>
                         @endif
-                        @if (filled(config('smelterworks.links.github')))
+                        @if (filled(config('smelterworks.links.forgejo')))
                             <li>
-                                <a href="{{ config('smelterworks.links.github') }}" rel="noopener noreferrer"
-                                    target="_blank">GitHub</a>
+                                <a href="{{ config('smelterworks.links.forgejo') }}" rel="noopener noreferrer"
+                                    target="_blank">Forgejo</a>
                             </li>
                         @endif
                         <li>

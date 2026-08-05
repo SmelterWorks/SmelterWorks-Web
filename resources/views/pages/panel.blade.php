@@ -16,7 +16,8 @@
                 the mod browser, backups, and the file editor land here as the hosting stack is wired up.
             </p>
             <p>
-                Until then, ask in community chat if configured, or use GitHub for the open-source code.
+                Until then, ask in community chat if configured, or browse the Forgejo organization for open-source
+                code.
             </p>
             <div class="action-row">
                 <x-button href="{{ route('hosting') }}">Hosting plans</x-button>
@@ -26,10 +27,10 @@
                         Fluxer
                     </x-button>
                 @endif
-                @if (filled(config('smelterworks.links.github')))
-                    <x-button href="{{ config('smelterworks.links.github') }}" variant="ghost" rel="noopener noreferrer"
-                        target="_blank">
-                        GitHub
+                @if (filled(config('smelterworks.links.forgejo')))
+                    <x-button href="{{ config('smelterworks.links.forgejo') }}" variant="ghost"
+                        rel="noopener noreferrer" target="_blank">
+                        Forgejo
                     </x-button>
                 @endif
             </div>
