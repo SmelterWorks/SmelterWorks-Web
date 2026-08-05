@@ -48,6 +48,11 @@ return [
         'link_label' => env('SMELTERWORKS_BANNER_LINK_LABEL'),
     ],
 
+    'seo' => [
+        'image' => 'images/brand/SmelterWorks-512.png',
+        'twitter' => env('SMELTERWORKS_TWITTER'),
+    ],
+
     'legal' => [
         'operator' => 'SmelterWorks',
         'contact_email' => env('SMELTERWORKS_CONTACT_EMAIL'),

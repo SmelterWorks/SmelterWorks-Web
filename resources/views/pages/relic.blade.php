@@ -1,4 +1,27 @@
-<x-layouts.site :title="$relic['name']" :description="$relic['summary']">
+@php
+    $relicJsonLd = [
+        array_filter([
+            '@type' => 'SoftwareApplication',
+            'name' => $relic['name'],
+            'applicationCategory' => 'GameApplication',
+            'operatingSystem' => collect($relic['platforms'])->pluck('label')->implode(', '),
+            'offers' => [
+                '@type' => 'Offer',
+                'price' => '0',
+                'priceCurrency' => 'USD',
+            ],
+            'description' => $relic['summary'],
+            'url' => route('relic'),
+            'downloadUrl' => route('relic.download'),
+            'image' => $relic['preview_url'] ?? null,
+            'license' => 'https://spdx.org/licenses/0BSD.html',
+            'codeRepository' => $relic['repo_url'] ?? null,
+        ], fn (mixed $value): bool => $value !== null && $value !== ''),
+    ];
+@endphp
+
+<x-layouts.site :title="$relic['name']" :description="$relic['summary']" :image="$relic['preview_url'] ?? null"
+    :image-alt="$relic['preview_alt'] ?? $relic['name']" :json-ld="$relicJsonLd">
     <section class="page-hero page-hero--split">
         <div class="page-hero__inner relic-hero">
             <div class="relic-hero__copy">

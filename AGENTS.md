@@ -21,6 +21,7 @@ This repo is open source under Apache 2.0 (`LICENSE`). Treat every commit as pub
 | Donate | `/donate` | Ko-Fi link from env |
 | Panel | `/panel` | Placeholder in this app. Redirects away if `SMELTERWORKS_PANEL_URL` is set |
 | Legal | `/privacy`, `/terms` | No ads, no tracking, no telemetry. Functional cookies only |
+| SEO | `/robots.txt`, `/sitemap.xml` | Layout emits description, canonical, Open Graph, Twitter, JSON-LD |
 
 The panel product (login, provisioning, mod browser, backups, file editor) is intended to live in this web app over time. Until then `/panel` is a stub or external redirect.
 
@@ -33,6 +34,7 @@ The panel product (login, provisioning, mod browser, backups, file editor) is in
 - `app/Support/Currency` ECB/Frankfurter FX quotes
 - `app/Support/Platform` Relic download UA detection
 - `app/Support/ContactEmail` display obfuscation for contact addresses
+- `app/Support/Seo` JSON-LD graph and sitemap URL list
 - `config/smelterworks.php` site-level copy and requires under `config/smelterworks/`
 - `config/smelterworks/hosting.php`, `relic.php`, `projects.php` focused catalogs
 - Site banner under the navbar from `smelterworks.banner` / `<x-site-banner>` (toggle and colors via env)

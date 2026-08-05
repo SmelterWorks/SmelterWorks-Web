@@ -2,9 +2,31 @@
     $platformIcon = static function (string $id): string {
         return str_starts_with($id, 'macos') ? 'macos' : $id;
     };
+
+    $relicJsonLd = [
+        array_filter([
+            '@type' => 'SoftwareApplication',
+            'name' => $relic['name'],
+            'applicationCategory' => 'GameApplication',
+            'operatingSystem' => collect($relic['platforms'])->pluck('label')->implode(', '),
+            'offers' => [
+                '@type' => 'Offer',
+                'price' => '0',
+                'priceCurrency' => 'USD',
+            ],
+            'description' => 'Download Relic Launcher for Windows, Linux, or macOS.',
+            'url' => route('relic.download'),
+            'downloadUrl' => route('relic.download'),
+            'image' => $relic['preview_url'] ?? null,
+            'license' => 'https://spdx.org/licenses/0BSD.html',
+            'codeRepository' => $relic['repo_url'] ?? null,
+        ], fn (mixed $value): bool => $value !== null && $value !== ''),
+    ];
 @endphp
 
-<x-layouts.site title="Download Relic Launcher" description="Download Relic Launcher for Windows, Linux, or macOS.">
+<x-layouts.site title="Download Relic Launcher" description="Download Relic Launcher for Windows, Linux, or macOS."
+    :image="$relic['preview_url'] ?? null" :image-alt="$relic['preview_alt'] ?? $relic['name']"
+    :json-ld="$relicJsonLd">
     <section class="page-hero">
         <div class="page-hero__inner">
             <h1 class="page-hero__title">Download Relic Launcher</h1>

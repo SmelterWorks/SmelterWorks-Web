@@ -1,4 +1,5 @@
-<x-layouts.site title="Order reserved" description="Your SmelterWorks hosting order was reserved.">
+<x-layouts.site title="Order reserved" description="Your SmelterWorks hosting order was reserved."
+    robots="noindex, nofollow">
     <section class="page-hero">
         <div class="page-hero__inner">
             <h1 class="page-hero__title">Order reserved</h1>
