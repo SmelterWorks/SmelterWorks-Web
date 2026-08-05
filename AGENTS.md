@@ -40,6 +40,7 @@ The panel product (login, provisioning, mod browser, backups, file editor) is in
 - `scripts/sync-icons.mjs` icon sync (runs under `npm run build`)
 - `resources/css/site/` CSS modules imported from `resources/css/app.css`
 - `docker/` + `Dockerfile` + `docker-compose.yml` rootless production image
+- `docker-compose.coolify.yml` Coolify stack pulling `ghcr.io/smelterworks/smelterworks-web`
 - `resources/views` Blade pages and components
 - `routes/web.php` named public routes
 - `.agents/skills/` writing and project skills
@@ -101,6 +102,7 @@ GitHub Actions workflows live in `.github/workflows/`. Actions are pinned to ful
 | Workflow | Purpose |
 | --- | --- |
 | `ci.yml` | PHP tests, Pint, Vite build |
+| `docker.yml` | GHCR image build and publish |
 | `links.yml` | Lychee dead-link check |
 | `codeql.yml` | CodeQL |
 | `dependency-review.yml` | Vulnerable dependency gate on PRs |

@@ -67,7 +67,7 @@ docker compose up -d
 
 The runtime listens on port 8080, drops capabilities, uses a read-only root filesystem, and health-checks `/up`.
 
-For Coolify, use `docker-compose.coolify.yml` as the Compose file. It skips host port publishes, routes through Coolify's proxy with `SERVICE_URL_WEB_8080`, and surfaces `APP_KEY` plus optional `SMELTERWORKS_*` links in the Coolify UI. Set `APP_KEY` before the first deploy (`php artisan key:generate --show`).
+For Coolify, use `docker-compose.coolify.yml`. It pulls `ghcr.io/smelterworks/smelterworks-web` (built by the Docker workflow), skips host port publishes, and routes through Coolify's proxy with `SERVICE_URL_WEB_8080`. Set `APP_KEY` before the first deploy (`php artisan key:generate --show`). Optionally set `IMAGE_TAG` (default `latest`, or a release / `sha-…` tag). Make the GHCR package public under the org Packages settings so Coolify can pull without a token.
 
 ## CI/CD
 
@@ -76,6 +76,7 @@ GitHub Actions runs on pushes and pull requests to `main`:
 | Workflow | Purpose |
 | --- | --- |
 | `ci.yml` | PHP 8.4/8.5 tests, Pint, PHPStan, Blade format check, Vite build |
+| `docker.yml` | Build and publish `ghcr.io/smelterworks/smelterworks-web` |
 | `links.yml` | Dead link check on docs, config URLs, and Blade templates |
 | `codeql.yml` | CodeQL for PHP, JavaScript, and Actions |
 | `dependency-review.yml` | Blocks PRs that add vulnerable dependencies |

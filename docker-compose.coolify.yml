@@ -1,22 +1,20 @@
 # Coolify Docker Compose for SmelterWorks Web.
 # Point Coolify at this file (Docker Compose build pack).
+# Pulls the prebuilt image from GHCR (published by .github/workflows/docker.yml).
 # Do not publish host ports: Coolify's proxy routes by domain.
 # Assign a domain in the Coolify UI, or rely on SERVICE_URL_WEB_8080.
 # Container listens on 8080 (not 80), so the port suffix is required.
 #
 # Before first deploy, set APP_KEY in Coolify (php artisan key:generate --show).
+# IMAGE_TAG defaults to latest. Pin to a release (v1.2.3) or sha-abcdef for deploys.
+# Make the GHCR package public, or add a pull token for private packages.
 
 name: smelterworks-web
 
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        OCI_VERSION: ${OCI_VERSION:-coolify}
-        OCI_REVISION: ${SOURCE_COMMIT:-unknown}
-    image: smelterworks/web:${OCI_VERSION:-coolify}
+    image: ghcr.io/smelterworks/smelterworks-web:${IMAGE_TAG:-latest}
+    pull_policy: always
     init: true
     read_only: true
     security_opt:
