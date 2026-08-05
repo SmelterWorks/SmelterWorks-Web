@@ -16,7 +16,7 @@ module.exports = {
             startServerReadyPattern: 'Development Server \\(http',
             settings: {
                 preset: 'desktop',
-                chromeFlags: '--no-sandbox --headless --disable-dev-shm-usage',
+                chromeFlags: '--headless=new --no-sandbox --disable-dev-shm-usage --disable-gpu',
             },
         },
         assert: {

@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-# Absolute path so artisan serve workers can re-exec this wrapper with -c.
-exec /usr/bin/php -c "$ROOT/php-local.ini" "$@"
+PHP_BIN="$(command -v php)"
+
+# Arch/CachyOS: php-local.ini loads SQLite and other extensions from /usr/lib/php/modules.
+if [[ -d /usr/lib/php/modules ]]; then
+    exec "$PHP_BIN" -c "$ROOT/php-local.ini" "$@"
+fi
+
+exec "$PHP_BIN" -d memory_limit=512M "$@"

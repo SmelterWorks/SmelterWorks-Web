@@ -69,10 +69,4 @@ if ($uri !== '/' && is_file($path)) {
     return true;
 }
 
-$acceptEncoding = $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '';
-
-if (str_contains($acceptEncoding, 'gzip')) {
-    ob_start('ob_gzhandler');
-}
-
 require $documentRoot.'/index.php';

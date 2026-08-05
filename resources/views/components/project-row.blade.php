@@ -14,6 +14,6 @@
     </div>
 
     <a class="project-row__action" href="{{ $project->url() }}">
-        View
+        View {{ $project->name }}
     </a>
 </article>

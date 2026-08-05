@@ -1,7 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-export PHP_BINARY="$ROOT/bin/php"
 HOST="${LIGHTHOUSE_HOST:-127.0.0.1}"
 PORT="${LIGHTHOUSE_PORT:-8765}"
-exec "$ROOT/bin/php" -S "${HOST}:${PORT}" -t "$ROOT/public" "$ROOT/scripts/lighthouse-router.php"
+
+if [[ -n "${LIGHTHOUSE_PHP:-}" ]]; then
+    PHP_BIN="$LIGHTHOUSE_PHP"
+elif [[ -d /usr/lib/php/modules ]]; then
+    PHP_BIN="$ROOT/bin/php"
+    export PHP_BINARY="$PHP_BIN"
+else
+    PHP_BIN="$(command -v php)"
+    export PHP_BINARY="$PHP_BIN"
+fi
+
+exec "$PHP_BIN" -S "${HOST}:${PORT}" -t "$ROOT/public" "$ROOT/scripts/lighthouse-router.php"

@@ -61,12 +61,14 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate --ansi
+          touch database/database.sqlite
 
       - name: Run Lighthouse CI
         run: npm run lighthouse:ci
         env:
           APP_ENV: production
           APP_DEBUG: false
+          APP_URL: http://127.0.0.1:8765
 
       - name: Update Lighthouse score badge
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -92,3 +94,4 @@ jobs:
           path: .lighthouseci
           if-no-files-found: warn
           retention-days: 7
+          include-hidden-files: true
