@@ -83,6 +83,7 @@
 
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('head')
 </head>
 
 <body class="min-h-dvh bg-ash text-iron antialiased">

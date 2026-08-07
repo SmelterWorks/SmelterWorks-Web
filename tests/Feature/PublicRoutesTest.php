@@ -19,6 +19,7 @@ class PublicRoutesTest extends TestCase
             'home' => ['home'],
             'hosting' => ['hosting'],
             'hosting feed' => ['hosting.feed'],
+            'servers' => ['servers'],
             'mods' => ['mods'],
             'relic' => ['relic'],
             'relic download' => ['relic.download'],

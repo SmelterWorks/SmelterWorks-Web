@@ -9,6 +9,7 @@ use App\Support\Hosting\HostingPurchaseService;
 use App\Support\Hosting\HostingStockService;
 use App\Support\Relic\RelicCatalog;
 use App\Support\Relic\RelicGitHubReleases;
+use App\Support\Servers\MasterServerListService;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(HostingPurchaseService::class);
         $this->app->singleton(RelicGitHubReleases::class);
         $this->app->singleton(RelicCatalog::class);
+        $this->app->singleton(MasterServerListService::class);
     }
 
     /**

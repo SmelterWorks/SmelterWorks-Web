@@ -16,6 +16,7 @@ This repo is open source under Apache 2.0 (`LICENSE`). Treat every commit as pub
 | --- | --- | --- |
 | Website | `/`, `/projects`, `/mods`, `/about`, `/contribute` | Catalog and copy from `config/smelterworks.php` |
 | Hosting | `/hosting` (+ purchase routes) | Plans and regions are public. Checkout is gated by `hosting.coming_soon` |
+| Servers | `/servers`, `/api/v1/servers/list` | Hidden tool. Cached master list proxy for Relic. Not linked in site nav |
 | Relic | `/relic`, `/relic/download` | Download page auto-detects OS from User-Agent |
 | Contact | `/contact` | Email shown obfuscated (`[at]`, `[dot]`) when configured |
 | Donate | `/donate` | Ko-Fi link from env |
@@ -32,6 +33,7 @@ The panel product (login, provisioning, mod browser, backups, file editor) is in
 - `app/Support/Content` catalog services
 - `app/Support/Hosting` stock and purchase services
 - `app/Support/Currency` ECB/Frankfurter FX quotes
+- `app/Support/Servers` Vintage Story master list cache proxy
 - `app/Support/Platform` Relic download UA detection
 - `app/Support/ContactEmail` display obfuscation for contact addresses
 - `app/Support/Seo` JSON-LD graph and sitemap URL list

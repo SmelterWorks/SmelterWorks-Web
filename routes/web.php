@@ -7,6 +7,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RelicController;
 use App\Http\Controllers\RobotsController;
+use App\Http\Controllers\ServersPageController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,7 @@ Route::post('/hosting/purchase', [HostingController::class, 'store'])
 Route::get('/hosting/orders/{purchase}', [HostingController::class, 'show'])->name('hosting.purchases.show');
 
 Route::get('/mods', [PageController::class, 'mods'])->name('mods');
+Route::get('/servers', ServersPageController::class)->name('servers');
 Route::get('/relic', [RelicController::class, 'show'])->name('relic');
 Route::get('/relic/download', [RelicController::class, 'download'])->name('relic.download');
 Route::get('/panel', [PageController::class, 'panel'])->name('panel');

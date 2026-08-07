@@ -1,0 +1,20 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "smelterworks/vintage-story-serverlist",
+    "description": "Vintage Story public master server list client, snapshot, and query helpers.",
+    "license": "Apache-2.0",
+    "type": "library",
+    "require": {
+        "php": "^8.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "SmelterWorks\\VintageStoryServerList\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SmelterWorks\\VintageStoryServerList\\Tests\\": "tests/"
+        }
+    }
+}

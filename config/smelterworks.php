@@ -67,5 +67,6 @@ return [
     'relic' => require __DIR__.'/smelterworks/relic.php',
     'projects' => require __DIR__.'/smelterworks/projects.php',
     'branding' => require __DIR__.'/smelterworks/branding.php',
+    'servers' => require __DIR__.'/smelterworks/servers.php',
 
 ];

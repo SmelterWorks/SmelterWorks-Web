@@ -24,6 +24,7 @@ on:
       - .dockerignore
       - composer.json
       - composer.lock
+      - packages/**
       - package.json
       - pnpm-lock.yaml
       - pnpm-workspace.yaml

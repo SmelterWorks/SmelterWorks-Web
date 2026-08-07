@@ -43,6 +43,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1 \
     COMPOSER_ALLOW_PLUGINS=1
 
 COPY composer.json composer.lock ./
+COPY packages/vintage-story-serverlist ./packages/vintage-story-serverlist
 RUN composer install \
     --no-dev \
     --no-scripts \
@@ -117,6 +118,7 @@ COPY docker/php.ini /usr/local/etc/php/conf.d/zz-security.ini
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 COPY --from=vendor --chown=app:app /app/vendor ./vendor
+COPY --from=vendor --chown=app:app /app/packages/vintage-story-serverlist ./packages/vintage-story-serverlist
 
 COPY --chown=app:app app ./app
 COPY --chown=app:app bootstrap ./bootstrap

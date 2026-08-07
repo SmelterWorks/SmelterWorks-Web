@@ -66,6 +66,7 @@ class SeoTest extends TestCase
             ->assertSee(route('home'), false)
             ->assertSee(route('hosting'), false)
             ->assertSee(route('relic'), false)
+            ->assertDontSee(route('servers'), false)
             ->assertSee(route('branding'), false)
             ->assertSee(route('privacy'), false)
             ->assertDontSee('/hosting/friends/purchase', false);

@@ -1,6 +1,7 @@
 <?php
 
 use App\Support\Currency\ExchangeRateService;
+use App\Support\Servers\MasterServerListService;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -12,3 +13,7 @@ Artisan::command('inspire', function () {
 Schedule::call(function (): void {
     app(ExchangeRateService::class)->warmCache();
 })->everySixHours();
+
+Schedule::call(function (): void {
+    app(MasterServerListService::class)->warmCache();
+})->everyTwoMinutes();

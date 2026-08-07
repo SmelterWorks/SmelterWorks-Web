@@ -8,8 +8,18 @@
     "require": {
         "php": "^8.5",
         "laravel/framework": "^13.8",
-        "laravel/tinker": "^3.0"
+        "laravel/tinker": "^3.0",
+        "smelterworks/vintage-story-serverlist": "@dev"
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/vintage-story-serverlist",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.0",
