@@ -42,7 +42,7 @@ class GitHubReleaseSourceTest extends TestCase
         $this->assertNotNull($release);
         $this->assertSame('v0.1.0', $release->tag);
         $this->assertSame('0.1.0', $release->version);
-        $this->assertCount(1, $release->assets);
+        $this->assertCount(2, $release->assets);
     }
 
     public function test_fetch_nightly_channel_picks_newest_tag(): void

@@ -48,8 +48,6 @@ trait FakesRelicReleases
      */
     protected function relicStableReleaseFixture(string $tag = 'v0.1.0'): array
     {
-        $version = ltrim($tag, 'v');
-
         return [
             'tag_name' => $tag,
             'prerelease' => false,
@@ -59,6 +57,10 @@ trait FakesRelicReleases
                 [
                     'name' => "relic-launcher-{$tag}-win-x64.zip",
                     'browser_download_url' => 'https://example.test/stable-win.zip',
+                ],
+                [
+                    'name' => "relic-launcher-{$tag}-linux-x64.AppImage",
+                    'browser_download_url' => 'https://example.test/stable-linux.AppImage',
                 ],
             ],
         ];

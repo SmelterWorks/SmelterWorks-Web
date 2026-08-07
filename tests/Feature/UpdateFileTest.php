@@ -4,12 +4,14 @@ namespace Tests\Feature;
 
 use App\Support\Updates\UpdateMirrorService;
 use Illuminate\Support\Facades\Cache;
+use Tests\Support\AssertsCacheControl;
 use Tests\Support\FakesProductUpdates;
 use Tests\Support\FakesRelicReleases;
 use Tests\TestCase;
 
 class UpdateFileTest extends TestCase
 {
+    use AssertsCacheControl;
     use FakesProductUpdates;
     use FakesRelicReleases;
 
@@ -25,10 +27,11 @@ class UpdateFileTest extends TestCase
     {
         $this->fakeAndWarmRelicMirror($this->relicStableReleaseFixture('v0.1.0'));
 
-        $this->get('/files/relic/0.1.0/relic-launcher-v0.1.0-win-x64.zip')
-            ->assertOk()
-            ->assertHeader('Content-Type', 'application/octet-stream')
-            ->assertHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        $response = $this->get('/files/relic/0.1.0/relic-launcher-v0.1.0-win-x64.zip');
+
+        $response->assertOk()
+            ->assertHeader('Content-Type', 'application/octet-stream');
+        $this->assertCacheControlDirectives($response, ['public', 'max-age=31536000', 'immutable']);
     }
 
     public function test_file_endpoint_rejects_path_traversal(): void

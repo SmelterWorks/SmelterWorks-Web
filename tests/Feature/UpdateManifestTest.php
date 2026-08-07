@@ -4,12 +4,14 @@ namespace Tests\Feature;
 
 use App\Support\Updates\UpdateMirrorService;
 use Illuminate\Support\Facades\Cache;
+use Tests\Support\AssertsCacheControl;
 use Tests\Support\FakesProductUpdates;
 use Tests\Support\FakesRelicReleases;
 use Tests\TestCase;
 
 class UpdateManifestTest extends TestCase
 {
+    use AssertsCacheControl;
     use FakesProductUpdates;
     use FakesRelicReleases;
 
@@ -28,14 +30,14 @@ class UpdateManifestTest extends TestCase
         $response = $this->get('/updates/relic/stable.json');
 
         $response->assertOk()
-            ->assertHeader('ETag')
-            ->assertHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=3600')
-            ->assertJson([
-                'schemaVersion' => 1,
-                'product' => 'relic',
-                'channel' => 'stable',
-                'version' => '0.1.0',
-            ]);
+            ->assertHeader('ETag');
+        $this->assertCacheControlDirectives($response, ['public', 'max-age=300', 'stale-while-revalidate=3600']);
+        $response->assertJson([
+            'schemaVersion' => 1,
+            'product' => 'relic',
+            'channel' => 'stable',
+            'version' => '0.1.0',
+        ]);
 
         $this->assertStringContainsString(
             '/files/relic/0.1.0/relic-launcher-v0.1.0-win-x64.zip',
