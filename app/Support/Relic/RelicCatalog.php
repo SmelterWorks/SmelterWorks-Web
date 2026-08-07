@@ -2,10 +2,17 @@
 
 namespace App\Support\Relic;
 
+use App\Support\Updates\Data\ChannelManifest;
+use App\Support\Updates\Data\MirroredAsset;
+use App\Support\Updates\UpdateMirrorService;
+
 class RelicCatalog
 {
+    private const PRODUCT = 'relic';
+
     public function __construct(
-        private readonly RelicGitHubReleases $releases,
+        private readonly UpdateMirrorService $mirror,
+        private readonly UpdateProductRegistry $updates,
     ) {}
 
     /**
@@ -46,48 +53,26 @@ class RelicCatalog
     public function forDownloadPage(?array $relic = null): array
     {
         $relic = $this->forView($relic);
-        $parsed = $this->parsedReleasesRepo($relic);
 
-        $stableRelease = $parsed === null
-            ? null
-            : $this->releases->latestStable($parsed['owner'], $parsed['repo']);
-
-        $stable = [
-            'available' => $stableRelease !== null,
-            'tag' => $stableRelease['tag'] ?? null,
-            'html_url' => $stableRelease !== null
-                ? ($stableRelease['html_url'] !== '' ? $stableRelease['html_url'] : (string) $relic['releases_url'])
-                : null,
-            'published_at' => $stableRelease['published_at'] ?? null,
-        ];
-
-        $downloads = $this->stableDownloads($relic, $stableRelease);
+        $stableManifest = $this->mirror->getChannelManifest(self::PRODUCT, 'stable');
+        $stable = $this->channelSummary($stableManifest, (string) $relic['releases_url']);
+        $downloads = $this->buildDownloads($relic, $stableManifest, 'stable');
 
         $nightlyEnabled = (bool) data_get($relic, 'nightly.enabled', true);
+        $nightlyManifest = $nightlyEnabled
+            ? $this->mirror->getChannelManifest(self::PRODUCT, 'nightly')
+            : null;
+
         $nightly = [
             'enabled' => $nightlyEnabled,
-            'available' => false,
-            'tag' => null,
-            'html_url' => null,
-            'published_at' => null,
-            'downloads' => [],
+            'available' => $nightlyManifest !== null,
+            'tag' => $this->displayTag($nightlyManifest),
+            'html_url' => $nightlyManifest?->releaseNotesUrl ?: (string) $relic['nightly_list_url'],
+            'published_at' => $nightlyManifest?->publishedAt,
+            'downloads' => $nightlyEnabled
+                ? $this->buildDownloads($relic, $nightlyManifest, 'nightly')
+                : [],
         ];
-
-        if ($nightlyEnabled && $parsed !== null) {
-            $latest = $this->releases->latestNightly($parsed['owner'], $parsed['repo']);
-
-            if ($latest !== null) {
-                $nightly['available'] = true;
-                $nightly['tag'] = $latest['tag'];
-                $nightly['html_url'] = $latest['html_url'] !== ''
-                    ? $latest['html_url']
-                    : (string) $relic['nightly_list_url'];
-                $nightly['published_at'] = $latest['published_at'];
-                $nightly['downloads'] = $this->nightlyDownloads($relic, $latest);
-            } else {
-                $nightly['downloads'] = $this->nightlyFallbackDownloads($relic);
-            }
-        }
 
         return [
             'relic' => $relic,
@@ -122,33 +107,12 @@ class RelicCatalog
 
     /**
      * @param  array<string, mixed>  $relic
-     * @return array{owner: string, repo: string}|null
-     */
-    private function parsedReleasesRepo(array $relic): ?array
-    {
-        return $this->releases->parseRepo((string) ($relic['releases_repo_url'] ?? ''));
-    }
-
-    /**
-     * @param  array<string, mixed>  $relic
      * @return array<string, mixed>
      */
     private function withStableTag(array $relic): array
     {
-        $relic['stable_tag'] = null;
-
-        $parsed = $this->parsedReleasesRepo($relic);
-
-        if ($parsed === null) {
-            return $relic;
-        }
-
-        $stable = $this->releases->latestStable($parsed['owner'], $parsed['repo']);
-        $tag = $stable['tag'] ?? null;
-
-        if (filled($tag)) {
-            $relic['stable_tag'] = (string) $tag;
-        }
+        $manifest = $this->mirror->getChannelManifest(self::PRODUCT, 'stable');
+        $relic['stable_tag'] = $this->displayTag($manifest);
 
         return $relic;
     }
@@ -188,10 +152,12 @@ class RelicCatalog
      */
     private function withReleaseUrls(array $relic): array
     {
+        $stableManifest = $this->mirror->getChannelManifest(self::PRODUCT, 'stable');
         $releasesRepo = rtrim((string) ($relic['releases_repo_url'] ?? ''), '/');
+
         $releasesUrl = filled($relic['releases_url'] ?? null)
             ? (string) $relic['releases_url']
-            : ($releasesRepo !== '' ? $releasesRepo.'/releases/latest' : '');
+            : ($stableManifest?->releaseNotesUrl ?: ($releasesRepo !== '' ? $releasesRepo.'/releases/latest' : ''));
 
         $relic['releases_url'] = $releasesUrl;
         $relic['nightly_list_url'] = $releasesRepo !== '' ? $releasesRepo.'/releases' : '';
@@ -201,114 +167,86 @@ class RelicCatalog
 
     /**
      * @param  array<string, mixed>  $relic
-     * @param  array{
-     *     tag: string,
-     *     html_url: string,
-     *     published_at: string|null,
-     *     assets: list<array{name: string, browser_download_url: string}>
-     * }|null  $stable
      * @return list<array<string, mixed>>
      */
-    private function stableDownloads(array $relic, ?array $stable): array
+    private function buildDownloads(array $relic, ?ChannelManifest $manifest, string $channel): array
     {
         /** @var list<array<string, mixed>> $downloads */
         $downloads = $relic['downloads'] ?? [];
 
-        if ($stable === null) {
-            return collect($downloads)
-                ->map(function (array $download): array {
-                    $download['channel'] = 'stable';
-                    $download['available'] = false;
-                    $download['url'] = '';
-                    $download['rid'] = (string) ($download['rid'] ?? '');
+        return collect($downloads)
+            ->map(function (array $download) use ($manifest, $channel): array {
+                $rid = (string) ($download['rid'] ?? '');
+                $asset = $rid !== '' && $manifest !== null
+                    ? $this->assetForRid($manifest, $rid)
+                    : null;
 
-                    return $download;
-                })
-                ->values()
-                ->all();
+                $download['channel'] = $channel;
+                $download['rid'] = $rid;
+                $download['available'] = $asset !== null;
+                $download['url'] = $asset !== null
+                    ? $this->mirror->fileUrl(self::PRODUCT, $manifest->version, $asset->filename)
+                    : '';
+
+                if ($channel === 'nightly') {
+                    $download['detail'] = $this->nightlyDetail($download, $asset !== null);
+                }
+
+                return $download;
+            })
+            ->values()
+            ->all();
+    }
+
+    private function assetForRid(ChannelManifest $manifest, string $rid): ?MirroredAsset
+    {
+        foreach ($manifest->assets as $asset) {
+            if ($asset->rid === $rid) {
+                return $asset;
+            }
         }
 
-        $fallback = $stable['html_url'] !== ''
-            ? $stable['html_url']
-            : (string) $relic['releases_url'];
-
-        return collect($downloads)
-            ->map(function (array $download) use ($stable, $fallback): array {
-                $rid = (string) ($download['rid'] ?? '');
-                $assetUrl = $rid !== ''
-                    ? $this->releases->assetUrlForRid($stable['assets'], $rid)
-                    : null;
-
-                $download['channel'] = 'stable';
-                $download['available'] = $assetUrl !== null || $fallback !== '';
-                $download['url'] = $assetUrl ?? $fallback;
-                $download['rid'] = $rid;
-
-                return $download;
-            })
-            ->values()
-            ->all();
+        return null;
     }
 
     /**
-     * @param  array<string, mixed>  $relic
-     * @param  array{
-     *     tag: string,
-     *     html_url: string,
-     *     published_at: string|null,
-     *     assets: list<array{name: string, browser_download_url: string}>
-     * }  $nightly
-     * @return list<array<string, mixed>>
+     * @return array{
+     *     available: bool,
+     *     tag: string|null,
+     *     html_url: string|null,
+     *     published_at: string|null
+     * }
      */
-    private function nightlyDownloads(array $relic, array $nightly): array
+    private function channelSummary(?ChannelManifest $manifest, string $fallbackUrl): array
     {
-        $fallback = $nightly['html_url'] !== ''
-            ? $nightly['html_url']
-            : (string) $relic['nightly_list_url'];
+        if ($manifest === null) {
+            return [
+                'available' => false,
+                'tag' => null,
+                'html_url' => null,
+                'published_at' => null,
+            ];
+        }
 
-        /** @var list<array<string, mixed>> $downloads */
-        $downloads = $relic['downloads'] ?? [];
-
-        return collect($downloads)
-            ->map(function (array $download) use ($nightly): array {
-                $rid = (string) ($download['rid'] ?? '');
-                $assetUrl = $rid !== ''
-                    ? $this->releases->assetUrlForRid($nightly['assets'], $rid)
-                    : null;
-
-                $download['channel'] = 'nightly';
-                $download['available'] = $assetUrl !== null;
-                $download['url'] = $assetUrl ?? '';
-                $download['rid'] = $rid;
-                $download['detail'] = $this->nightlyDetail($download, $assetUrl !== null);
-
-                return $download;
-            })
-            ->values()
-            ->all();
+        return [
+            'available' => true,
+            'tag' => $this->displayTag($manifest),
+            'html_url' => $manifest->releaseNotesUrl !== '' ? $manifest->releaseNotesUrl : $fallbackUrl,
+            'published_at' => $manifest->publishedAt,
+        ];
     }
 
-    /**
-     * @param  array<string, mixed>  $relic
-     * @return list<array<string, mixed>>
-     */
-    private function nightlyFallbackDownloads(array $relic): array
+    private function displayTag(?ChannelManifest $manifest): ?string
     {
-        /** @var list<array<string, mixed>> $downloads */
-        $downloads = $relic['downloads'] ?? [];
+        if ($manifest === null) {
+            return null;
+        }
 
-        return collect($downloads)
-            ->map(function (array $download): array {
-                $download['channel'] = 'nightly';
-                $download['available'] = false;
-                $download['url'] = '';
-                $download['rid'] = (string) ($download['rid'] ?? '');
-                $download['detail'] = $this->nightlyDetail($download, false);
+        if (preg_match('/^\d+\./', $manifest->version)) {
+            return 'v'.$manifest->version;
+        }
 
-                return $download;
-            })
-            ->values()
-            ->all();
+        return $manifest->version;
     }
 
     /**

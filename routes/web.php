@@ -9,6 +9,8 @@ use App\Http\Controllers\RelicController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\ServersPageController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\UpdateFileController;
+use App\Http\Controllers\UpdateManifestController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/robots.txt', RobotsController::class)->name('robots');
@@ -31,6 +33,13 @@ Route::get('/mods', [PageController::class, 'mods'])->name('mods');
 Route::get('/servers', ServersPageController::class)->name('servers');
 Route::get('/relic', [RelicController::class, 'show'])->name('relic');
 Route::get('/relic/download', [RelicController::class, 'download'])->name('relic.download');
+
+Route::get('/updates/{product}/{channel}.json', UpdateManifestController::class)
+    ->name('updates.manifest');
+Route::get('/files/{product}/{version}/{filename}', UpdateFileController::class)
+    ->middleware('throttle:60,1')
+    ->name('updates.file');
+
 Route::get('/panel', [PageController::class, 'panel'])->name('panel');
 
 Route::get('/about', [PageController::class, 'about'])->name('about');

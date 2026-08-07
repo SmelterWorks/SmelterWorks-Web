@@ -13,6 +13,8 @@ class RobotsController extends Controller
             'Allow: /',
             'Disallow: /hosting/*/purchase',
             'Disallow: /hosting/orders/',
+            'Disallow: /updates/',
+            'Disallow: /files/',
             '',
             'Sitemap: '.url('/sitemap.xml'),
             '',

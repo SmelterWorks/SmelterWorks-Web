@@ -3,15 +3,17 @@
 namespace Tests\Feature;
 
 use App\Support\Relic\RelicCatalog;
-use App\Support\Relic\RelicGitHubReleases;
+use App\Support\Updates\UpdateMirrorService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use Tests\Support\FakesProductUpdates;
 use Tests\Support\FakesRelicReleases;
 use Tests\TestCase;
 
 class RelicPageTest extends TestCase
 {
+    use FakesProductUpdates;
     use FakesRelicReleases;
     use RefreshDatabase;
 
@@ -20,13 +22,13 @@ class RelicPageTest extends TestCase
         parent::setUp();
 
         Cache::flush();
-        app()->forgetInstance(RelicGitHubReleases::class);
+        app()->forgetInstance(UpdateMirrorService::class);
         app()->forgetInstance(RelicCatalog::class);
     }
 
     public function test_relic_page_renders_with_default_config(): void
     {
-        $this->fakeRelicEmptyReleases();
+        $this->fakeRelicEmptyMirror();
 
         $this->get(route('relic'))
             ->assertOk()
@@ -45,7 +47,7 @@ class RelicPageTest extends TestCase
 
     public function test_relic_page_shows_stable_version_badge_on_download_button(): void
     {
-        $this->fakeStableRelease();
+        $this->fakeStableMirror();
 
         $this->get(route('relic'))
             ->assertOk()
@@ -61,7 +63,7 @@ class RelicPageTest extends TestCase
             'macOS 13+ (x64 and arm64)',
         ]);
 
-        $this->fakeRelicEmptyReleases();
+        $this->fakeRelicEmptyMirror();
 
         $this->get(route('relic'))
             ->assertOk()
@@ -73,7 +75,7 @@ class RelicPageTest extends TestCase
 
     public function test_relic_download_page_detects_windows(): void
     {
-        $this->fakeStableRelease();
+        $this->fakeStableMirror();
 
         $this->withHeader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36')
             ->get(route('relic.download'))
@@ -90,7 +92,7 @@ class RelicPageTest extends TestCase
 
     public function test_relic_download_page_detects_linux(): void
     {
-        $this->fakeStableRelease();
+        $this->fakeStableMirror();
 
         $this->withHeader('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36')
             ->get(route('relic.download'))
@@ -101,7 +103,7 @@ class RelicPageTest extends TestCase
 
     public function test_relic_download_page_shows_empty_state_without_releases(): void
     {
-        $this->fakeRelicEmptyReleases();
+        $this->fakeRelicEmptyMirror();
 
         $this->get(route('relic.download'))
             ->assertOk()
@@ -114,7 +116,7 @@ class RelicPageTest extends TestCase
 
     public function test_relic_download_page_can_hide_nightly_channel(): void
     {
-        $this->fakeStableRelease();
+        $this->fakeStableMirror();
         Config::set('smelterworks.relic.nightly.enabled', false);
 
         $this->get(route('relic.download'))
@@ -125,26 +127,26 @@ class RelicPageTest extends TestCase
 
     public function test_relic_pages_do_not_promote_hosting(): void
     {
-        $this->fakeRelicEmptyReleases();
+        $this->fakeRelicEmptyMirror();
 
         $this->get(route('relic'))
             ->assertDontSee('View hosting', false)
             ->assertDontSee('Buy hosting', false)
             ->assertDontSee('Server hosting integration', false);
 
-        $this->fakeStableRelease();
+        $this->fakeStableMirror();
 
         $this->get(route('relic.download'))
             ->assertDontSee('View hosting', false)
             ->assertDontSee('Buy hosting', false);
     }
 
-    private function fakeStableRelease(): void
+    private function fakeStableMirror(): void
     {
         Cache::flush();
-        app()->forgetInstance(RelicGitHubReleases::class);
+        app()->forgetInstance(UpdateMirrorService::class);
         app()->forgetInstance(RelicCatalog::class);
 
-        $this->fakeRelicLatestStable($this->relicStableReleaseFixture('v0.1.0'));
+        $this->fakeAndWarmRelicMirror($this->relicStableReleaseFixture('v0.1.0'));
     }
 }

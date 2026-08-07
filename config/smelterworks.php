@@ -68,5 +68,6 @@ return [
     'projects' => require __DIR__.'/smelterworks/projects.php',
     'branding' => require __DIR__.'/smelterworks/branding.php',
     'servers' => require __DIR__.'/smelterworks/servers.php',
+    'updates' => require __DIR__.'/smelterworks/updates.php',
 
 ];
