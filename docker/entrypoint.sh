@@ -66,6 +66,8 @@ php artisan view:cache --no-ansi
 
 php artisan migrate --force --no-interaction --no-ansi || true
 
+(php artisan updates:warm --no-ansi || true) &
+
 php-fpm -D
 # -e /dev/null skips nginx's compiled-in default error log (opened before
 # nginx.conf is even read), which otherwise logs a startup alert here.

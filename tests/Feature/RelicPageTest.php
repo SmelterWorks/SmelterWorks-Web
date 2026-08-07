@@ -107,7 +107,7 @@ class RelicPageTest extends TestCase
 
         $this->get(route('relic.download'))
             ->assertOk()
-            ->assertSee('No stable release is published yet', false)
+            ->assertSee('No stable build is mirrored on this site yet', false)
             ->assertSee('No nightly pre-release is published right now', false)
             ->assertSee('Not available', false)
             ->assertSee('No nightly yet', false)

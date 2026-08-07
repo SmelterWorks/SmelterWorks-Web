@@ -38,7 +38,7 @@
                 @else
                     Pick a build for your system.
                 @endif
-                Stable builds ship from GitHub Releases. Nightly builds are pre-releases from the same mirror.
+                Stable and nightly installers download from this site. Release notes stay on the upstream tracker.
             </p>
             <div class="platform-list platform-list--compact">
                 <x-platform-chip platform="windows" label="Windows" detail="10+ x64" />
@@ -61,7 +61,7 @@
                     </div>
                     <p class="download-hero__detail">{{ $suggested['detail'] }}</p>
                     <div class="action-row">
-                        <x-button :href="$suggested['url']" rel="noopener noreferrer" target="_blank">
+                        <x-button :href="$suggested['url']">
                             Download {{ $suggested['label'] }}
                         </x-button>
                         @if ($stable['available'] && filled($stable['html_url']))
@@ -81,13 +81,19 @@
                         <a href="{{ $stable['html_url'] }}" rel="noopener noreferrer"
                             target="_blank">{{ $stable['tag'] }}</a>.
                     @else
-                        Stable release files are on GitHub Releases.
+                        Pick the build for your OS below.
                     @endif
                     Pick the asset for your OS below.
                 </p>
             @else
                 <p class="download-channel__lede">
-                    No stable release is published yet. Check back after the first GitHub release ships.
+                    No stable build is mirrored on this site yet. The server pulls releases automatically.
+                    Refresh in a few minutes.
+                    @if (filled($relic['releases_url']))
+                        Upstream release notes:
+                        <a href="{{ $relic['releases_url'] }}" rel="noopener noreferrer"
+                            target="_blank">open tracker</a>.
+                    @endif
                 </p>
             @endif
 
@@ -108,7 +114,7 @@
                             </div>
                         </div>
                         @if (($download['available'] ?? false) && filled($download['url']))
-                            <x-button :href="$download['url']" variant="ghost" rel="noopener noreferrer" target="_blank">
+                            <x-button :href="$download['url']" variant="ghost">
                                 Download
                             </x-button>
                         @else
@@ -148,8 +154,7 @@
                                     </div>
                                 </div>
                                 @if (($download['available'] ?? false) && filled($download['url']))
-                                    <x-button :href="$download['url']" variant="ghost" rel="noopener noreferrer"
-                                        target="_blank">
+                                    <x-button :href="$download['url']" variant="ghost">
                                         Download nightly
                                     </x-button>
                                 @else
@@ -163,10 +168,15 @@
 
             <div class="prose-block" style="margin-top: 2rem;">
                 <p>
-                    Source and issue tracker on Forgejo:
+                    Source and issues:
                     <a href="{{ $relic['repo_url'] }}" rel="noopener noreferrer"
                         target="_blank">{{ $relic['repo_url'] }}</a>.
-                    Release binaries are mirrored on GitHub.
+                    Installers are cached on this site.
+                    @if (filled($relic['releases_url']))
+                        Release notes:
+                        <a href="{{ $relic['releases_url'] }}" rel="noopener noreferrer"
+                            target="_blank">{{ $relic['releases_url'] }}</a>.
+                    @endif
                 </p>
                 <div class="action-row">
                     <x-button :href="route('relic')" variant="ghost">Back to Relic</x-button>
