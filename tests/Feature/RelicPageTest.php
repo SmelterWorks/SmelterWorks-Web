@@ -84,6 +84,11 @@ class RelicPageTest extends TestCase
             ->assertSee('Looks like you are on Windows', false)
             ->assertSee('Suggested for you', false)
             ->assertSee('Download Windows', false)
+            ->assertSee('download-formats__option', false)
+            ->assertSee('Installer', false)
+            ->assertSee('Portable', false)
+            ->assertSee('relic-preview--compact', false)
+            ->assertSee('home-relic-default.webp', false)
             ->assertSee('download-card__icon', false)
             ->assertSee('v0.1.0', false)
             ->assertSee('Nightly pre-release', false)
@@ -98,7 +103,10 @@ class RelicPageTest extends TestCase
             ->get(route('relic.download'))
             ->assertOk()
             ->assertSee('Looks like you are on Linux', false)
-            ->assertSee('Download Linux', false);
+            ->assertSee('Download Linux', false)
+            ->assertSee('AppImage', false)
+            ->assertSee('Fedora (RPM)', false)
+            ->assertSee('Flatpak', false);
     }
 
     public function test_relic_download_page_shows_empty_state_without_releases(): void

@@ -54,17 +54,8 @@
             </div>
 
             @if (filled($relic['preview_url'] ?? null))
-                <figure class="relic-preview">
-                    <picture>
-                        @if (filled($relic['preview_webp'] ?? null))
-                            <source srcset="{{ $relic['preview_webp'] }}" type="image/webp">
-                        @endif
-                        <img class="relic-preview__image"
-                            src="{{ $relic['preview_fallback'] ?? $relic['preview_url'] }}"
-                            alt="{{ $relic['preview_alt'] ?? $relic['name'] }}" width="1280" height="720"
-                            fetchpriority="high" loading="eager" decoding="async">
-                    </picture>
-                </figure>
+                <x-app-preview :url="$relic['preview_url']" :alt="$relic['preview_alt'] ?? $relic['name']"
+                    :webp="$relic['preview_webp'] ?? null" :fallback="$relic['preview_fallback'] ?? null" :priority="true" />
             @endif
         </div>
     </section>

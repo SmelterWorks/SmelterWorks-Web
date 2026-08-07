@@ -54,6 +54,13 @@ return [
             'assets' => [
                 [
                     'rid' => 'win-x64',
+                    'installKind' => 'WindowsInstaller',
+                    'match' => ['*.msi', '*-setup.exe', '*Setup.exe'],
+                    'prefer' => ['*win-x64*'],
+                    'reject' => [],
+                ],
+                [
+                    'rid' => 'win-x64',
                     'installKind' => 'WindowsZip',
                     'match' => ['*.zip'],
                     'prefer' => ['*win-x64*'],
@@ -63,6 +70,27 @@ return [
                     'rid' => 'linux-x64',
                     'installKind' => 'LinuxAppImage',
                     'match' => ['*.AppImage', '*.appimage'],
+                    'prefer' => ['*linux-x64*'],
+                    'reject' => [],
+                ],
+                [
+                    'rid' => 'linux-x64',
+                    'installKind' => 'LinuxDeb',
+                    'match' => ['*.deb'],
+                    'prefer' => ['*linux-x64*'],
+                    'reject' => [],
+                ],
+                [
+                    'rid' => 'linux-x64',
+                    'installKind' => 'LinuxRpm',
+                    'match' => ['*.rpm'],
+                    'prefer' => ['*linux-x64*'],
+                    'reject' => [],
+                ],
+                [
+                    'rid' => 'linux-x64',
+                    'installKind' => 'LinuxFlatpak',
+                    'match' => ['*.flatpak'],
                     'prefer' => ['*linux-x64*'],
                     'reject' => [],
                 ],

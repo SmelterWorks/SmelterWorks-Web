@@ -22,6 +22,11 @@
         background: color-mix(in oklab, var(--color-ash-deep) 70%, transparent);
     }
 
+    .relic-preview--compact .relic-preview__image {
+        max-width: 16rem;
+        margin-inline: auto;
+    }
+
     .platform-list {
         display: flex;
         flex-wrap: wrap;

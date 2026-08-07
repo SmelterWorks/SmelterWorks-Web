@@ -126,6 +126,62 @@
         margin: 0;
         color: var(--color-iron-soft);
     }
+
+    .download-formats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+    }
+
+    .download-formats--suggested {
+        margin-bottom: 0.85rem;
+    }
+
+    .download-formats__option {
+        display: inline-flex;
+        align-items: center;
+        min-height: 2rem;
+        padding: 0.35rem 0.75rem;
+        border: 1px solid color-mix(in oklab, var(--color-iron) 14%, transparent);
+        border-radius: 999px;
+        background: color-mix(in oklab, var(--color-ash-deep) 45%, transparent);
+        color: var(--color-iron-soft);
+        font-size: 0.82rem;
+        font-weight: 600;
+        line-height: 1.2;
+        cursor: pointer;
+        transition:
+            border-color 0.15s ease,
+            background 0.15s ease,
+            color 0.15s ease;
+    }
+
+    .download-formats__option:hover:not(:disabled) {
+        border-color: color-mix(in oklab, var(--color-iron) 24%, transparent);
+        color: var(--color-iron);
+    }
+
+    .download-formats__option.is-active {
+        border-color: color-mix(in oklab, var(--color-ember) 45%, transparent);
+        background: color-mix(in oklab, var(--color-ember) 14%, white);
+        color: color-mix(in oklab, var(--color-ember) 78%, black);
+    }
+
+    .download-formats__option.is-unavailable,
+    .download-formats__option:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+    .download-hero-layout {
+        display: grid;
+        gap: 1.75rem;
+        align-items: center;
+    }
+
+    .download-hero-layout__preview {
+        min-width: 0;
+    }
 }
 @layer components {
 
@@ -133,6 +189,11 @@
         .download-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 1rem 1.5rem;
+        }
+
+        .download-hero-layout {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
+            gap: 2rem;
         }
     }
 }

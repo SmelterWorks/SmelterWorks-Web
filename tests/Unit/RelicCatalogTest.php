@@ -52,10 +52,21 @@ class RelicCatalogTest extends TestCase
 
         $windows = collect($page['downloads'])->firstWhere('id', 'windows');
         $this->assertTrue($windows['available']);
+        $this->assertSame('portable', $windows['default_format']);
         $this->assertSame(
             url('/files/relic/0.1.0/relic-launcher-v0.1.0-win-x64.zip'),
             $windows['url'],
         );
+
+        $portable = collect($windows['formats'])->firstWhere('id', 'portable');
+        $this->assertTrue($portable['available']);
+        $this->assertFalse(collect($windows['formats'])->firstWhere('id', 'installer')['available']);
+
+        $linux = collect($page['downloads'])->firstWhere('id', 'linux');
+        $this->assertTrue($linux['available']);
+        $this->assertSame('appimage', $linux['default_format']);
+        $this->assertTrue(collect($linux['formats'])->firstWhere('id', 'appimage')['available']);
+        $this->assertFalse(collect($linux['formats'])->firstWhere('id', 'deb')['available']);
     }
 
     public function test_stable_downloads_empty_when_no_release_exists(): void

@@ -143,3 +143,39 @@ document.querySelectorAll('[data-branding-mark]').forEach((mark) => {
         button.addEventListener('click', () => setFormat(button));
     });
 });
+
+document.querySelectorAll('[data-download-card]').forEach((card) => {
+    const downloadLink = card.querySelector('[data-download-link]');
+    const buttons = card.querySelectorAll('[data-download-format]');
+
+    if (!downloadLink || buttons.length === 0) {
+        return;
+    }
+
+    const setFormat = (button) => {
+        if (button.dataset.available !== 'true') {
+            return;
+        }
+
+        buttons.forEach((entry) => {
+            const active = entry === button;
+            entry.classList.toggle('is-active', active);
+            entry.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+
+        downloadLink.href = button.dataset.url;
+        downloadLink.removeAttribute('aria-disabled');
+        downloadLink.classList.remove('button--disabled');
+
+        const label = button.dataset.label;
+        const baseLabel = downloadLink.textContent?.trim().split(' (')[0] ?? 'Download';
+
+        if (label && baseLabel.startsWith('Download')) {
+            downloadLink.textContent = `Download (${label})`;
+        }
+    };
+
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => setFormat(button));
+    });
+});

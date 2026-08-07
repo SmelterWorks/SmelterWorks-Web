@@ -154,9 +154,15 @@ class RelicCatalog
         $stableManifest = $this->mirror->getChannelManifest(self::PRODUCT, 'stable');
         $releasesRepo = rtrim((string) ($relic['releases_repo_url'] ?? ''), '/');
 
-        $releasesUrl = filled($relic['releases_url'] ?? null)
-            ? (string) $relic['releases_url']
-            : ($stableManifest?->releaseNotesUrl ?: ($releasesRepo !== '' ? $releasesRepo.'/releases/latest' : ''));
+        if (filled($relic['releases_url'] ?? null)) {
+            $releasesUrl = (string) $relic['releases_url'];
+        } elseif (filled($stableManifest?->releaseNotesUrl)) {
+            $releasesUrl = $stableManifest->releaseNotesUrl;
+        } elseif ($stableManifest !== null && $releasesRepo !== '') {
+            $releasesUrl = $releasesRepo.'/releases/latest';
+        } else {
+            $releasesUrl = '';
+        }
 
         $relic['releases_url'] = $releasesUrl;
         $relic['nightly_list_url'] = $releasesRepo !== '' ? $releasesRepo.'/releases' : '';
@@ -176,25 +182,91 @@ class RelicCatalog
         return collect($downloads)
             ->map(function (array $download) use ($manifest, $channel): array {
                 $rid = (string) ($download['rid'] ?? '');
-                $asset = $rid !== '' && $manifest !== null
-                    ? $this->assetForRid($manifest, $rid)
-                    : null;
-
                 $download['channel'] = $channel;
                 $download['rid'] = $rid;
-                $download['available'] = $asset !== null;
-                $download['url'] = $asset !== null
-                    ? $this->mirror->fileUrl(self::PRODUCT, $manifest->version, $asset->filename)
-                    : '';
+
+                /** @var list<array<string, mixed>> $formats */
+                $formats = $download['formats'] ?? [];
+
+                if ($formats !== []) {
+                    $resolvedFormats = collect($formats)
+                        ->map(function (array $format) use ($manifest, $rid): array {
+                            $installKind = (string) ($format['install_kind'] ?? '');
+                            $asset = $rid !== '' && $installKind !== '' && $manifest !== null
+                                ? $this->assetForInstallKind($manifest, $rid, $installKind)
+                                : null;
+
+                            return [
+                                'id' => (string) ($format['id'] ?? ''),
+                                'label' => (string) ($format['label'] ?? ''),
+                                'install_kind' => $installKind,
+                                'available' => $asset !== null,
+                                'url' => $asset !== null && $manifest !== null
+                                    ? $this->mirror->fileUrl(self::PRODUCT, $manifest->version, $asset->filename)
+                                    : '',
+                            ];
+                        })
+                        ->values()
+                        ->all();
+
+                    $defaultFormat = $this->resolveDefaultFormat(
+                        $resolvedFormats,
+                        (string) ($download['default_format'] ?? ''),
+                    );
+
+                    $download['formats'] = $resolvedFormats;
+                    $download['default_format'] = $defaultFormat['id'] ?? '';
+                    $download['available'] = $defaultFormat !== null;
+                    $download['url'] = $defaultFormat['url'] ?? '';
+                } else {
+                    $asset = $rid !== '' && $manifest !== null
+                        ? $this->assetForRid($manifest, $rid)
+                        : null;
+
+                    $download['available'] = $asset !== null;
+                    $download['url'] = $asset !== null && $manifest !== null
+                        ? $this->mirror->fileUrl(self::PRODUCT, $manifest->version, $asset->filename)
+                        : '';
+                }
 
                 if ($channel === 'nightly') {
-                    $download['detail'] = $this->nightlyDetail($download, $asset !== null);
+                    $download['detail'] = $this->nightlyDetail($download, $download['available']);
                 }
 
                 return $download;
             })
             ->values()
             ->all();
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $formats
+     * @return array<string, mixed>|null
+     */
+    private function resolveDefaultFormat(array $formats, string $preferredId): ?array
+    {
+        if ($preferredId !== '') {
+            $preferred = collect($formats)->first(
+                fn (array $format): bool => ($format['id'] ?? '') === $preferredId && ($format['available'] ?? false),
+            );
+
+            if ($preferred !== null) {
+                return $preferred;
+            }
+        }
+
+        return collect($formats)->firstWhere('available', true);
+    }
+
+    private function assetForInstallKind(ChannelManifest $manifest, string $rid, string $installKind): ?MirroredAsset
+    {
+        foreach ($manifest->assets as $asset) {
+            if ($asset->rid === $rid && $asset->installKind === $installKind) {
+                return $asset;
+            }
+        }
+
+        return null;
     }
 
     private function assetForRid(ChannelManifest $manifest, string $rid): ?MirroredAsset

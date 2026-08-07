@@ -21,23 +21,35 @@ return [
     ],
     'platforms' => [
         ['icon' => 'windows', 'label' => 'Windows', 'detail' => '10+ x64'],
-        ['icon' => 'linux', 'label' => 'Linux', 'detail' => 'x64, X11 and Wayland'],
-        ['icon' => 'macos', 'label' => 'macOS', 'detail' => '13+ Intel and Apple Silicon'],
+        ['icon' => 'linux', 'label' => 'Linux', 'detail' => 'x64'],
+        ['icon' => 'macos', 'label' => 'macOS', 'detail' => 'Intel and Apple Silicon'],
     ],
     'downloads' => [
         [
             'id' => 'windows',
             'rid' => 'win-x64',
             'label' => 'Windows',
-            'detail' => 'Windows 10+ x64 · zip',
+            'detail' => 'Windows 10+ x64',
             'match' => ['windows', 'win'],
+            'default_format' => 'installer',
+            'formats' => [
+                ['id' => 'installer', 'label' => 'Installer', 'install_kind' => 'WindowsInstaller'],
+                ['id' => 'portable', 'label' => 'Portable', 'install_kind' => 'WindowsZip'],
+            ],
         ],
         [
             'id' => 'linux',
             'rid' => 'linux-x64',
             'label' => 'Linux',
-            'detail' => 'Linux x64 · AppImage, deb, rpm, and Arch packages on Releases',
+            'detail' => 'Linux x64',
             'match' => ['linux', 'x11', 'wayland'],
+            'default_format' => 'appimage',
+            'formats' => [
+                ['id' => 'appimage', 'label' => 'AppImage', 'install_kind' => 'LinuxAppImage'],
+                ['id' => 'deb', 'label' => 'Debian', 'install_kind' => 'LinuxDeb'],
+                ['id' => 'rpm', 'label' => 'Fedora (RPM)', 'install_kind' => 'LinuxRpm'],
+                ['id' => 'flatpak', 'label' => 'Flatpak', 'install_kind' => 'LinuxFlatpak'],
+            ],
         ],
         [
             'id' => 'macos-arm',
