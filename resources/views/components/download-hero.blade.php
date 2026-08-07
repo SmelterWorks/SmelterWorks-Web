@@ -1,9 +1,4 @@
-@props([
-    'title',
-    'detected' => null,
-    'platforms' => [],
-    'preview' => null,
-])
+@props(['title', 'detected' => null, 'platforms' => [], 'preview' => null])
 
 <section class="page-hero page-hero--split">
     <div class="page-hero__inner download-hero-layout">
@@ -20,8 +15,7 @@
             @if ($platforms !== [])
                 <div class="platform-list platform-list--compact">
                     @foreach ($platforms as $platform)
-                        <x-platform-chip :platform="$platform['icon']" :label="$platform['label']"
-                            :detail="$platform['detail']" />
+                        <x-platform-chip :platform="$platform['icon']" :label="$platform['label']" :detail="$platform['detail']" />
                     @endforeach
                 </div>
             @endif
@@ -29,8 +23,8 @@
 
         @if (filled($preview['url'] ?? null))
             <div class="download-hero-layout__preview">
-                <x-app-preview :url="$preview['url']" :alt="$preview['alt']" :webp="$preview['webp'] ?? null"
-                    :fallback="$preview['fallback'] ?? null" compact :priority="true" />
+                <x-app-preview :url="$preview['url']" :alt="$preview['alt']" :webp="$preview['webp'] ?? null" :fallback="$preview['fallback'] ?? null" compact
+                    :priority="true" />
             </div>
         @endif
     </div>

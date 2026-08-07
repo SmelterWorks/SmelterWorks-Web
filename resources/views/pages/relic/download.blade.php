@@ -25,13 +25,12 @@
 
 <x-layouts.site title="Download Relic Launcher" description="Download Relic Launcher for Windows, Linux, or macOS."
     :image="$relic['preview_url'] ?? null" :image-alt="$relic['preview_alt'] ?? $relic['name']" :json-ld="$relicJsonLd">
-    <x-download-hero title="Download Relic Launcher" :detected="$detected" :platforms="$relic['platforms']"
-        :preview="[
-            'url' => $relic['preview_url'] ?? null,
-            'alt' => $relic['preview_alt'] ?? $relic['name'],
-            'webp' => $relic['preview_webp'] ?? null,
-            'fallback' => $relic['preview_fallback'] ?? null,
-        ]" />
+    <x-download-hero title="Download Relic Launcher" :detected="$detected" :platforms="$relic['platforms']" :preview="[
+        'url' => $relic['preview_url'] ?? null,
+        'alt' => $relic['preview_alt'] ?? $relic['name'],
+        'webp' => $relic['preview_webp'] ?? null,
+        'fallback' => $relic['preview_fallback'] ?? null,
+    ]" />
 
     <section class="section section--tight">
         <div class="section__inner">
@@ -57,8 +56,8 @@
                     Refresh in a few minutes.
                     @if (filled($relic['releases_url']))
                         Upstream release notes:
-                        <a href="{{ $relic['releases_url'] }}" rel="noopener noreferrer"
-                            target="_blank">open tracker</a>.
+                        <a href="{{ $relic['releases_url'] }}" rel="noopener noreferrer" target="_blank">open
+                            tracker</a>.
                     @endif
                 </p>
             @endif

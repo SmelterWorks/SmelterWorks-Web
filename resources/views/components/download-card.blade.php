@@ -1,8 +1,4 @@
-@props([
-    'download',
-    'suggested' => false,
-    'channel' => 'stable',
-])
+@props(['download', 'suggested' => false, 'channel' => 'stable'])
 
 @php
     $platformIcon = static function (string $id): string {
@@ -11,9 +7,9 @@
 
     $formats = $download['formats'] ?? [];
     $hasFormats = count($formats) > 1;
-    $defaultFormat = collect($formats)->firstWhere('id', $download['default_format'] ?? '')
-        ?? collect($formats)->firstWhere('available', true)
-        ?? ($formats[0] ?? null);
+    $defaultFormat =
+        collect($formats)->firstWhere('id', $download['default_format'] ?? '') ??
+        (collect($formats)->firstWhere('available', true) ?? ($formats[0] ?? null));
     $downloadUrl = $defaultFormat['url'] ?? ($download['url'] ?? '');
     $isAvailable = ($download['available'] ?? false) && filled($downloadUrl);
     $downloadLabel = $channel === 'nightly' ? 'Download nightly' : 'Download';
@@ -35,17 +31,15 @@
     </div>
 
     @if ($hasFormats)
-        <div class="download-formats" role="group"
-            aria-label="Download format for {{ $download['label'] }}">
+        <div class="download-formats" role="group" aria-label="Download format for {{ $download['label'] }}">
             @foreach ($formats as $format)
                 <button type="button" @class([
                     'download-formats__option',
                     'is-active' => $format['id'] === ($defaultFormat['id'] ?? ''),
                     'is-unavailable' => !($format['available'] ?? false),
                 ]) data-download-format="{{ $format['id'] }}"
-                    data-url="{{ $format['url'] ?? '' }}"
-                    data-label="{{ $format['label'] }}"
-                    data-available="{{ ($format['available'] ?? false) ? 'true' : 'false' }}"
+                    data-url="{{ $format['url'] ?? '' }}" data-label="{{ $format['label'] }}"
+                    data-available="{{ $format['available'] ?? false ? 'true' : 'false' }}"
                     aria-pressed="{{ $format['id'] === ($defaultFormat['id'] ?? '') ? 'true' : 'false' }}"
                     @disabled(!($format['available'] ?? false))>
                     {{ $format['label'] }}

@@ -54,8 +54,8 @@
             </div>
 
             @if (filled($relic['preview_url'] ?? null))
-                <x-app-preview :url="$relic['preview_url']" :alt="$relic['preview_alt'] ?? $relic['name']"
-                    :webp="$relic['preview_webp'] ?? null" :fallback="$relic['preview_fallback'] ?? null" :priority="true" />
+                <x-app-preview :url="$relic['preview_url']" :alt="$relic['preview_alt'] ?? $relic['name']" :webp="$relic['preview_webp'] ?? null" :fallback="$relic['preview_fallback'] ?? null"
+                    :priority="true" />
             @endif
         </div>
     </section>
