@@ -1,4 +1,9 @@
 import { LAND_MASK_BASE64, MASK_WIDTH, MASK_HEIGHT } from './land-mask-data.js';
+import { KOPPEN_MASK_BASE64, KOPPEN_WIDTH, KOPPEN_HEIGHT } from './koppen-mask-data.js';
+import { terrainFromKoppenIndex } from './koppen-terrain.js';
+
+export { KOPPEN_CLASSES } from './koppen-mask-data.js';
+export { terrainFromKoppen, terrainFromKoppenIndex } from './koppen-terrain.js';
 
 export const BLOCK_PX = 4;
 export const TILE_PX = 256;
@@ -33,6 +38,17 @@ export const COLORS = {
 
 const landMaskBytes = (() => {
     const binary = atob(LAND_MASK_BASE64);
+    const bytes = new Uint8Array(binary.length);
+
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+
+    return bytes;
+})();
+
+const koppenMaskBytes = (() => {
+    const binary = atob(KOPPEN_MASK_BASE64);
     const bytes = new Uint8Array(binary.length);
 
     for (let i = 0; i < binary.length; i++) {
@@ -89,52 +105,35 @@ export function fbm(x, y, octaves = 4) {
     return value;
 }
 
-function maskIndex(lng, lat) {
-    const col = Math.floor(((lng + 180) / 360) * MASK_WIDTH);
-    const row = Math.floor(((90 - lat) / 180) * MASK_HEIGHT);
-    const clampedCol = Math.min(MASK_WIDTH - 1, Math.max(0, col));
-    const clampedRow = Math.min(MASK_HEIGHT - 1, Math.max(0, row));
+function maskIndex(lng, lat, width, height) {
+    const col = Math.floor(((lng + 180) / 360) * width);
+    const row = Math.floor(((90 - lat) / 180) * height);
+    const clampedCol = Math.min(width - 1, Math.max(0, col));
+    const clampedRow = Math.min(height - 1, Math.max(0, row));
 
-    return clampedRow * MASK_WIDTH + clampedCol;
+    return clampedRow * width + clampedCol;
 }
 
 export function isLand(lng, lat) {
-    const idx = maskIndex(lng, lat);
+    const idx = maskIndex(lng, lat, MASK_WIDTH, MASK_HEIGHT);
     const byteIdx = idx >> 3;
     const bitIdx = 7 - (idx & 7);
 
     return ((landMaskBytes[byteIdx] >> bitIdx) & 1) === 1;
 }
 
-// Real-world hot deserts and arid interiors, roughly matching actual climate maps.
-const DESERT_REGIONS = [
-    { minLng: -17, maxLng: 35, minLat: 15, maxLat: 31 }, // Sahara
-    { minLng: 34, maxLng: 60, minLat: 12, maxLat: 33 }, // Arabian
-    { minLng: 60, maxLng: 78, minLat: 25, maxLat: 35 }, // Iranian
-    { minLng: 68, maxLng: 76, minLat: 24, maxLat: 30 }, // Thar
-    { minLng: 90, maxLng: 112, minLat: 38, maxLat: 47 }, // Gobi
-    { minLng: 76, maxLng: 90, minLat: 36, maxLat: 43 }, // Taklamakan
-    { minLng: 11, maxLng: 26, minLat: -29, maxLat: -17 }, // Kalahari / Namib
-    { minLng: -74, maxLng: -66, minLat: -30, maxLat: -17 }, // Atacama
-    { minLng: -72, maxLng: -64, minLat: -50, maxLat: -39 }, // Patagonia
-    { minLng: -122, maxLng: -103, minLat: 27, maxLat: 38 }, // Mojave / Sonoran / SW US
-    { minLng: 112, maxLng: 141, minLat: -31, maxLat: -19 }, // Australian outback (core)
-    { minLng: 122, maxLng: 138, minLat: -19, maxLat: -12 }, // Northern Australia arid fringe
-];
+export function koppenIndexAt(lng, lat) {
+    const idx = maskIndex(lng, lat, KOPPEN_WIDTH, KOPPEN_HEIGHT);
 
-// Tropical rainforest belts.
-const RAINFOREST_REGIONS = [
-    { minLng: -78, maxLng: -48, minLat: -12, maxLat: 6 }, // Amazon
-    { minLng: 8, maxLng: 30, minLat: -6, maxLat: 5 }, // Congo basin
-    { minLng: 92, maxLng: 141, minLat: -9, maxLat: 8 }, // Maritime SE Asia
-    { minLng: -85, maxLng: -76, minLat: 6, maxLat: 12 }, // Central American isthmus
-];
+    return koppenMaskBytes[idx];
+}
 
 // Greenland's ice sheet covers roughly 80% of the island. Treat the whole
-// landmass as ice/snow rather than diluting it into the generic tundra band.
+// landmass as ice/snow rather than diluting it into generic tundra from the
+// 1-degree Köppen raster.
 const GREENLAND_REGION = { minLng: -74, maxLng: -11, minLat: 59, maxLat: 84 };
 
-// Coarse mountain ranges, layered on top of land/climate coloring.
+// Coarse mountain ranges layered on Köppen coloring for visible relief.
 const MOUNTAIN_REGIONS = [
     { minLng: -122, maxLng: -104, minLat: 32, maxLat: 60 }, // Rockies
     { minLng: -78, maxLng: -66, minLat: -55, maxLat: 10 }, // Andes
@@ -162,6 +161,38 @@ function isMountainous(lng, lat) {
     return isInAnyRegion(lng, lat, MOUNTAIN_REGIONS);
 }
 
+function mountainTerrain(absLat, elevation, band) {
+    if (absLat > 55 || elevation > 0.88) {
+        return band ? 'rockSnow' : 'rock';
+    }
+
+    return band ? 'rockLight' : 'rockDark';
+}
+
+function latitudeFallbackTerrain(absLat, roughness, microNoise) {
+    if (absLat > 66) {
+        return roughness > 0.35 ? 'tundra' : 'tundraDark';
+    }
+
+    if (absLat > 50) {
+        return roughness > 0.45 ? 'forestDark' : 'forest';
+    }
+
+    if (absLat < 23) {
+        return microNoise > 0.6 ? 'savannaLight' : 'savanna';
+    }
+
+    if (microNoise > 0.72) {
+        return 'grassLight';
+    }
+
+    if (microNoise > 0.4) {
+        return 'grass';
+    }
+
+    return 'grassDark';
+}
+
 export function terrainAt(lng, lat) {
     if (!isLand(lng, lat)) {
         const depth = Math.abs(fbm(lng * 0.3, lat * 0.3, 2));
@@ -181,8 +212,6 @@ export function terrainAt(lng, lat) {
     const roughness = fbm(lng * 3, lat * 3, 3);
     const microNoise = hash01(Math.floor(lng * 60), Math.floor(lat * 60));
 
-    // Antarctica is an ice sheet almost everywhere, unlike northern land at the
-    // same latitude, so it gets its own threshold instead of the Arctic one below.
     if (lat < -60) {
         return roughness > 0.78 ? 'rockSnow' : roughness > 0.4 ? 'snow' : 'ice';
     }
@@ -195,73 +224,28 @@ export function terrainAt(lng, lat) {
         return roughness > 0.5 ? 'snow' : 'ice';
     }
 
+    const koppenIndex = koppenIndexAt(lng, lat);
+    let terrain = terrainFromKoppenIndex(koppenIndex, roughness, microNoise);
+
+    if (!terrain) {
+        terrain = latitudeFallbackTerrain(absLat, roughness, microNoise);
+    }
+
     if (isMountainous(lng, lat)) {
         const elevation = 0.6 + fbm(lng * 1.5, lat * 1.5, 3) * 0.4;
         const band = Math.floor(elevation * 14) % 2;
 
-        if (absLat > 55 || elevation > 0.88) {
-            return band ? 'rockSnow' : 'rock';
+        if (
+            terrain.startsWith('forest') ||
+            terrain.startsWith('grass') ||
+            terrain.startsWith('savanna') ||
+            terrain.startsWith('tundra')
+        ) {
+            return mountainTerrain(absLat, elevation, band);
         }
-
-        return band ? 'rockLight' : 'rockDark';
     }
 
-    if (absLat > 66) {
-        return roughness > 0.35 ? 'tundra' : 'tundraDark';
-    }
-
-    if (isInAnyRegion(lng, lat, DESERT_REGIONS)) {
-        if (roughness > 0.45) {
-            return 'desertRock';
-        }
-
-        return microNoise > 0.5 ? 'desert' : 'desertDark';
-    }
-
-    if (isInAnyRegion(lng, lat, RAINFOREST_REGIONS)) {
-        return roughness > 0.35 ? 'rainforest' : 'rainforestDark';
-    }
-
-    if (absLat > 50) {
-        const forestNoise = fbm(lng * 2.2, lat * 2.2, 2);
-
-        return forestNoise > 0.45 ? 'forestDark' : 'forest';
-    }
-
-    if (absLat < 23) {
-        const moisture = fbm(lng * 1.4 + 20, lat * 1.4, 3);
-
-        if (moisture > 0.55) {
-            return roughness > 0.5 ? 'rainforestDark' : 'forest';
-        }
-
-        return microNoise > 0.6 ? 'savannaLight' : 'savanna';
-    }
-
-    const moisture = fbm(lng * 1.2 + 40, lat * 1.1, 3);
-    const forestNoise = fbm(lng * 2.5, lat * 2.3, 2);
-
-    if (moisture > 0.55 && forestNoise > 0.42) {
-        if (forestNoise > 0.68) {
-            return 'forestDark';
-        }
-
-        return 'forest';
-    }
-
-    if (moisture < 0.3) {
-        return microNoise > 0.65 ? 'sandLight' : 'sand';
-    }
-
-    if (microNoise > 0.72) {
-        return 'grassLight';
-    }
-
-    if (microNoise > 0.4) {
-        return 'grass';
-    }
-
-    return 'grassDark';
+    return terrain;
 }
 
 function adjustBrightness(hex, amount) {

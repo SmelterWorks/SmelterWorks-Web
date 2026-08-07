@@ -10,6 +10,7 @@
         "icons:sync": "node scripts/sync-icons.mjs",
         "brand:sync": "node scripts/sync-brand-assets.mjs",
         "world-mask:generate": "pnpm --filter vintage-story-worldmap run generate-land-mask",
+        "world-koppen:generate": "pnpm --filter vintage-story-worldmap run generate-koppen-mask",
         "build": "pnpm run icons:sync && vite build && node scripts/strip-woff-fallbacks.mjs",
         "dev": "vite",
         "format": "blade-formatter --write \"resources/views/**/*.blade.php\"",

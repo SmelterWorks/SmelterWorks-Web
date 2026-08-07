@@ -15,7 +15,8 @@
         "node": ">=18"
     },
     "scripts": {
-        "generate-land-mask": "node scripts/generate-land-mask.mjs"
+        "generate-land-mask": "node scripts/generate-land-mask.mjs",
+        "generate-koppen-mask": "node scripts/generate-koppen-mask.mjs"
     },
     "peerDependencies": {
         "ol": "^10.0.0"
