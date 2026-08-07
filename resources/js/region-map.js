@@ -3,7 +3,6 @@ import View from 'ol/View.js';
 import TileLayer from 'ol/layer/Tile.js';
 import VectorLayer from 'ol/layer/Vector.js';
 import VectorSource from 'ol/source/Vector.js';
-import XYZ from 'ol/source/XYZ.js';
 import Feature from 'ol/Feature.js';
 import Point from 'ol/geom/Point.js';
 import Overlay from 'ol/Overlay.js';
@@ -11,7 +10,38 @@ import { fromLonLat } from 'ol/proj.js';
 import { defaults as defaultControls } from 'ol/control.js';
 import { defaults as defaultInteractions } from 'ol/interaction.js';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
+import { createWorldTileSource } from 'vintage-story-worldmap/openlayers';
 import 'ol/ol.css';
+
+// Mercator can't reach the true poles. Bounds below cover the full width of the
+// world plus Greenland/Svalbard in the north and the Antarctic Peninsula in the
+// south. The map frame background matches the ocean color, so any letterboxing
+// from the container's aspect ratio reads as open water rather than empty space.
+const WORLD_VIEW_EXTENT = (() => {
+    const [minX, minY] = fromLonLat([-180, -75]);
+    const [maxX, maxY] = fromLonLat([180, 80]);
+
+    return [minX, minY, maxX, maxY];
+})();
+
+function markerStyles() {
+    return [
+        new Style({
+            image: new CircleStyle({
+                radius: 8,
+                fill: new Fill({ color: '#f4ebe1' }),
+                stroke: new Stroke({ color: '#1a1816', width: 2.5 }),
+            }),
+        }),
+        new Style({
+            image: new CircleStyle({
+                radius: 3.5,
+                fill: new Fill({ color: '#b45309' }),
+                stroke: new Stroke({ color: '#7a3506', width: 1 }),
+            }),
+        }),
+    ];
+}
 
 function initRegionMap() {
     const mapRoot = document.querySelector('[data-region-map]');
@@ -62,16 +92,7 @@ function initRegionMap() {
         return;
     }
 
-    const pinStyle = new Style({
-        image: new CircleStyle({
-            radius: 7,
-            fill: new Fill({ color: '#b45309' }),
-            stroke: new Stroke({ color: '#f4ebe1', width: 2 }),
-        }),
-    });
-
     const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-    const useRetinaTiles = pixelRatio > 1;
     const vectorSource = new VectorSource({ features });
 
     const map = new Map({
@@ -79,50 +100,50 @@ function initRegionMap() {
         pixelRatio,
         layers: [
             new TileLayer({
-                source: new XYZ({
-                    url: useRetinaTiles
-                        ? 'https://{a-d}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png'
-                        : 'https://{a-d}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-                    attributions:
-                        '&copy; <a href="https://www.openstreetmap.org/copyright" rel="noopener noreferrer" target="_blank">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" rel="noopener noreferrer" target="_blank">CARTO</a>',
-                    maxZoom: 12,
-                    tilePixelRatio: useRetinaTiles ? 2 : 1,
-                }),
+                source: createWorldTileSource(),
             }),
             new VectorLayer({
                 source: vectorSource,
-                style: pinStyle,
+                style: markerStyles(),
             }),
         ],
         controls: defaultControls({
             zoom: false,
             rotate: false,
-            attribution: true,
+            attribution: false,
         }),
+        // This map only ever shows the whole world at a fixed zoom, so there is
+        // nowhere useful to pan or zoom to. Dragging used to be enabled, but the
+        // view was fit to exactly the world extent with no bounds beyond it, so a
+        // drag of even a few pixels exposed undefined tiles (no coastline data,
+        // and Mercator y values with no sane latitude) alongside the markers,
+        // and moved the markers out from under the fixed-position hit testing.
+        // Disabling every interaction is the correct fix, not a tighter bound:
+        // there is no valid interaction for a map that always shows everything.
         interactions: defaultInteractions({
             mouseWheelZoom: false,
             doubleClickZoom: false,
             pinchZoom: false,
             shiftDragZoom: false,
-            dragPan: true,
+            dragPan: false,
             keyboard: false,
         }),
         view: new View({
-            center: fromLonLat([0, 20]),
+            center: fromLonLat([0, 15]),
             zoom: 1,
-            maxZoom: 6,
-            minZoom: 0,
             multiWorld: false,
-            constrainResolution: true,
+            constrainResolution: false,
+            enableRotation: false,
+            extent: WORLD_VIEW_EXTENT,
         }),
     });
 
     requestAnimationFrame(() => {
         map.updateSize();
-        map.getView().fit([-20037508.34, -16000000, 20037508.34, 18000000], {
-            padding: [8, 8, 8, 8],
+        map.getView().fit(WORLD_VIEW_EXTENT, {
+            padding: [0, 0, 0, 0],
             duration: 0,
-            constrainResolution: true,
+            constrainResolution: false,
         });
     });
 
@@ -133,7 +154,7 @@ function initRegionMap() {
 
     const tipOverlay = new Overlay({
         element: tip,
-        offset: [0, -14],
+        offset: [0, -16],
         positioning: 'bottom-center',
         stopEvent: false,
     });
@@ -175,6 +196,7 @@ function initRegionMap() {
         if (event.dragging) {
             tip.hidden = true;
             canvas.style.cursor = '';
+
             return;
         }
 
@@ -184,6 +206,7 @@ function initRegionMap() {
         if (label === '') {
             tip.hidden = true;
             canvas.style.cursor = '';
+
             return;
         }
 

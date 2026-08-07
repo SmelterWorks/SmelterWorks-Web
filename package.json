@@ -9,6 +9,7 @@
     "scripts": {
         "icons:sync": "node scripts/sync-icons.mjs",
         "brand:sync": "node scripts/sync-brand-assets.mjs",
+        "world-mask:generate": "pnpm --filter vintage-story-worldmap run generate-land-mask",
         "build": "pnpm run icons:sync && vite build && node scripts/strip-woff-fallbacks.mjs",
         "dev": "vite",
         "format": "blade-formatter --write \"resources/views/**/*.blade.php\"",
@@ -36,6 +37,7 @@
         "vite": "^8.0.0"
     },
     "dependencies": {
-        "ol": "^10.10.0"
+        "ol": "^10.10.0",
+        "vintage-story-worldmap": "workspace:*"
     }
 }

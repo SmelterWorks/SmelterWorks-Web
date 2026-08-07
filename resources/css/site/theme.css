@@ -158,10 +158,11 @@
     }
 
     [data-theme='dark'] .region-map__frame {
-        background: color-mix(in oklab, var(--color-ash-deep) 55%, var(--color-surface-elevated));
+        border-color: color-mix(in oklab, var(--color-iron) 35%, #14110f);
+        background: #142a34;
         box-shadow:
             0 0.85rem 1.75rem color-mix(in oklab, black 28%, transparent),
-            inset 0 1px 0 color-mix(in oklab, var(--color-iron) 8%, transparent);
+            inset 0 0 0 1px color-mix(in oklab, var(--color-iron) 12%, transparent);
     }
 
     [data-theme='dark'] .currency-toggle.is-active {

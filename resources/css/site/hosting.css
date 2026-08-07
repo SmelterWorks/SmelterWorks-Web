@@ -169,15 +169,15 @@
     }
 
     .region-map__frame {
-        height: min(22rem, 58vw);
-        min-height: 16rem;
-        border-radius: 0.75rem;
-        border: 1px solid color-mix(in oklab, var(--color-iron) 12%, transparent);
+        height: min(28.5rem, 76vw);
+        min-height: 19rem;
+        border-radius: 0.5rem;
+        border: 2px solid color-mix(in oklab, var(--color-iron) 28%, #2a2520);
         overflow: hidden;
         box-shadow:
             0 0.85rem 1.75rem color-mix(in oklab, var(--color-iron) 8%, transparent),
-            inset 0 1px 0 color-mix(in oklab, white 55%, transparent);
-        background: color-mix(in oklab, var(--color-ash-deep) 55%, white);
+            inset 0 0 0 1px color-mix(in oklab, white 12%, transparent);
+        background: #1c3644;
         position: relative;
     }
 
@@ -186,18 +186,12 @@
     }
 
     .region-map__frame .ol-layer {
-        image-rendering: auto;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
     }
 
     .region-map__frame .ol-attribution {
-        background: color-mix(in oklab, var(--color-ash) 88%, transparent);
-        color: var(--color-iron-soft);
-        font-size: 0.68rem;
-        border-radius: 0.25rem 0 0 0;
-    }
-
-    .region-map__frame .ol-attribution a {
-        color: var(--color-copper);
+        display: none;
     }
 
     .region-map__tip {

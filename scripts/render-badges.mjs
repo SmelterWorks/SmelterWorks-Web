@@ -34,13 +34,16 @@ function workflowBadge(badge) {
     return `https://img.shields.io/github/actions/workflow/status/${config.repository}/${badge.workflow}?${params.toString()}`;
 }
 
+function shieldsPathSegment(value) {
+    return encodeURIComponent(String(value).replaceAll('-', '--'));
+}
+
 function staticBadge(badge) {
+    const color = themeColor(badge.color ?? 'accent');
+    const path = `${shieldsPathSegment(badge.label)}-${shieldsPathSegment(badge.message)}-${color}`;
     const params = new URLSearchParams({
         style: 'flat-square',
         labelColor: theme.labelColor,
-        label: badge.label,
-        message: badge.message,
-        color: themeColor(badge.color ?? 'accent'),
     });
 
     if (badge.logo) {
@@ -48,7 +51,7 @@ function staticBadge(badge) {
         params.set('logoColor', 'white');
     }
 
-    return `https://img.shields.io/badge/?${params.toString()}`;
+    return `https://img.shields.io/badge/${path}?${params.toString()}`;
 }
 
 function endpointBadge(badge) {
