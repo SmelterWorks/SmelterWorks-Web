@@ -315,23 +315,31 @@ if (page) {
 
     const renderListRow = (server) => {
         const playstyle = playstyleId(server);
+        const badges = [];
+
+        if (server.hasPassword) {
+            badges.push('<span class="servers-badge">Password</span>');
+        }
+
+        if (server.whitelisted) {
+            badges.push('<span class="servers-badge">Whitelist</span>');
+        }
+
+        if (hasMods(server)) {
+            badges.push('<span class="servers-badge">Modded</span>');
+        }
 
         return `
             <article class="servers-row servers-row--list">
-                <div class="servers-row__list-main">
-                    <h2 class="servers-row__title">${escapeHtml(server.serverName ?? 'Unnamed server')}</h2>
-                    <p class="servers-row__players">
-                        <strong>${players(server)}</strong>
-                        <span>/ ${maxPlayers(server) || '?'}</span>
-                    </p>
-                </div>
-                <div class="servers-row__list-meta">
-                    <span>${escapeHtml(server.serverIP ?? '')}</span>
-                    <span>${escapeHtml(server.gameVersion ?? 'Unknown version')}</span>
-                    ${playstyle ? `<span>${escapeHtml(playstyle)}</span>` : ''}
-                </div>
-                ${renderBadges(server)}
-                ${renderDescription(server)}
+                <h2 class="servers-row__title">${escapeHtml(server.serverName ?? 'Unnamed server')}</h2>
+                <p class="servers-row__players">
+                    <strong>${players(server)}</strong>
+                    <span>/ ${maxPlayers(server) || '?'}</span>
+                </p>
+                <span class="servers-row__list-ip">${escapeHtml(server.serverIP ?? '')}</span>
+                <span class="servers-row__list-version">${escapeHtml(server.gameVersion ?? 'Unknown version')}</span>
+                ${playstyle ? `<span class="servers-row__list-playstyle">${escapeHtml(playstyle)}</span>` : '<span class="servers-row__list-playstyle"></span>'}
+                <div class="servers-row__badges">${badges.join('')}</div>
             </article>
         `;
     };
