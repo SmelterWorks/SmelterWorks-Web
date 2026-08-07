@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Support\Updates\UpdateFileServer;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response;
 
 class UpdateFileController extends Controller
 {

@@ -14,6 +14,14 @@ trait FakesProductUpdates
         Storage::fake('local');
         Config::set('smelterworks.updates.disk', 'local');
         Config::set('smelterworks.updates.use_accel_redirect', false);
+        Config::set('smelterworks.updates.products.relic.source.allowed_hosts', [
+            'github.com',
+            'api.github.com',
+            'objects.githubusercontent.com',
+            'release-assets.githubusercontent.com',
+            'git.smelterworks.com',
+            'example.test',
+        ]);
         app()->forgetInstance(UpdateMirrorService::class);
     }
 

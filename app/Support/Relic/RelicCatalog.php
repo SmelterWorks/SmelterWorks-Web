@@ -12,7 +12,6 @@ class RelicCatalog
 
     public function __construct(
         private readonly UpdateMirrorService $mirror,
-        private readonly UpdateProductRegistry $updates,
     ) {}
 
     /**
