@@ -1,4 +1,5 @@
-<x-layouts.site title="Servers" description="Browse public Vintage Story servers with live player counts, versions, and filters.">
+<x-layouts.site title="Servers"
+    description="Browse public Vintage Story servers with live player counts, versions, and filters.">
     @push('head')
         @vite(['resources/js/servers.js'])
     @endpush
@@ -7,7 +8,8 @@
         <div class="page-hero__inner">
             <h1 class="page-hero__title">Servers</h1>
             <p class="page-hero__lede">
-                Public Vintage Story servers from the master list, cached by SmelterWorks so Relic and this page do not hammer upstream.
+                Public Vintage Story servers from the master list, cached by SmelterWorks so Relic and this page do not
+                hammer upstream.
             </p>
         </div>
     </section>
@@ -35,8 +37,9 @@
                 <div class="servers-toolbar__top">
                     <label class="servers-search">
                         <span class="sr-only">Search servers</span>
-                        <input type="search" class="servers-search__input" placeholder="Search name, IP, or description"
-                            data-servers-search autocomplete="off" spellcheck="false">
+                        <input type="search" class="servers-search__input"
+                            placeholder="Search name, IP, or description" data-servers-search autocomplete="off"
+                            spellcheck="false">
                     </label>
 
                     <div class="servers-view-toggle" role="group" aria-label="Layout">
@@ -119,7 +122,8 @@
             <p class="servers-note">
                 List data comes from the Vintage Story master server API, proxied and cached on SmelterWorks.
                 Not affiliated with Anego Studios.
-                <a href="{{ $officialListUrl }}" rel="noopener noreferrer" target="_blank">Official server browser</a>
+                <a href="{{ $officialListUrl }}" rel="noopener noreferrer" target="_blank">Official server
+                    browser</a>
             </p>
         </div>
     </section>
