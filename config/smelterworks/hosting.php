@@ -134,4 +134,9 @@ return [
         'Export your world and mods anytime, including a Docker setup for self-hosting',
     ],
     'change_note' => 'Features and plans are subject to change until we are open.',
+    'exchange' => [
+        'cache_seconds' => (int) env('SMELTERWORKS_EXCHANGE_CACHE_SECONDS', 21600),
+        'stale_seconds' => (int) env('SMELTERWORKS_EXCHANGE_STALE_SECONDS', 604800),
+        'fallback_usd_to_eur' => (float) env('SMELTERWORKS_EXCHANGE_FALLBACK_USD_TO_EUR', 0.92),
+    ],
 ];
