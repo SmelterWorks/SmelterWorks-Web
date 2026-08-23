@@ -10,6 +10,10 @@ class VerifyMetricsToken
 {
     public function handle(Request $request, Closure $next): Response
     {
+        if (! config('metrics.enabled', false)) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
+
         $token = (string) config('metrics.token', '');
 
         if ($token === '') {

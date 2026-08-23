@@ -10,6 +10,7 @@ use App\Http\Controllers\RelicController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\ServersPageController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\UpdateFileController;
 use App\Http\Controllers\UpdateManifestController;
 use Illuminate\Support\Facades\Route;
@@ -30,7 +31,7 @@ Route::post('/hosting/purchase', [HostingController::class, 'store'])
     ->name('hosting.purchase.store');
 Route::get('/hosting/orders/{purchase}', [HostingController::class, 'show'])->name('hosting.purchases.show');
 
-Route::post('/stripe/webhook', \App\Http\Controllers\StripeWebhookController::class)
+Route::post('/stripe/webhook', StripeWebhookController::class)
     ->name('stripe.webhook');
 
 Route::get('/mods', [PageController::class, 'mods'])->name('mods');

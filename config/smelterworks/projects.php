@@ -6,6 +6,18 @@
  */
 return [
     [
+        'slug' => 'better-sprinting',
+        'name' => 'Better Sprinting',
+        'summary' => 'Client-side sprint QoL with Minecraft-style double-tap forward and optional auto-sprint.',
+        'description' => 'Double-tap forward to sprint, or enable auto-sprint to keep sprinting while holding forward. Open settings with Ctrl+Shift+R. Client-only mod for Vintage Story 1.22.0 or newer. Open source on GitHub under 0BSD.',
+        'kind' => 'mod',
+        'status' => 'active',
+        'repo_url' => 'https://github.com/SmelterWorks/BetterSprinting',
+        'page_route' => null,
+        'mod_db_url' => null,
+        'tags' => ['client', 'qol', 'movement'],
+    ],
+    [
         'slug' => 'relic-launcher',
         'name' => 'Relic Launcher',
         'summary' => 'A simple desktop launcher for Vintage Story with VS ModDB, multiple game versions, and themes.',

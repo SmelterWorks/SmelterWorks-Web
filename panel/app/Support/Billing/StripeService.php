@@ -5,6 +5,7 @@ namespace App\Support\Billing;
 use App\Models\GameServer;
 use App\Models\Organization;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Stripe\Checkout\Session;
 use Stripe\Customer;
 use Stripe\Stripe;
@@ -14,11 +15,26 @@ final class StripeService
 {
     public function __construct()
     {
+        if (! StripeConfig::enabled()) {
+            return;
+        }
+
         Stripe::setApiKey((string) config('panel.stripe.secret'));
+    }
+
+    public function ensureEnabled(): void
+    {
+        if (! StripeConfig::enabled()) {
+            throw ValidationException::withMessages([
+                'billing' => 'Stripe billing is not configured on this panel.',
+            ]);
+        }
     }
 
     public function ensureCustomer(Organization $organization): string
     {
+        $this->ensureEnabled();
+
         if ($organization->stripe_customer_id !== null) {
             return $organization->stripe_customer_id;
         }
@@ -41,6 +57,7 @@ final class StripeService
      */
     public function createSubscriptionCheckout(Organization $organization, array $line): Session
     {
+        $this->ensureEnabled();
         $customerId = $this->ensureCustomer($organization);
 
         return Session::create([
@@ -66,6 +83,7 @@ final class StripeService
 
     public function portalUrl(Organization $organization): string
     {
+        $this->ensureEnabled();
         $customerId = $this->ensureCustomer($organization);
         $session = \Stripe\BillingPortal\Session::create([
             'customer' => $customerId,
@@ -77,6 +95,12 @@ final class StripeService
 
     public function handleWebhook(string $payload, ?string $signature): void
     {
+        if (! StripeConfig::enabled()) {
+            Log::info('Stripe webhook ignored because billing is disabled.');
+
+            return;
+        }
+
         $secret = (string) config('panel.stripe.webhook_secret');
 
         if ($secret === '') {

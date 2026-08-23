@@ -13,6 +13,7 @@ class ProjectCatalogTest extends TestCase
 
         $this->assertTrue($mods->every(fn ($project): bool => $project->kind === 'mod'));
         $this->assertTrue($mods->every(fn ($project): bool => $project->status === 'active'));
+        $this->assertTrue($mods->contains(fn ($project): bool => $project->slug === 'better-sprinting'));
     }
 
     public function test_catalog_does_not_include_placeholder_projects(): void

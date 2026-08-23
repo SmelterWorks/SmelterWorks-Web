@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ValidAltcha;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class LoginRequest extends FormRequest
 {
@@ -20,6 +22,11 @@ class LoginRequest extends FormRequest
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
             'remember' => ['nullable', 'boolean'],
+            'altcha' => [
+                Rule::requiredIf(fn (): bool => (bool) config('panel.altcha.enabled')),
+                'string',
+                new ValidAltcha,
+            ],
         ];
     }
 }

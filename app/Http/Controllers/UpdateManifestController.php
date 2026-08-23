@@ -33,7 +33,9 @@ class UpdateManifestController extends Controller
         }
 
         if ($mirror->channelIsStale($product, $channel)) {
-            app()->terminating(fn (): mixed => $mirror->warmProduct($product, $channel));
+            app()->terminating(static function () use ($mirror, $product, $channel): void {
+                $mirror->warmProduct($product, $channel);
+            });
         }
 
         $etag = $presenter->etag($manifest);

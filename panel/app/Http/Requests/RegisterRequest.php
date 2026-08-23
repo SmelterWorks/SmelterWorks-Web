@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ValidAltcha;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -19,9 +20,14 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:120'],
-            'organization_name' => ['required', 'string', 'max:120'],
+            'team_name' => ['nullable', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
             'password' => ['required', 'string', 'confirmed'],
+            'altcha' => [
+                Rule::requiredIf(fn (): bool => (bool) config('panel.altcha.enabled')),
+                'string',
+                new ValidAltcha,
+            ],
         ];
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\HostingPurchase;
-use App\Support\Billing\StripeCheckoutService;
+use App\Support\Billing\StripeConfig;
 use App\Support\Hosting\HostingCatalog;
 use App\Support\Hosting\HostingPurchaseService;
 use App\Support\Panel\PanelProvisioningClient;
@@ -19,6 +19,10 @@ class StripeWebhookController extends Controller
         HostingCatalog $catalog,
         PanelProvisioningClient $panel,
     ): Response {
+        if (! StripeConfig::enabled()) {
+            return response('billing disabled', 503);
+        }
+
         $secret = (string) config('services.stripe.webhook_secret');
 
         if ($secret === '') {
@@ -45,9 +49,11 @@ class StripeWebhookController extends Controller
                 return response('ok', 200);
             }
 
+            $paymentIntent = $session->payment_intent ?? null;
+
             $purchase->update([
                 'stripe_checkout_session_id' => $session->id,
-                'stripe_payment_intent_id' => is_string($session->payment_intent) ? $session->payment_intent : null,
+                'stripe_payment_intent_id' => is_string($paymentIntent) ? $paymentIntent : null,
             ]);
 
             $purchases->markPaid($purchase);

@@ -2,8 +2,31 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-ember: #c45c26;
+    --color-ember-light: #f0c090;
+    --color-surface: #111111;
+    --color-surface-raised: #171717;
+    --color-border: #333333;
+}
+
+@layer components {
+    .auth-input {
+        @apply w-full rounded-lg border border-border bg-surface px-3.5 py-2.5 text-zinc-100 shadow-sm outline-none transition;
+        @apply placeholder:text-zinc-600 focus:border-ember focus:ring-2 focus:ring-ember/30;
+    }
+
+    .auth-button {
+        @apply w-full rounded-lg bg-ember px-4 py-2.5 text-sm font-semibold text-white transition;
+        @apply hover:bg-ember/90 focus:outline-none focus:ring-2 focus:ring-ember/40;
+    }
+
+    .altcha-wrap altcha-widget {
+        display: block;
+        width: 100%;
+    }
 }

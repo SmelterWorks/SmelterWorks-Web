@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreHostingPurchaseRequest;
 use App\Models\HostingPurchase;
 use App\Support\Billing\StripeCheckoutService;
+use App\Support\Billing\StripeConfig;
 use App\Support\Currency\ExchangeRateService;
 use App\Support\Hosting\HostingCatalog;
 use App\Support\Hosting\HostingIndexPresenter;
@@ -83,7 +84,11 @@ class HostingController extends Controller
 
         $plan = $this->catalog->plan($purchase->plan_slug);
 
-        if ($purchase->status === HostingPurchase::STATUS_PENDING && $purchase->stripe_checkout_session_id === null) {
+        if (
+            $purchase->status === HostingPurchase::STATUS_PENDING
+            && $purchase->stripe_checkout_session_id === null
+            && StripeConfig::enabled()
+        ) {
             $session = $stripe->createCheckoutSession($purchase, (string) $plan['name']);
             $purchase->update(['stripe_checkout_session_id' => $session->id]);
 
@@ -94,6 +99,7 @@ class HostingController extends Controller
             'purchase' => $purchase->fresh(),
             'plan' => $plan,
             'regionLabel' => $this->catalog->regionLabel($purchase->region_code),
+            'stripeEnabled' => StripeConfig::enabled(),
         ]);
     }
 

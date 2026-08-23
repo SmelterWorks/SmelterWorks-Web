@@ -3,6 +3,7 @@
 namespace App\Support\Billing;
 
 use App\Models\HostingPurchase;
+use Illuminate\Validation\ValidationException;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
 
@@ -10,11 +11,21 @@ final class StripeCheckoutService
 {
     public function __construct()
     {
+        if (! StripeConfig::enabled()) {
+            return;
+        }
+
         Stripe::setApiKey((string) config('services.stripe.secret'));
     }
 
     public function createCheckoutSession(HostingPurchase $purchase, string $planName): Session
     {
+        if (! StripeConfig::enabled()) {
+            throw ValidationException::withMessages([
+                'billing' => 'Stripe checkout is not configured.',
+            ]);
+        }
+
         return Session::create([
             'mode' => 'payment',
             'customer_email' => $purchase->customer_email,

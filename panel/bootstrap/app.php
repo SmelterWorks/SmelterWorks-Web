@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AuthenticateApiToken;
+use App\Http\Middleware\EnsureEmailIsVerified;
 use App\Http\Middleware\EnsureManagedMode;
 use App\Http\Middleware\RecordMetrics;
 use App\Http\Middleware\RequireApiAbility;
@@ -31,6 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'api.ability' => RequireApiAbility::class,
             'managed' => EnsureManagedMode::class,
             'metrics.token' => VerifyMetricsToken::class,
+            'verified' => EnsureEmailIsVerified::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -40,6 +42,8 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->booting(function (): void {
         RateLimiter::for('login', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
+        RateLimiter::for('register', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
+        RateLimiter::for('verification', fn (Request $request) => Limit::perMinute(6)->by($request->ip()));
         RateLimiter::for('agent', fn (Request $request) => Limit::perMinute(60)->by($request->ip()));
         RateLimiter::for('api', fn (Request $request) => Limit::perMinute(120)->by($request->ip()));
     })

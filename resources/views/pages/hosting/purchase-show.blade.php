@@ -31,8 +31,10 @@
                     @else
                         Provisioning is in progress.
                     @endif
-                @else
+                @elseif ($stripeEnabled ?? false)
                     Complete payment in Stripe to activate this order.
+                @else
+                    Your slot is reserved. Card checkout is not configured on this site yet.
                 @endif
             </p>
 

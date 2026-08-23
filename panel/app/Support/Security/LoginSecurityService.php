@@ -67,6 +67,23 @@ final class LoginSecurityService
         }
     }
 
+    public function remainingAttempts(?User $user, Request $request): ?int
+    {
+        if ($user === null) {
+            return null;
+        }
+
+        $max = (int) config('panel.security.login_max_attempts', 5);
+        $accountKey = 'panel-login-user:'.$user->id;
+        $attempts = RateLimiter::attempts($accountKey);
+
+        if ($attempts >= $max) {
+            return 0;
+        }
+
+        return $max - $attempts;
+    }
+
     public function recordSuccess(User $user, Request $request): void
     {
         RateLimiter::clear('panel-login-ip:'.$request->ip());

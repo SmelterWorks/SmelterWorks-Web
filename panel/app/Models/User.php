@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Notifications\VerifyEmailNotification;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,7 +15,7 @@ use Illuminate\Notifications\Notifiable;
 
 #[Fillable(['name', 'email', 'password', 'organization_id', 'role'])]
 #[Hidden(['password', 'remember_token', 'totp_secret'])]
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -48,5 +50,10 @@ class User extends Authenticatable
     public function isLocked(): bool
     {
         return $this->locked_until !== null && $this->locked_until->isFuture();
+    }
+
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailNotification);
     }
 }
