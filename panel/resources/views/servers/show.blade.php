@@ -4,7 +4,7 @@
     <h1>{{ $server->name }}</h1>
     <div class="card">
         <p>Type: {{ $server->type }} · Status: {{ $server->status }}</p>
-        <p><a href="{{ route('servers.mods', $server) }}">Mod browser</a></p>
+        <p><a href="{{ route('servers.mods', $server) }}">Mod browser</a> · <a href="{{ route('servers.files', $server) }}">Files</a></p>
 
         @if ($server->daemon)
             <p>

@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+    ],
+
+    'panel' => [
+        'provision_url' => env('PANEL_PROVISION_URL'),
+        'provision_secret' => env('PANEL_PROVISION_SECRET'),
+    ],
+
 ];

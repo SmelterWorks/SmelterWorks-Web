@@ -124,6 +124,25 @@ jobs:
       - name: Run tests
         run: composer test
 
+  server-daemon:
+    name: Server daemon Go
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: server-daemon
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Setup Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version: '1.24'
+      - name: Test
+        run: go test ./...
+      - name: Build
+        run: go build -o /tmp/smelterd ./cmd/smelterd && go build -o /tmp/daemon-tool ./cmd/daemon-tool
+
   frontend:
     name: Frontend build
     runs-on: ubuntu-latest

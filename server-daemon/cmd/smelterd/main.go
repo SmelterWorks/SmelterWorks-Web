@@ -12,6 +12,7 @@ import (
 	"github.com/smelterworks/server-daemon/internal/docker"
 	"github.com/smelterworks/server-daemon/internal/hubclient"
 	"github.com/smelterworks/server-daemon/internal/localapi"
+	sftpserver "github.com/smelterworks/server-daemon/internal/sftp"
 )
 
 func main() {
@@ -37,6 +38,15 @@ func main() {
 	}
 
 	executor := hubclient.NewExecutor(cfg, dockerClient, backupSvc)
+
+	if cfg.SFTPPassword != "" {
+		go func() {
+			sftpServer := sftpserver.New(cfg, cfg.SFTPPassword, cfg.DataPath)
+			if err := sftpServer.ListenAndServe(); err != nil {
+				log.Printf("sftp stopped: %v", err)
+			}
+		}()
+	}
 
 	if cfg.Token != "" {
 		go hubLoop(cfg, fp, dockerClient, executor)

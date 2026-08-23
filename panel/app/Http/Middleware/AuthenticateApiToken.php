@@ -32,6 +32,7 @@ class AuthenticateApiToken
 
         $token->update(['last_used_at' => now()]);
         Auth::login($token->user);
+        $request->attributes->set('api_token_abilities', $token->abilities ?? []);
 
         return $next($request);
     }

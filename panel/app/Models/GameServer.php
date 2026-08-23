@@ -17,8 +17,12 @@ class GameServer extends Model
         'uuid',
         'organization_id',
         'daemon_registration_id',
+        'host_node_id',
         'name',
         'type',
+        'plan_slug',
+        'stripe_subscription_id',
+        'billing_cycle',
         'status',
         'region_code',
         'ram_gb',
@@ -60,10 +64,23 @@ class GameServer extends Model
     }
 
     /**
+     * @return BelongsTo<HostNode, $this>
+     */
+    public function hostNode(): BelongsTo
+    {
+        return $this->belongsTo(HostNode::class);
+    }
+
+    /**
      * @return HasMany<BackupRecord, $this>
      */
     public function backups(): HasMany
     {
         return $this->hasMany(BackupRecord::class);
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
     }
 }

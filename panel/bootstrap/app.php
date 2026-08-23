@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Middleware\AuthenticateApiToken;
+use App\Http\Middleware\EnsureManagedMode;
 use App\Http\Middleware\RecordMetrics;
+use App\Http\Middleware\RequireApiAbility;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\VerifyMetricsToken;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -20,9 +22,14 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(SecurityHeaders::class);
+        $middleware->validateCsrfTokens(except: [
+            'stripe/webhook',
+        ]);
         $middleware->append(RecordMetrics::class);
         $middleware->alias([
             'auth.api' => AuthenticateApiToken::class,
+            'api.ability' => RequireApiAbility::class,
+            'managed' => EnsureManagedMode::class,
             'metrics.token' => VerifyMetricsToken::class,
         ]);
     })

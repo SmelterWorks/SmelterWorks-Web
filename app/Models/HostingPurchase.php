@@ -23,6 +23,9 @@ class HostingPurchase extends Model
         'customer_email',
         'server_name',
         'status',
+        'stripe_checkout_session_id',
+        'stripe_payment_intent_id',
+        'provisioned_server_uuid',
         'paid_at',
         'cancelled_at',
     ];

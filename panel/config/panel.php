@@ -6,6 +6,24 @@ return [
     'database' => [
         'validate_on_boot' => (bool) env('PANEL_DB_VALIDATE_ON_BOOT', true),
     ],
+    'regions' => [
+        ['code' => 'us', 'label' => 'United States'],
+        ['code' => 'eu-de', 'label' => 'Europe (Germany)'],
+    ],
+    'plans' => [
+        'friends' => ['ram_gb' => 4, 'storage_gb' => 25, 'price_monthly' => 10, 'price_yearly' => 100],
+        'modded' => ['ram_gb' => 8, 'storage_gb' => 50, 'price_monthly' => 15, 'price_yearly' => 150],
+        'heavy' => ['ram_gb' => 16, 'storage_gb' => 100, 'price_monthly' => 25, 'price_yearly' => 250],
+        'byos' => ['ram_gb' => 0, 'storage_gb' => 0, 'price_monthly' => 5, 'price_yearly' => 50],
+    ],
+    'provision' => [
+        'secret' => env('PANEL_PROVISION_SECRET'),
+    ],
+    'stripe' => [
+        'key' => env('PANEL_STRIPE_KEY'),
+        'secret' => env('PANEL_STRIPE_SECRET'),
+        'webhook_secret' => env('PANEL_STRIPE_WEBHOOK_SECRET'),
+    ],
     'agent' => [
         'listen_host' => env('PANEL_AGENT_LISTEN_HOST', '127.0.0.1'),
         'listen_port' => (int) env('PANEL_AGENT_LISTEN_PORT', 8081),

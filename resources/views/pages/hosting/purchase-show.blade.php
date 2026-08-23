@@ -25,11 +25,14 @@
             </ul>
 
             <p>
-                Card payment is not connected yet. Your slot stays reserved while we finish checkout.
-                @if (filled(config('smelterworks.links.fluxer')))
-                    Message Fluxer with this order ID if you need help.
+                @if ($purchase->status === 'paid')
+                    Payment received. @if ($purchase->provisioned_server_uuid)
+                        Server UUID: <code>{{ $purchase->provisioned_server_uuid }}</code>
+                    @else
+                        Provisioning is in progress.
+                    @endif
                 @else
-                    Contact support with this order ID if you need help.
+                    Complete payment in Stripe to activate this order.
                 @endif
             </p>
 

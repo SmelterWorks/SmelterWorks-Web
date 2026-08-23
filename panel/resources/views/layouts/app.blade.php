@@ -26,6 +26,9 @@
             <nav class="nav">
                 <a href="{{ route('dashboard') }}">Dashboard</a>
                 <a href="{{ route('daemons.pairing') }}">BYOS pairing</a>
+                <a href="{{ route('subusers.index') }}">Subusers</a>
+                <a href="{{ route('totp.show') }}">2FA</a>
+                <a href="{{ route('billing.portal') }}">Billing</a>
                 <form method="post" action="{{ route('logout') }}" style="display:inline">@csrf<button type="submit" style="width:auto">Logout</button></form>
             </nav>
         @endauth

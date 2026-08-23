@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreHostingPurchaseRequest;
 use App\Models\HostingPurchase;
+use App\Support\Billing\StripeCheckoutService;
 use App\Support\Currency\ExchangeRateService;
 use App\Support\Hosting\HostingCatalog;
 use App\Support\Hosting\HostingIndexPresenter;
@@ -74,7 +75,7 @@ class HostingController extends Controller
             ->with('status', 'Order reserved. Stock is held while payment is completed.');
     }
 
-    public function show(HostingPurchase $purchase): View|RedirectResponse
+    public function show(HostingPurchase $purchase, StripeCheckoutService $stripe): View|RedirectResponse
     {
         if ($this->purchasesClosed()) {
             return $this->comingSoonRedirect();
@@ -82,8 +83,15 @@ class HostingController extends Controller
 
         $plan = $this->catalog->plan($purchase->plan_slug);
 
+        if ($purchase->status === HostingPurchase::STATUS_PENDING && $purchase->stripe_checkout_session_id === null) {
+            $session = $stripe->createCheckoutSession($purchase, (string) $plan['name']);
+            $purchase->update(['stripe_checkout_session_id' => $session->id]);
+
+            return redirect()->away($session->url);
+        }
+
         return view('pages.hosting.purchase-show', [
-            'purchase' => $purchase,
+            'purchase' => $purchase->fresh(),
             'plan' => $plan,
             'regionLabel' => $this->catalog->regionLabel($purchase->region_code),
         ]);

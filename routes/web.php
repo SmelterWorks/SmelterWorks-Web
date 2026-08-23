@@ -30,6 +30,9 @@ Route::post('/hosting/purchase', [HostingController::class, 'store'])
     ->name('hosting.purchase.store');
 Route::get('/hosting/orders/{purchase}', [HostingController::class, 'show'])->name('hosting.purchases.show');
 
+Route::post('/stripe/webhook', \App\Http\Controllers\StripeWebhookController::class)
+    ->name('stripe.webhook');
+
 Route::get('/mods', [PageController::class, 'mods'])->name('mods');
 Route::get('/servers', ServersPageController::class)->name('servers');
 Route::get('/relic', [RelicController::class, 'show'])->name('relic');

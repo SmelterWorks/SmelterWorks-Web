@@ -20,6 +20,7 @@ type Config struct {
 	LocalSocket   string
 	LocalToken    string
 	SFTPPort      int
+	SFTPPassword  string
 	S3Endpoint    string
 	S3Bucket      string
 	S3Region      string
@@ -49,6 +50,7 @@ func Load() Config {
 		LocalSocket:   env("SMELTER_LOCAL_SOCKET", "/run/smelterd.sock"),
 		LocalToken:    env("SMELTER_LOCAL_TOKEN", ""),
 		SFTPPort:      envInt("SMELTER_SFTP_PORT", 2222),
+		SFTPPassword:  env("SMELTER_SFTP_PASSWORD", ""),
 		S3Endpoint:    env("AWS_ENDPOINT", ""),
 		S3Bucket:      env("AWS_BUCKET", ""),
 		S3Region:      env("AWS_DEFAULT_REGION", "us-east-1"),

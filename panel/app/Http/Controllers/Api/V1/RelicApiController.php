@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ApiToken;
 use App\Models\GameServer;
 use App\Models\MigrationJob;
+use App\Support\Relic\RelicConsoleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -26,7 +27,7 @@ class RelicApiController extends Controller
                 'type' => $server->type,
                 'status' => $server->status,
                 'connect_address' => $server->connect_address,
-                'daemon_online' => $server->daemon?->last_seen_at?->gt(now()->subMinutes(2)) ?? false,
+                'daemon_online' => $server->daemon?->isOnline() ?? false,
             ]);
 
         return response()->json([
@@ -49,11 +50,29 @@ class RelicApiController extends Controller
         ]);
     }
 
+    public function consoleLogs(GameServer $server, Request $request, RelicConsoleService $console): JsonResponse
+    {
+        abort_unless($request->user()->organization_id === $server->organization_id, 403);
+
+        $lines = (int) $request->query('lines', 200);
+        $output = $console->tail($server, max(10, min($lines, 500)));
+
+        return response()->json([
+            'schemaVersion' => 1,
+            'server_uuid' => $server->uuid,
+            ...$output,
+        ]);
+    }
+
     public function createToken(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:80'],
+            'abilities' => ['nullable', 'array'],
+            'abilities.*' => ['string', 'in:relic:read,relic:console'],
         ]);
+
+        $abilities = $validated['abilities'] ?? ['relic:read', 'relic:console'];
 
         $plain = 'swr_'.Str::random(48);
 
@@ -62,12 +81,13 @@ class RelicApiController extends Controller
             'name' => $validated['name'],
             'token_hash' => hash('sha256', $plain),
             'token_prefix' => substr($plain, 0, 16),
-            'abilities' => ['relic:read', 'relic:console'],
+            'abilities' => $abilities,
         ]);
 
         return response()->json([
             'token' => $plain,
             'prefix' => substr($plain, 0, 16),
+            'abilities' => $abilities,
         ]);
     }
 }

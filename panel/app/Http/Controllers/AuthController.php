@@ -36,6 +36,13 @@ class AuthController extends Controller
         $authenticated = Auth::user();
         $security->recordSuccess($authenticated, $request);
 
+        if ($authenticated->totp_enabled) {
+            Auth::logout();
+            $request->session()->put('totp_user_id', $authenticated->id);
+
+            return redirect()->route('totp.challenge');
+        }
+
         return redirect()->intended(route('dashboard'));
     }
 

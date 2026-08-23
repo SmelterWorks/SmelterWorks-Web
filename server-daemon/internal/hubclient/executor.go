@@ -3,6 +3,7 @@ package hubclient
 import (
 	"context"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -16,6 +17,7 @@ import (
 	"github.com/smelterworks/server-daemon/internal/backup"
 	"github.com/smelterworks/server-daemon/internal/config"
 	"github.com/smelterworks/server-daemon/internal/docker"
+	"github.com/smelterworks/server-daemon/internal/files"
 	"github.com/smelterworks/server-daemon/internal/migrate"
 )
 
@@ -24,6 +26,7 @@ type Executor struct {
 	docker *docker.Client
 	backup *backup.Service
 	cloud  *backup.CloudUploader
+	files  *files.Service
 	local  *http.Client
 }
 
@@ -33,6 +36,7 @@ func NewExecutor(cfg config.Config, dockerClient *docker.Client, backupSvc *back
 		docker: dockerClient,
 		backup: backupSvc,
 		cloud:  backup.NewCloudUploader(cfg),
+		files:  files.New(cfg.DataPath, cfg.ModsPath),
 		local: &http.Client{
 			Timeout: 15 * time.Minute,
 			Transport: &http.Transport{
@@ -61,6 +65,12 @@ func (e *Executor) Run(ctx context.Context, cmd Command) (map[string]interface{}
 		return e.runMigrateImport(ctx, cmd.Payload)
 	case "mod.install":
 		return e.runModInstall(ctx, cmd.Payload)
+	case "console.logs":
+		return e.runConsoleLogs(ctx, cmd.Payload)
+	case "files.list":
+		return e.runFilesList(cmd.Payload)
+	case "files.write":
+		return e.runFilesWrite(cmd.Payload)
 	default:
 		return nil, fmt.Errorf("unknown command type: %s", cmd.Type)
 	}
@@ -210,6 +220,67 @@ func (e *Executor) runModInstall(ctx context.Context, payload map[string]interfa
 	}
 
 	return map[string]interface{}{"path": dest}, nil
+}
+
+func (e *Executor) runConsoleLogs(ctx context.Context, payload map[string]interface{}) (map[string]interface{}, error) {
+	lines := 200
+	if raw, ok := payload["lines"].(float64); ok {
+		lines = int(raw)
+	}
+	if lines < 10 {
+		lines = 10
+	}
+	if lines > 500 {
+		lines = 500
+	}
+
+	output, err := e.docker.Logs(ctx, fmt.Sprintf("%d", lines))
+	if err != nil {
+		return nil, err
+	}
+
+	chunks := []string{}
+	if output != "" {
+		chunks = strings.Split(strings.TrimRight(output, "\n"), "\n")
+	}
+
+	return map[string]interface{}{
+		"lines":     chunks,
+		"truncated": len(chunks) >= lines,
+	}, nil
+}
+
+func (e *Executor) runFilesList(payload map[string]interface{}) (map[string]interface{}, error) {
+	path, _ := payload["path"].(string)
+	entries, err := e.files.List(path)
+	if err != nil {
+		return nil, err
+	}
+	names := make([]string, 0, len(entries))
+	for _, entry := range entries {
+		name := entry.Name()
+		if entry.IsDir() {
+			name += "/"
+		}
+		names = append(names, name)
+	}
+	return map[string]interface{}{"entries": names}, nil
+}
+
+func (e *Executor) runFilesWrite(payload map[string]interface{}) (map[string]interface{}, error) {
+	path, _ := payload["path"].(string)
+	encoded, _ := payload["content_base64"].(string)
+	if path == "" || encoded == "" {
+		return nil, fmt.Errorf("missing path or content")
+	}
+	raw, err := base64.StdEncoding.DecodeString(encoded)
+	if err != nil {
+		return nil, err
+	}
+	if err := e.files.Write(path, strings.NewReader(string(raw))); err != nil {
+		return nil, err
+	}
+	return map[string]interface{}{"ok": true}, nil
 }
 
 func (e *Executor) localPost(ctx context.Context, path string) error {
