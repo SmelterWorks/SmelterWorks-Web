@@ -32,6 +32,10 @@ class UpdateManifestController extends Controller
                 ->header('Cache-Control', 'public, max-age=60');
         }
 
+        if ($mirror->channelIsStale($product, $channel)) {
+            app()->terminating(fn (): mixed => $mirror->warmProduct($product, $channel));
+        }
+
         $etag = $presenter->etag($manifest);
 
         if ($request->headers->get('If-None-Match') === $etag) {

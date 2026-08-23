@@ -85,6 +85,41 @@ final class UpdateMirrorService
         }
     }
 
+    public function fetchUpstreamRelease(string $productSlug, string $channelSlug, bool $fresh = false): ?UpstreamRelease
+    {
+        if ($this->registry->channel($productSlug, $channelSlug) === null) {
+            return null;
+        }
+
+        $source = $this->sources->forProduct($productSlug);
+
+        if ($source === null) {
+            return null;
+        }
+
+        return $source->fetchChannel($productSlug, $channelSlug, $fresh);
+    }
+
+    public function channelIsStale(string $productSlug, string $channelSlug): bool
+    {
+        if ($this->registry->channel($productSlug, $channelSlug) === null) {
+            return false;
+        }
+
+        $manifest = $this->getChannelManifest($productSlug, $channelSlug);
+        $upstream = $this->fetchUpstreamRelease($productSlug, $channelSlug, fresh: true);
+
+        if ($upstream === null) {
+            return $manifest === null;
+        }
+
+        if ($manifest === null) {
+            return true;
+        }
+
+        return $manifest->version !== $upstream->version;
+    }
+
     public function getChannelManifest(string $productSlug, string $channelSlug): ?ChannelManifest
     {
         if ($this->registry->channel($productSlug, $channelSlug) === null) {

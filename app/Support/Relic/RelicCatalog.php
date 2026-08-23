@@ -4,6 +4,7 @@ namespace App\Support\Relic;
 
 use App\Support\Updates\Data\ChannelManifest;
 use App\Support\Updates\Data\MirroredAsset;
+use App\Support\Updates\Data\UpstreamRelease;
 use App\Support\Updates\UpdateMirrorService;
 
 class RelicCatalog
@@ -55,6 +56,10 @@ class RelicCatalog
 
         $stableManifest = $this->mirror->getChannelManifest(self::PRODUCT, 'stable');
         $stable = $this->channelSummary($stableManifest, (string) $relic['releases_url']);
+        $stable['tag'] = $this->preferNewerDisplayTag(
+            $stable['tag'],
+            $this->displayTagFromUpstream($this->mirror->fetchUpstreamRelease(self::PRODUCT, 'stable', fresh: true)),
+        );
         $downloads = $this->buildDownloads($relic, $stableManifest, 'stable');
 
         $nightlyEnabled = (bool) data_get($relic, 'nightly.enabled', true);
@@ -111,7 +116,12 @@ class RelicCatalog
     private function withStableTag(array $relic): array
     {
         $manifest = $this->mirror->getChannelManifest(self::PRODUCT, 'stable');
-        $relic['stable_tag'] = $this->displayTag($manifest);
+        $upstream = $this->mirror->fetchUpstreamRelease(self::PRODUCT, 'stable', fresh: true);
+
+        $relic['stable_tag'] = $this->preferNewerDisplayTag(
+            $this->displayTag($manifest),
+            $this->displayTagFromUpstream($upstream),
+        );
 
         return $relic;
     }
@@ -313,11 +323,49 @@ class RelicCatalog
             return null;
         }
 
-        if (preg_match('/^\d+\./', $manifest->version)) {
-            return 'v'.$manifest->version;
+        return $this->displayTagFromVersion($manifest->version);
+    }
+
+    private function displayTagFromUpstream(?UpstreamRelease $release): ?string
+    {
+        if ($release === null) {
+            return null;
         }
 
-        return $manifest->version;
+        return $this->displayTagFromVersion($release->version);
+    }
+
+    private function displayTagFromVersion(string $version): ?string
+    {
+        if ($version === '') {
+            return null;
+        }
+
+        if (preg_match('/^\d+\./', $version)) {
+            return 'v'.$version;
+        }
+
+        return $version;
+    }
+
+    private function preferNewerDisplayTag(?string $manifestTag, ?string $upstreamTag): ?string
+    {
+        if ($upstreamTag === null) {
+            return $manifestTag;
+        }
+
+        if ($manifestTag === null) {
+            return $upstreamTag;
+        }
+
+        $manifestVersion = ltrim($manifestTag, 'v');
+        $upstreamVersion = ltrim($upstreamTag, 'v');
+
+        if (version_compare($upstreamVersion, $manifestVersion, '>')) {
+            return $upstreamTag;
+        }
+
+        return $manifestTag;
     }
 
     /**

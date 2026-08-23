@@ -9,6 +9,43 @@ use Tests\TestCase;
 
 class AssetMatcherTest extends TestCase
 {
+    public function test_matches_windows_installer_zip_excluding_portable(): void
+    {
+        $release = new UpstreamRelease(
+            tag: 'v0.2.0',
+            version: '0.2.0',
+            htmlUrl: 'https://example.test/releases/tag/v0.2.0',
+            publishedAt: null,
+            assets: [
+                new UpstreamAsset('relic-launcher-0.2.0-win-x64-portable.zip', 'https://example.test/portable.zip'),
+                new UpstreamAsset('relic-launcher-0.2.0-win-x64.zip', 'https://example.test/installer.zip'),
+            ],
+        );
+
+        $matches = app(AssetMatcher::class)->match($release, [
+            [
+                'rid' => 'win-x64',
+                'installKind' => 'WindowsInstaller',
+                'match' => ['*.msi', '*-setup.exe', '*Setup.exe', '*.zip'],
+                'prefer' => ['*win-x64*'],
+                'reject' => ['*portable*', '*.app.zip'],
+            ],
+            [
+                'rid' => 'win-x64',
+                'installKind' => 'WindowsZip',
+                'match' => ['*.zip'],
+                'prefer' => ['*portable*', '*win-x64*'],
+                'reject' => ['*.app.zip'],
+            ],
+        ]);
+
+        $this->assertCount(2, $matches);
+        $this->assertSame('WindowsInstaller', $matches[0]['installKind']);
+        $this->assertSame('relic-launcher-0.2.0-win-x64.zip', $matches[0]['asset']->name);
+        $this->assertSame('WindowsZip', $matches[1]['installKind']);
+        $this->assertSame('relic-launcher-0.2.0-win-x64-portable.zip', $matches[1]['asset']->name);
+    }
+
     public function test_matches_windows_zip_preferring_win_x64_without_app_zip(): void
     {
         $release = new UpstreamRelease(

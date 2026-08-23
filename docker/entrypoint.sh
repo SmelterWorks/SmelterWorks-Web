@@ -67,6 +67,7 @@ php artisan view:cache --no-ansi
 php artisan migrate --force --no-interaction --no-ansi || true
 
 (php artisan updates:warm --no-ansi || true) &
+(php artisan schedule:work --no-ansi || true) &
 
 php-fpm -D
 # -e /dev/null skips nginx's compiled-in default error log (opened before

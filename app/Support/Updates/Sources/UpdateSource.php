@@ -6,5 +6,5 @@ use App\Support\Updates\Data\UpstreamRelease;
 
 interface UpdateSource
 {
-    public function fetchChannel(string $productSlug, string $channelSlug): ?UpstreamRelease;
+    public function fetchChannel(string $productSlug, string $channelSlug, bool $fresh = false): ?UpstreamRelease;
 }

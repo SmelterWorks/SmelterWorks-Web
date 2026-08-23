@@ -23,6 +23,26 @@ class RelicCatalogTest extends TestCase
         app()->forgetInstance(RelicCatalog::class);
     }
 
+    public function test_for_view_shows_upstream_tag_when_mirror_is_stale(): void
+    {
+        $this->fakeAndWarmRelicMirror($this->relicStableReleaseFixture('v0.1.0'));
+        $this->fakeRelicLatestStable($this->relicStableReleaseFixture('v0.2.0'));
+
+        $relic = app(RelicCatalog::class)->forView();
+
+        $this->assertSame('v0.2.0', $relic['stable_tag']);
+    }
+
+    public function test_for_download_page_shows_upstream_tag_when_mirror_is_stale(): void
+    {
+        $this->fakeAndWarmRelicMirror($this->relicStableReleaseFixture('v0.1.0'));
+        $this->fakeRelicLatestStable($this->relicStableReleaseFixture('v0.2.0'));
+
+        $page = app(RelicCatalog::class)->forDownloadPage();
+
+        $this->assertSame('v0.2.0', $page['stable']['tag']);
+    }
+
     public function test_for_view_includes_stable_tag_when_release_exists(): void
     {
         $this->fakeAndWarmRelicMirror($this->relicStableReleaseFixture('v0.1.0'));
@@ -52,15 +72,16 @@ class RelicCatalogTest extends TestCase
 
         $windows = collect($page['downloads'])->firstWhere('id', 'windows');
         $this->assertTrue($windows['available']);
-        $this->assertSame('portable', $windows['default_format']);
+        $this->assertSame('installer', $windows['default_format']);
         $this->assertSame(
             url('/files/relic/0.1.0/relic-launcher-v0.1.0-win-x64.zip'),
             $windows['url'],
         );
 
+        $installer = collect($windows['formats'])->firstWhere('id', 'installer');
+        $this->assertTrue($installer['available']);
         $portable = collect($windows['formats'])->firstWhere('id', 'portable');
         $this->assertTrue($portable['available']);
-        $this->assertFalse(collect($windows['formats'])->firstWhere('id', 'installer')['available']);
 
         $linux = collect($page['downloads'])->firstWhere('id', 'linux');
         $this->assertTrue($linux['available']);

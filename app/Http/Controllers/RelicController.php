@@ -20,9 +20,7 @@ class RelicController extends Controller
     {
         $relic = $this->relic->forView();
 
-        if ($relic['stable_tag'] === null) {
-            $this->queueMirrorWarmIfIdle();
-        }
+        $this->queueMirrorWarmIfNeeded();
 
         return view('pages.relic', [
             'relic' => $relic,
@@ -34,9 +32,7 @@ class RelicController extends Controller
         $page = $this->relic->forDownloadPage();
         $detected = $this->platforms->detect($request->userAgent());
 
-        if (! $page['stable']['available']) {
-            $this->queueMirrorWarmIfIdle();
-        }
+        $this->queueMirrorWarmIfNeeded();
 
         $suggested = collect($page['downloads'])->firstWhere('id', $detected['id']);
 
@@ -50,8 +46,12 @@ class RelicController extends Controller
         ]);
     }
 
-    private function queueMirrorWarmIfIdle(): void
+    private function queueMirrorWarmIfNeeded(): void
     {
+        if (! $this->updates->channelIsStale('relic', 'stable')) {
+            return;
+        }
+
         app()->terminating(function (): void {
             $this->updates->warmProduct('relic');
         });

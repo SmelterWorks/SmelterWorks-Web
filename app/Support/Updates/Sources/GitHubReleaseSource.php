@@ -27,11 +27,11 @@ final class GitHubReleaseSource implements UpdateSource
         private readonly RepoUrlParser $parser,
     ) {}
 
-    public function fetchChannel(string $productSlug, string $channelSlug): ?UpstreamRelease
+    public function fetchChannel(string $productSlug, string $channelSlug, bool $fresh = false): ?UpstreamRelease
     {
         $memoryKey = "{$productSlug}.{$channelSlug}";
 
-        if (array_key_exists($memoryKey, $this->memory)) {
+        if (! $fresh && array_key_exists($memoryKey, $this->memory)) {
             return $this->memory[$memoryKey];
         }
 
@@ -40,6 +40,18 @@ final class GitHubReleaseSource implements UpdateSource
 
         if ($product === null || $channel === null) {
             return $this->memory[$memoryKey] = null;
+        }
+
+        if ($fresh) {
+            unset($this->memory[$memoryKey]);
+
+            $fetched = $this->fetchUpstream($product, $channel);
+
+            if ($fetched !== null) {
+                $this->rememberRelease("updates.upstream.{$productSlug}.{$channelSlug}", $fetched);
+            }
+
+            return $this->memory[$memoryKey] = $fetched;
         }
 
         $cacheKey = "updates.upstream.{$productSlug}.{$channelSlug}";

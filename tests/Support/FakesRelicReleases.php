@@ -2,6 +2,9 @@
 
 namespace Tests\Support;
 
+use App\Support\Updates\Sources\GitHubReleaseSource;
+use App\Support\Updates\Sources\UpdateSourceResolver;
+use App\Support\Updates\UpdateMirrorService;
 use Illuminate\Support\Facades\Http;
 
 trait FakesRelicReleases
@@ -11,6 +14,12 @@ trait FakesRelicReleases
      */
     protected function fakeRelicLatestStable(array $release): void
     {
+        app()->forgetInstance(GitHubReleaseSource::class);
+        app()->forgetInstance(UpdateSourceResolver::class);
+        app()->forgetInstance(UpdateMirrorService::class);
+
+        $this->resetHttpFakes();
+
         Http::fake(function ($request) use ($release) {
             $url = $request->url();
 
@@ -41,6 +50,11 @@ trait FakesRelicReleases
 
             return Http::response([], 404);
         });
+    }
+
+    protected function resetHttpFakes(): void
+    {
+        Http::swap(new \Illuminate\Http\Client\Factory(app('events')));
     }
 
     /**

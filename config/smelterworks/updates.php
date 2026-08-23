@@ -55,15 +55,15 @@ return [
                 [
                     'rid' => 'win-x64',
                     'installKind' => 'WindowsInstaller',
-                    'match' => ['*.msi', '*-setup.exe', '*Setup.exe'],
+                    'match' => ['*.msi', '*-setup.exe', '*Setup.exe', '*.zip'],
                     'prefer' => ['*win-x64*'],
-                    'reject' => [],
+                    'reject' => ['*portable*', '*.app.zip'],
                 ],
                 [
                     'rid' => 'win-x64',
                     'installKind' => 'WindowsZip',
                     'match' => ['*.zip'],
-                    'prefer' => ['*win-x64*'],
+                    'prefer' => ['*portable*', '*win-x64*'],
                     'reject' => ['*.app.zip'],
                 ],
                 [
