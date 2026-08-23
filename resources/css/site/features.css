@@ -93,4 +93,42 @@
         color: color-mix(in oklab, var(--color-copper) 70%, black);
         text-decoration-color: currentColor;
     }
+
+    .feature-grid--dots {
+        gap: 0.6rem 2rem;
+        max-width: 52rem;
+    }
+
+    .feature-grid--dots .feature-grid__item {
+        position: relative;
+        padding: 0 0 0 1.05rem;
+        border: none;
+        background: transparent;
+        gap: 0;
+    }
+
+    .feature-grid--dots .feature-grid__item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.58rem;
+        width: 0.38rem;
+        height: 0.38rem;
+        border-radius: 999px;
+        background: color-mix(in oklab, var(--color-copper) 72%, var(--color-iron));
+        box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-copper) 14%, transparent);
+    }
+
+    .feature-grid--dots .feature-grid__icon {
+        display: none;
+    }
+
+    .feature-grid--dots .feature-grid__body {
+        padding-top: 0;
+    }
+
+    .feature-grid--dots .feature-grid__text {
+        font-size: 0.98rem;
+        line-height: 1.55;
+    }
 }

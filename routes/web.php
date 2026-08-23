@@ -4,6 +4,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HostingController;
 use App\Http\Controllers\HostingFeedController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PanelDemoController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RelicController;
 use App\Http\Controllers\RobotsController;
@@ -41,6 +42,9 @@ Route::get('/files/{product}/{version}/{filename}', UpdateFileController::class)
     ->name('updates.file');
 
 Route::get('/panel', [PageController::class, 'panel'])->name('panel');
+Route::get('/panel/demo/mods', [PanelDemoController::class, 'mods'])
+    ->middleware('throttle:30,1')
+    ->name('panel.demo.mods');
 
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/branding', [PageController::class, 'branding'])->name('branding');

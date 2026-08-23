@@ -33,16 +33,18 @@ class HostingPurchaseService
             ? (int) $plan['price_yearly']
             : (int) $plan['price_monthly'];
 
-        return DB::transaction(function () use ($input, $amount, $billingCycle): HostingPurchase {
-            $stock = $this->stock->findLocked($input['region_code'], $input['plan_slug']);
+        return DB::transaction(function () use ($input, $amount, $billingCycle, $plan): HostingPurchase {
+            if (! $this->catalog->isByos($plan)) {
+                $stock = $this->stock->findLocked($input['region_code'], $input['plan_slug']);
 
-            if (! $stock->isAvailable()) {
-                throw ValidationException::withMessages([
-                    'region_code' => 'That plan is sold out in this region. Pick the other region or another plan.',
-                ]);
+                if (! $stock->isAvailable()) {
+                    throw ValidationException::withMessages([
+                        'region_code' => 'That plan is sold out in this region. Pick the other region or another plan.',
+                    ]);
+                }
+
+                $stock->increment('sold');
             }
-
-            $stock->increment('sold');
 
             return HostingPurchase::query()->create([
                 'plan_slug' => $input['plan_slug'],
@@ -89,7 +91,7 @@ class HostingPurchaseService
                 return $locked;
             }
 
-            if ($locked->holdsStock()) {
+            if ($locked->holdsStock() && ! $this->catalog->isByosPlan($locked->plan_slug)) {
                 $stock = $this->stock->findLocked($locked->region_code, $locked->plan_slug);
 
                 if ($stock->sold > 0) {

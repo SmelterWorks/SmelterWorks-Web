@@ -3,8 +3,13 @@
         <div class="page-hero__inner">
             <h1 class="page-hero__title">Purchase {{ $plan['name'] }}</h1>
             <p class="page-hero__lede">
-                {{ $plan['blurb'] }} {{ $plan['ram_gb'] }} GB RAM, {{ $plan['storage_gb'] }} GB NVMe.
-                {{ $remaining }} left across both regions.
+                {{ $plan['blurb'] }}
+                @if ($isByos)
+                    ${{ $plan['price_monthly'] }}/month per daemon. Local backups included on your hardware.
+                @else
+                    {{ $plan['ram_gb'] }} GB RAM, {{ $plan['storage_gb'] }} GB NVMe.
+                    {{ $remaining }} left across both regions.
+                @endif
             </p>
         </div>
     </section>
@@ -12,19 +17,42 @@
     <section class="section section--tight">
         <div class="section__inner purchase-layout">
             <div class="prose-block">
-                <h2>Stock by region</h2>
-                <ul>
-                    @forelse ($stocks as $stock)
-                        <li>
-                            {{ collect(config('smelterworks.hosting.regions'))->firstWhere('code', $stock->region_code)['label'] ?? $stock->region_code }}:
-                            {{ $stock->remaining() }} of {{ $stock->capacity }} left
-                        </li>
-                    @empty
-                        <li>Stock is not configured yet.</li>
-                    @endforelse
-                </ul>
+                @if ($isByos)
+                    <h2>What you get</h2>
+                    <ul>
+                        @foreach ($plan['highlights'] ?? [] as $highlight)
+                            <li>{{ $highlight }}</li>
+                        @endforeach
+                    </ul>
+                    @if (count($cloudBackupTiers) > 0)
+                        <h3>Optional cloud backups</h3>
+                        <ul>
+                            @foreach ($cloudBackupTiers as $tier)
+                                <li>
+                                    {{ $tier['label'] }}: {{ $tier['storage_gb'] }} GB for
+                                    ${{ $tier['price_monthly'] }}/month or ${{ $tier['price_yearly'] }}/year
+                                    @if ($tier['default'] ?? false)
+                                        (usual pick)
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+                @else
+                    <h2>Stock by region</h2>
+                    <ul>
+                        @forelse ($stocks as $stock)
+                            <li>
+                                {{ collect(config('smelterworks.hosting.regions'))->firstWhere('code', $stock->region_code)['label'] ?? $stock->region_code }}:
+                                {{ $stock->remaining() }} of {{ $stock->capacity }} left
+                            </li>
+                        @empty
+                            <li>Stock is not configured yet.</li>
+                        @endforelse
+                    </ul>
+                @endif
                 <p>
-                    ${{ $plan['price_monthly'] }}/month
+                    ${{ $plan['price_monthly'] }}/month{{ $isByos ? ' per daemon' : '' }}
                     @if ($priceMonthlyEur)
                         (about €{{ number_format($priceMonthlyEur, 2) }})
                     @endif
@@ -36,7 +64,7 @@
                 </p>
             </div>
 
-            @if ($remaining < 1)
+            @if (!$isByos && $remaining < 1)
                 <p class="flash-message flash-message--warn">This plan is sold out in both regions.</p>
                 <x-button :href="route('hosting')" variant="ghost">Back to hosting</x-button>
             @else
@@ -50,11 +78,14 @@
                             @foreach ($regions as $region)
                                 @php
                                     $row = $stocks->firstWhere('region_code', $region['code']);
-                                    $left = $row?->remaining() ?? 0;
+                                    $left = $isByos ? null : $row?->remaining() ?? 0;
                                 @endphp
                                 <option value="{{ $region['code'] }}" @selected(old('region_code', $region['code']) === $region['code'])
-                                    @disabled($left < 1)>
-                                    {{ $region['label'] }} ({{ $left }} left)
+                                    @disabled(!$isByos && $left < 1)>
+                                    {{ $region['label'] }}
+                                    @unless ($isByos)
+                                        ({{ $left }} left)
+                                    @endunless
                                 </option>
                             @endforeach
                         </select>
@@ -106,8 +137,13 @@
                     </label>
 
                     <p class="form-note">
-                        Submitting reserves one slot on the chosen host. Payment wiring comes next.
-                        Until then the order stays pending and the stock stays held.
+                        @if ($isByos)
+                            Submitting creates a pending BYOS panel order. Cloud backup add-ons are picked in the panel
+                            after checkout opens.
+                        @else
+                            Submitting reserves one slot on the chosen host. Payment wiring comes next.
+                            Until then the order stays pending and the stock stays held.
+                        @endif
                     </p>
 
                     <div class="action-row">

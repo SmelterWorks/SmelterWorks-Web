@@ -20,11 +20,11 @@ This repo is open source under Apache 2.0 (`LICENSE`). Treat every commit as pub
 | Relic | `/relic`, `/relic/download` | Download page auto-detects OS from User-Agent |
 | Contact | `/contact` | Email shown obfuscated (`[at]`, `[dot]`) when configured |
 | Donate | `/donate` | Ko-Fi link from env |
-| Panel | `/panel` | Placeholder in this app. Redirects away if `SMELTERWORKS_PANEL_URL` is set |
+| Panel | `/panel` | Stub or redirect via `SMELTERWORKS_PANEL_URL`. Product lives in [`panel/`](panel/) |
 | Legal | `/privacy`, `/terms` | No ads, no tracking, no telemetry. Functional cookies only |
 | SEO | `/robots.txt`, `/sitemap.xml` | Layout emits description, canonical, Open Graph, Twitter, JSON-LD |
 
-The panel product (login, provisioning, mod browser, backups, file editor) is intended to live in this web app over time. Until then `/panel` is a stub or external redirect.
+The control panel is a separate Laravel app in [`panel/`](panel/). The marketing site keeps `/panel` as a stub or HTTPS redirect via `SMELTERWORKS_PANEL_URL`. Host agents live in [`server-daemon/`](server-daemon/) (`smelterd`, `daemon-tool`).
 
 ### Layout
 

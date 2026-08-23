@@ -20,13 +20,26 @@
             @include('pages.hosting.partials.currency-bar', ['exchange' => $exchange])
 
             <div class="plan-grid">
-                @foreach ($hosting['plans'] as $plan)
+                @foreach ($managedPlans as $plan)
                     @include('pages.hosting.partials.plan-card', [
                         'plan' => $plan,
                         'comingSoon' => $comingSoon,
+                        'cloudBackupTiers' => $hosting['cloud_backup_tiers'] ?? [],
                     ])
                 @endforeach
+
+                @if ($byosPlan)
+                    @include('pages.hosting.partials.plan-card', [
+                        'plan' => $byosPlan,
+                        'comingSoon' => $comingSoon,
+                        'cloudBackupTiers' => $hosting['cloud_backup_tiers'] ?? [],
+                    ])
+                @endif
             </div>
+
+            @if (filled($hosting['panel_attribution'] ?? null))
+                <x-panel-attribution :attribution="$hosting['panel_attribution']" />
+            @endif
 
             @include('pages.hosting.partials.details', ['hosting' => $hosting])
         </div>

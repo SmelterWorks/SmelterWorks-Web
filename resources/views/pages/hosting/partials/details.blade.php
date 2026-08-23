@@ -11,7 +11,7 @@
 
 <div class="feature-section">
     <h2 class="feature-section__title">Included on every plan</h2>
-    <x-feature-grid :items="$hosting['features']" />
+    <x-feature-grid :items="$hosting['features']" variant="dots" />
     @if (filled($hosting['change_note'] ?? null))
         <p class="section__note">{{ $hosting['change_note'] }}</p>
     @endif

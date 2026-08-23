@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+REPO_ROOT="$(cd "$ROOT/.." && pwd)"
+PHP_BIN="$(command -v php)"
+
+if [[ -d /usr/lib/php/modules ]]; then
+    exec "$PHP_BIN" -c "$REPO_ROOT/php-local.ini" "$@"
+fi
+
+exec "$PHP_BIN" -d memory_limit=512M "$@"

@@ -124,6 +124,10 @@
         background: color-mix(in oklab, var(--color-surface-elevated) 55%, transparent);
     }
 
+    [data-theme='dark'] .feature-grid--dots .feature-grid__item {
+        background: transparent;
+    }
+
     [data-theme='dark'] .feature-grid--muted .feature-grid__item {
         background: color-mix(in oklab, var(--color-ash-deep) 75%, transparent);
     }

@@ -64,6 +64,7 @@ return [
     ],
 
     'hosting' => require __DIR__.'/smelterworks/hosting.php',
+    'panel' => require __DIR__.'/smelterworks/panel.php',
     'relic' => require __DIR__.'/smelterworks/relic.php',
     'projects' => require __DIR__.'/smelterworks/projects.php',
     'branding' => require __DIR__.'/smelterworks/branding.php',

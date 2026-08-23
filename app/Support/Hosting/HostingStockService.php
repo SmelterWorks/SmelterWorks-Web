@@ -22,6 +22,10 @@ class HostingStockService
 
         foreach ($stock as $regionCode => $plans) {
             foreach ($plans as $planSlug => $capacity) {
+                if ($this->catalog->isByosPlan($planSlug)) {
+                    continue;
+                }
+
                 HostingStock::query()->updateOrCreate(
                     [
                         'region_code' => $regionCode,
@@ -79,6 +83,19 @@ class HostingStockService
 
         foreach ($this->catalog->plans() as $plan) {
             $slug = $plan['slug'];
+
+            if ($this->catalog->isByos($plan)) {
+                $snapshot[$slug] = [
+                    'remaining' => PHP_INT_MAX,
+                    'capacity' => PHP_INT_MAX,
+                    'sold' => 0,
+                    'by_region' => [],
+                    'unlimited' => true,
+                ];
+
+                continue;
+            }
+
             $rows = $this->forPlan($slug);
             $byRegion = [];
 

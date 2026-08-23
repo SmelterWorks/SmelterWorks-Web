@@ -1,0 +1,15 @@
+[Unit]
+Description=SmelterWorks server daemon
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/smelterd
+Restart=on-failure
+EnvironmentFile=/etc/smelterworks/smelterd.env
+User=smelterd
+Group=docker
+
+[Install]
+WantedBy=multi-user.target

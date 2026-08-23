@@ -1,0 +1,28 @@
+services:
+  panel:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      APP_URL: http://localhost:8080
+      PANEL_MODE: selfhost
+      DB_CONNECTION: sqlite
+    volumes:
+      - panel-data:/var/www/html/database
+
+  minio:
+    profiles: [cloud-backups]
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: smelterworks
+      MINIO_ROOT_PASSWORD: change-me
+    volumes:
+      - minio-data:/data
+
+volumes:
+  panel-data:
+  minio-data:

@@ -16,6 +16,7 @@ Ships:
 - Hosting catalog (plans, regions, refunds). Purchases stay closed while `config('smelterworks.hosting.coming_soon')` is true
 - Relic Launcher pages (`/relic`, `/relic/download` with UA platform detect)
 - Panel entry (`/panel`) as an in-app stub, or redirect when `SMELTERWORKS_PANEL_URL` is set
+- Separate panel app in `panel/` and host daemon in `server-daemon/`
 - Privacy and terms (no ads, tracking, or telemetry; functional cookies only)
 - Rootless Docker image (`Dockerfile`, `docker-compose.yml`)
 
@@ -23,9 +24,7 @@ License: Apache 2.0 (`LICENSE`). Assume the tree is public.
 
 ## What the panel is
 
-The control panel is the future home for account login, server provisioning, mod installs, backups, and the file editor. It is not a separate product name. Until features land, keep `/panel` honest as a placeholder or external URL from env.
-
-Do not invent live panel features in copy.
+The control panel is a separate Laravel app in `panel/`. It handles accounts, BYOS pairing, backups, migration, mod browser, and Relic API hooks. Host agents run via `server-daemon/` (`smelterd` + `daemon-tool`). Until checkout opens, marketing copy stays gated by `hosting.coming_soon`.
 
 ## Hosting copy rules
 

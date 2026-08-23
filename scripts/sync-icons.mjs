@@ -38,6 +38,13 @@ const lucideNames = [
     'upload',
     'sun',
     'moon',
+    'pencil',
+    'play',
+    'square',
+    'refresh-cw',
+    'user',
+    'settings',
+    'circle-stop',
 ];
 
 function resetDir(path) {

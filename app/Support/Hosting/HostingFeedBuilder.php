@@ -42,6 +42,47 @@ final class HostingFeedBuilder
 
         foreach ($this->catalog->plans() as $plan) {
             $stock = $inventory[$plan['slug']] ?? null;
+            $isByos = $this->catalog->isByos($plan);
+
+            if ($isByos) {
+                $status = $comingSoon ? 'Coming soon' : 'Available';
+                $availability = $comingSoon
+                    ? 'Purchases are not open yet.'
+                    : 'Unlimited panel slots on your own hardware.';
+
+                $description = sprintf(
+                    '%s $%s/mo or $%s/yr per daemon. Panel access only, not game-server RAM. Local backups included. Optional cloud backups from $3/mo (25GB) to $7/mo (100GB). Status: %s. %s',
+                    $plan['blurb'],
+                    number_format((float) $plan['price_monthly'], 2),
+                    number_format((float) $plan['price_yearly'], 2),
+                    $status,
+                    $availability,
+                );
+
+                $fingerprint = implode('|', [
+                    $plan['slug'],
+                    $plan['price_monthly'],
+                    $plan['price_yearly'],
+                    $comingSoon ? 'soon' : 'open',
+                    'byos',
+                ]);
+
+                $items[] = [
+                    'title' => sprintf(
+                        '%s: $%s/mo (%s)',
+                        $plan['name'],
+                        number_format((float) $plan['price_monthly'], 0),
+                        $status,
+                    ),
+                    'link' => route('hosting'),
+                    'guid' => 'smelterworks-hosting-'.$plan['slug'].'-'.substr(sha1($fingerprint), 0, 12),
+                    'description' => $description,
+                    'pub_date' => $updatedAt,
+                ];
+
+                continue;
+            }
+
             $remaining = $stock['remaining'] ?? null;
             $status = $comingSoon
                 ? 'Coming soon'

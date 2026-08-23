@@ -117,6 +117,22 @@ class HostingPurchaseTest extends TestCase
         $this->assertSame(2, HostingStock::query()->where('plan_slug', 'heavy')->sum('capacity'));
     }
 
+    public function test_byos_purchase_does_not_touch_stock_when_open(): void
+    {
+        $this->openHostingPurchases();
+
+        $this->post(route('hosting.purchase.store'), [
+            'plan_slug' => 'byos',
+            'region_code' => 'your-hardware',
+            'billing_cycle' => 'monthly',
+            'customer_name' => 'Alex Tester',
+            'customer_email' => 'alex@example.com',
+        ])->assertRedirect();
+
+        $this->assertSame(1, HostingPurchase::query()->where('plan_slug', 'byos')->count());
+        $this->assertSame(0, HostingStock::query()->where('plan_slug', 'byos')->count());
+    }
+
     private function openHostingPurchases(): void
     {
         Config::set('smelterworks.hosting.coming_soon', false);

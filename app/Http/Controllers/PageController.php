@@ -71,6 +71,8 @@ class PageController extends Controller
             return redirect()->away($external);
         }
 
-        return view('pages.panel');
+        return view('pages.panel', [
+            'panel' => config('smelterworks.panel'),
+        ]);
     }
 }

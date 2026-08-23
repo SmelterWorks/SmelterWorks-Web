@@ -1,17 +1,21 @@
-@props(['plan', 'comingSoon'])
+@props(['plan', 'comingSoon', 'cloudBackupTiers' => []])
 
 @php
+    $isByos = ($plan['type'] ?? null) === 'byos';
     $remaining = $plan['stock']['remaining'] ?? 0;
-    $soldOut = !$comingSoon && $remaining < 1;
+    $soldOut = !$comingSoon && !$isByos && $remaining < 1;
 @endphp
 
 <article @class([
     'plan-card',
-    'plan-card--featured' => $plan['recommended'] && !$comingSoon,
+    'plan-card--featured' => $plan['recommended'] && !$comingSoon && !$isByos,
+    'plan-card--byos' => $isByos,
     'plan-card--sold-out' => $soldOut,
 ])>
     @if ($comingSoon)
         <p class="plan-card__badge">Coming soon</p>
+    @elseif ($isByos)
+        <p class="plan-card__badge">Your hardware</p>
     @elseif ($plan['recommended'] && !$soldOut)
         <p class="plan-card__badge">Most players pick this</p>
     @endif
@@ -23,7 +27,7 @@
     <p class="plan-card__price">
         <span class="plan-card__amount" data-price data-usd="{{ $plan['price_monthly'] }}"
             data-eur="{{ $plan['price_monthly_eur'] }}">${{ $plan['price_monthly'] }}</span>
-        <span class="plan-card__period">/ month</span>
+        <span class="plan-card__period">/ month{{ $isByos ? ' per daemon' : '' }}</span>
     </p>
     <p class="plan-card__yearly">
         <span data-price data-usd="{{ $plan['price_yearly'] }}"
@@ -34,13 +38,26 @@
     </p>
     <p class="plan-card__blurb">{{ $plan['blurb'] }}</p>
     <ul class="plan-card__specs">
-        <li>{{ $plan['ram_gb'] }} GB RAM</li>
-        <li>{{ $plan['storage_gb'] }} GB NVMe</li>
-        <li>{{ $plan['comfort'] }}</li>
-        <li>US or Germany</li>
-        <li>Docker export for self-hosting</li>
+        @if ($isByos)
+            @foreach ($plan['highlights'] ?? [] as $highlight)
+                <li>{{ $highlight }}</li>
+            @endforeach
+            @if (count($cloudBackupTiers) > 0)
+                <li>Optional cloud backups:
+                    @foreach ($cloudBackupTiers as $tier)
+                        {{ $tier['storage_gb'] }}GB ${{ $tier['price_monthly'] }}/mo{{ $loop->last ? '' : ',' }}
+                    @endforeach
+                </li>
+            @endif
+        @else
+            <li>{{ $plan['ram_gb'] }} GB RAM</li>
+            <li>{{ $plan['storage_gb'] }} GB NVMe</li>
+            <li>{{ $plan['comfort'] }}</li>
+            <li>US or Germany</li>
+            <li>Docker export for self-hosting</li>
+        @endif
     </ul>
-    @unless ($comingSoon)
+    @unless ($comingSoon || $isByos)
         <p class="plan-card__stock">
             @if ($soldOut)
                 No slots left on either host.
@@ -57,7 +74,7 @@
     @elseif ($soldOut)
         <span class="button button--ghost" aria-disabled="true">Sold out</span>
     @else
-        <x-button :href="route('hosting.purchase', $plan['slug'])" :variant="$plan['recommended'] ? 'solid' : 'ghost'">
+        <x-button :href="route('hosting.purchase', $plan['slug'])" :variant="$plan['recommended'] && !$isByos ? 'solid' : 'ghost'">
             Purchase
         </x-button>
     @endif

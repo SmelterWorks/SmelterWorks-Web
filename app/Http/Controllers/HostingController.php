@@ -36,14 +36,19 @@ class HostingController extends Controller
         $this->stock->syncFromConfig();
 
         $selected = $this->catalog->plan($plan);
-        $stocks = $this->stock->forPlan($plan);
+        $isByos = $this->catalog->isByos($selected);
+        $stocks = $isByos ? collect() : $this->stock->forPlan($plan);
         $quote = $this->exchange->quote();
 
         return view('pages.hosting.purchase', [
             'plan' => $selected,
-            'regions' => $this->catalog->regions(),
+            'isByos' => $isByos,
+            'regions' => $isByos
+                ? [['code' => $selected['region_code'], 'label' => $selected['region_label'] ?? 'Your hardware']]
+                : $this->catalog->regions(),
             'stocks' => $stocks,
-            'remaining' => $this->stock->remainingForPlan($plan),
+            'remaining' => $isByos ? PHP_INT_MAX : $this->stock->remainingForPlan($plan),
+            'cloudBackupTiers' => $this->catalog->cloudBackupTiers(),
             'exchange' => $quote,
             'priceMonthlyEur' => $quote['available']
                 ? round($selected['price_monthly'] * $quote['rate'], 2)

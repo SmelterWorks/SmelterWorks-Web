@@ -17,6 +17,7 @@ class HostingPageTest extends TestCase
             ->assertSee('Friends', false)
             ->assertSee('Modded', false)
             ->assertSee('Heavy', false)
+            ->assertSee('Bring Your Own Server', false)
             ->assertSee('Coming soon', false)
             ->assertSee('Affordable and friendly but limited hosting.', false)
             ->assertDontSee('Checkout opens when the panel is ready.', false)
@@ -29,6 +30,11 @@ class HostingPageTest extends TestCase
             ->assertSee('data-region-map-markers', false)
             ->assertSee('Quality servers with efficient, lower-waste hosting', false)
             ->assertSee('SFTP and HTTP file uploads', false)
+            ->assertSee('One-click migration between cloud and your own hardware', false)
+            ->assertSee('Panel built by', false)
+            ->assertSee('Voltaic Hosting', false)
+            ->assertSee('https://voltaic.host', false)
+            ->assertSee('per daemon', false)
             ->assertSee('Features and plans are subject to change until we are open.', false)
             ->assertSee('Monthly plans: full refund within 7 days', false)
             ->assertSee('Prices are USD.', false)
@@ -55,6 +61,7 @@ class HostingPageTest extends TestCase
             ->assertSee('Friends: $10/mo (Coming soon)', false)
             ->assertSee('Modded: $15/mo (Coming soon)', false)
             ->assertSee('Heavy: $25/mo (Coming soon)', false)
+            ->assertSee('Bring Your Own Server: $5/mo (Coming soon)', false)
             ->assertSee('Affordable and friendly but limited hosting.', false);
     }
 }
