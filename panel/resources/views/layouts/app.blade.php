@@ -16,6 +16,8 @@
         .nav a { color: #f0c090; }
         .error { color: #f88; }
         .flash { background: #243; padding: .75rem; border-radius: .35rem; margin-bottom: 1rem; }
+        .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); gap: .5rem; margin-top: .75rem; }
+        code { word-break: break-all; }
     </style>
 </head>
 <body>
@@ -34,6 +36,10 @@
             <div class="card">
                 <p><strong>Daemon token (copy now):</strong></p>
                 <code>{{ session('daemon_token') }}</code>
+                @if (session('hub_public_key'))
+                    <p style="margin-top:1rem"><strong>Hub public key (set SMELTER_HUB_PUBLIC_KEY):</strong></p>
+                    <code>{{ session('hub_public_key') }}</code>
+                @endif
             </div>
         @endif
         @yield('content')

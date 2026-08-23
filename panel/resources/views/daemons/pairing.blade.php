@@ -15,6 +15,14 @@
     @foreach ($daemons as $daemon)
         <div class="card">
             <p>{{ $daemon->name }} · {{ $daemon->status }} · {{ $daemon->uuid }}</p>
+            <p>Last seen: {{ $daemon->last_seen_at?->diffForHumans() ?? 'never' }}
+                @if ($daemon->isOnline())
+                    · online
+                @endif
+            </p>
+            @if ($daemon->gameServer)
+                <p>Linked server: <a href="{{ route('servers.show', $daemon->gameServer) }}">{{ $daemon->gameServer->name }}</a></p>
+            @endif
         </div>
     @endforeach
 @endsection

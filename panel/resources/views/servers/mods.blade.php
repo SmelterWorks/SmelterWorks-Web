@@ -13,6 +13,7 @@
                 @csrf
                 <input type="hidden" name="modid" value="{{ $mod['modid'] ?? '' }}">
                 <input type="hidden" name="name" value="{{ $mod['name'] ?? 'Mod' }}">
+                <input type="hidden" name="download_url" value="{{ $mod['download_url'] ?? ($mod['downloadUrl'] ?? '') }}">
                 <button type="submit">Install</button>
             </form>
         </div>

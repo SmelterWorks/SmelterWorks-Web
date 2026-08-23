@@ -32,5 +32,9 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="METRICS_ENABLED" value="false"/>
+        <env name="METRICS_TOKEN" value=""/>
+        <env name="SENTRY_LARAVEL_DSN" value=""/>
+        <env name="PANEL_DB_VALIDATE_ON_BOOT" value="false"/>
     </php>
 </phpunit>

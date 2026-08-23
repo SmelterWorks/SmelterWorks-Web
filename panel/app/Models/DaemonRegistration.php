@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
@@ -68,5 +69,22 @@ class DaemonRegistration extends Model
     public function gameServer(): HasOne
     {
         return $this->hasOne(GameServer::class);
+    }
+
+    /**
+     * @return HasMany<AgentCommand, $this>
+     */
+    public function commands(): HasMany
+    {
+        return $this->hasMany(AgentCommand::class);
+    }
+
+    public function isOnline(): bool
+    {
+        if ($this->last_seen_at === null) {
+            return false;
+        }
+
+        return $this->last_seen_at->greaterThan(now()->subMinutes(2));
     }
 }

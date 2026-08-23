@@ -7,8 +7,82 @@ services:
       APP_URL: http://localhost:8080
       PANEL_MODE: selfhost
       DB_CONNECTION: sqlite
+      METRICS_ENABLED: "false"
     volumes:
       - panel-data:/var/www/html/database
+
+  panel-postgres:
+    profiles: [postgres]
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      APP_URL: http://localhost:8080
+      PANEL_MODE: selfhost
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: smelterworks_panel
+      DB_USERNAME: panel
+      DB_PASSWORD: change-me
+      METRICS_ENABLED: "false"
+    volumes:
+      - panel-storage:/var/www/html/storage
+
+  panel-mysql:
+    profiles: [mysql]
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      APP_URL: http://localhost:8080
+      PANEL_MODE: selfhost
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: smelterworks_panel
+      DB_USERNAME: panel
+      DB_PASSWORD: change-me
+      METRICS_ENABLED: "false"
+    volumes:
+      - panel-storage:/var/www/html/storage
+
+  postgres:
+    profiles: [postgres]
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: smelterworks_panel
+      POSTGRES_USER: panel
+      POSTGRES_PASSWORD: change-me
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U panel -d smelterworks_panel"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  mysql:
+    profiles: [mysql]
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: smelterworks_panel
+      MYSQL_USER: panel
+      MYSQL_PASSWORD: change-me
+      MYSQL_ROOT_PASSWORD: change-me
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-ppanel", "-u", "panel"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - mysql-data:/var/lib/mysql
 
   minio:
     profiles: [cloud-backups]
@@ -25,4 +99,7 @@ services:
 
 volumes:
   panel-data:
+  panel-storage:
+  postgres-data:
+  mysql-data:
   minio-data:

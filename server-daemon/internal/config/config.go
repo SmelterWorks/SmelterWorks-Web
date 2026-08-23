@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -9,6 +10,8 @@ type Config struct {
 	HubURL        string
 	Token         string
 	HubPublicKey  string
+	InstallPath   string
+	KeyPath       string
 	DataPath      string
 	ModsPath      string
 	BackupPath    string
@@ -26,10 +29,18 @@ type Config struct {
 }
 
 func Load() Config {
+	installPath := env("SMELTER_INSTALL_PATH", "/var/lib/smelterd")
+	keyPath := env("SMELTER_KEY_PATH", "")
+	if keyPath == "" {
+		keyPath = filepath.Join(installPath, "key")
+	}
+
 	return Config{
 		HubURL:        env("SMELTER_HUB_URL", "http://127.0.0.1:8000"),
 		Token:         env("SMELTER_TOKEN", ""),
 		HubPublicKey:  env("SMELTER_HUB_PUBLIC_KEY", ""),
+		InstallPath:   installPath,
+		KeyPath:       keyPath,
 		DataPath:      env("SMELTER_DATA_PATH", "/data"),
 		ModsPath:      env("SMELTER_MODS_PATH", "/mods"),
 		BackupPath:    env("SMELTER_BACKUP_PATH", "/backups"),

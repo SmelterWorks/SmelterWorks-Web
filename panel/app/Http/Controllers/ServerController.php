@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DaemonRegistration;
 use App\Models\GameServer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,6 +16,12 @@ class ServerController extends Controller
 
         return view('servers.show', [
             'server' => $server->load('daemon', 'backups'),
+            'daemons' => $request->user()->organization?->daemons()
+                ->where('status', DaemonRegistration::STATUS_ACTIVE)
+                ->get() ?? collect(),
+            'servers' => $request->user()->organization?->gameServers()
+                ->where('id', '!=', $server->id)
+                ->get() ?? collect(),
         ]);
     }
 

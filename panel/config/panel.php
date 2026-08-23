@@ -3,6 +3,9 @@
 return [
     'mode' => env('PANEL_MODE', 'managed'),
     'name' => env('PANEL_NAME', 'SmelterWorks Panel'),
+    'database' => [
+        'validate_on_boot' => (bool) env('PANEL_DB_VALIDATE_ON_BOOT', true),
+    ],
     'agent' => [
         'listen_host' => env('PANEL_AGENT_LISTEN_HOST', '127.0.0.1'),
         'listen_port' => (int) env('PANEL_AGENT_LISTEN_PORT', 8081),

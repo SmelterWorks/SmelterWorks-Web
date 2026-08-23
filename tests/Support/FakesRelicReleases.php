@@ -5,6 +5,7 @@ namespace Tests\Support;
 use App\Support\Updates\Sources\GitHubReleaseSource;
 use App\Support\Updates\Sources\UpdateSourceResolver;
 use App\Support\Updates\UpdateMirrorService;
+use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Http;
 
 trait FakesRelicReleases
@@ -54,7 +55,7 @@ trait FakesRelicReleases
 
     protected function resetHttpFakes(): void
     {
-        Http::swap(new \Illuminate\Http\Client\Factory(app('events')));
+        Http::swap(new Factory(app('events')));
     }
 
     /**

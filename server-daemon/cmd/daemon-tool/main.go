@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net"
@@ -21,7 +23,7 @@ func main() {
 	cmd := os.Args[1]
 	switch cmd {
 	case "status", "start", "stop", "restart", "backup":
-		if err := callLocal(cfg, "/"+cmd, http.MethodPost); err != nil {
+		if err := callLocal(cfg, "/"+cmd, http.MethodPost, nil); err != nil {
 			fmt.Fprintf(os.Stderr, "error: %v\n", err)
 			os.Exit(1)
 		}
@@ -30,25 +32,58 @@ func main() {
 			fmt.Fprintln(os.Stderr, "usage: daemon-tool migrate export|import")
 			os.Exit(2)
 		}
-		fmt.Printf("migrate %s: use smelterd RPC or panel UI for remote migrations\n", os.Args[2])
+		sub := os.Args[2]
+		switch sub {
+		case "export":
+			body := map[string]string{
+				"server_uuid": "local",
+			}
+			if err := callLocal(cfg, "/migrate/export", http.MethodPost, body); err != nil {
+				fmt.Fprintf(os.Stderr, "error: %v\n", err)
+				os.Exit(1)
+			}
+		case "import":
+			packagePath := ""
+			if len(os.Args) > 3 {
+				packagePath = os.Args[3]
+			}
+			body := map[string]string{
+				"package_path": packagePath,
+			}
+			if err := callLocal(cfg, "/migrate/import", http.MethodPost, body); err != nil {
+				fmt.Fprintf(os.Stderr, "error: %v\n", err)
+				os.Exit(1)
+			}
+		default:
+			fmt.Fprintln(os.Stderr, "usage: daemon-tool migrate export|import [package_path]")
+			os.Exit(2)
+		}
 	default:
 		printUsage()
 		os.Exit(2)
 	}
 }
 
-func callLocal(cfg config.Config, path, method string) error {
+func callLocal(cfg config.Config, path, method string, body map[string]string) error {
 	client := &http.Client{
-		Timeout: 30 * time.Second,
+		Timeout: 30 * time.Minute,
 		Transport: &http.Transport{
 			DialContext: func(_ context.Context, _, _ string) (net.Conn, error) {
 				return net.Dial("unix", cfg.LocalSocket)
 			},
 		},
 	}
-	req, err := http.NewRequest(method, "http://unix"+path, nil)
+	var reader io.Reader
+	if body != nil {
+		raw, _ := json.Marshal(body)
+		reader = bytes.NewReader(raw)
+	}
+	req, err := http.NewRequest(method, "http://unix"+path, reader)
 	if err != nil {
 		return err
+	}
+	if body != nil {
+		req.Header.Set("Content-Type", "application/json")
 	}
 	if cfg.LocalToken != "" {
 		req.Header.Set("X-Local-Token", cfg.LocalToken)
@@ -58,11 +93,11 @@ func callLocal(cfg config.Config, path, method string) error {
 		return err
 	}
 	defer resp.Body.Close()
-	body, _ := io.ReadAll(resp.Body)
+	raw, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode >= 300 {
-		return fmt.Errorf("%s", string(body))
+		return fmt.Errorf("%s", string(raw))
 	}
-	fmt.Println(string(body))
+	fmt.Println(string(raw))
 	return nil
 }
 
@@ -75,5 +110,6 @@ Commands:
   stop
   restart
   backup
-  migrate export|import`)
+  migrate export
+  migrate import [package_path]`)
 }

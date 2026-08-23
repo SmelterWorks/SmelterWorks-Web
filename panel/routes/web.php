@@ -3,11 +3,17 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DaemonController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MetricsController;
 use App\Http\Controllers\MigrationController;
 use App\Http\Controllers\ModController;
+use App\Http\Controllers\ServerActionController;
 use App\Http\Controllers\ServerController;
 use App\Http\Middleware\RequireStepUp;
 use Illuminate\Support\Facades\Route;
+
+$metricsRoute = (string) config('metrics.route', '/metrics');
+
+Route::middleware('metrics.token')->get($metricsRoute, MetricsController::class)->name('metrics');
 
 Route::middleware('guest')->group(function (): void {
     Route::get('login', [AuthController::class, 'showLogin'])->name('login');
@@ -22,6 +28,9 @@ Route::middleware('auth')->group(function (): void {
 
     Route::get('servers/{server}', [ServerController::class, 'show'])->name('servers.show');
     Route::post('servers', [ServerController::class, 'store'])->name('servers.store');
+    Route::post('servers/{server}/daemon', [ServerActionController::class, 'linkDaemon'])->name('servers.daemon.link');
+    Route::post('servers/{server}/power/{action}', [ServerActionController::class, 'power'])->name('servers.power');
+    Route::post('servers/{server}/backup', [ServerActionController::class, 'backup'])->name('servers.backup');
 
     Route::get('daemons/pairing', [DaemonController::class, 'pairing'])->name('daemons.pairing');
     Route::post('daemons', [DaemonController::class, 'create'])->name('daemons.store');

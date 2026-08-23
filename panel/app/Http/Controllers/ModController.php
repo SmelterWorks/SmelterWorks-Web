@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\GameServer;
+use App\Support\Agent\AgentCommandService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -35,13 +36,23 @@ class ModController extends Controller
         ]);
     }
 
-    public function install(GameServer $server, Request $request): RedirectResponse
-    {
+    public function install(
+        GameServer $server,
+        Request $request,
+        AgentCommandService $commands,
+    ): RedirectResponse {
         abort_unless($request->user()?->organization_id === $server->organization_id, 403);
 
         $validated = $request->validate([
             'modid' => ['required', 'string', 'max:120'],
             'name' => ['required', 'string', 'max:200'],
+            'download_url' => ['nullable', 'url', 'max:500'],
+        ]);
+
+        $commands->dispatchForServer($server, 'mod.install', [
+            'modid' => $validated['modid'],
+            'name' => $validated['name'],
+            'download_url' => $validated['download_url'] ?? null,
         ]);
 
         return back()->with('status', 'Mod install queued for '.$validated['name'].' on '.$server->name.'.');

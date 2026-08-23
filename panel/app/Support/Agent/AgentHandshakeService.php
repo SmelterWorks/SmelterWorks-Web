@@ -85,7 +85,7 @@ final class AgentHandshakeService
         ];
     }
 
-    public function heartbeat(string $daemonUuid, string $fingerprint): void
+    public function heartbeat(string $daemonUuid, string $fingerprint, ?string $containerStatus = null): void
     {
         $daemon = DaemonRegistration::query()
             ->where('uuid', $daemonUuid)
@@ -98,7 +98,24 @@ final class AgentHandshakeService
             ]);
         }
 
-        $daemon->update(['last_seen_at' => now()]);
+        $metadata = $daemon->metadata ?? [];
+
+        if ($containerStatus !== null) {
+            $metadata['container_status'] = $containerStatus;
+        }
+
+        $daemon->update([
+            'last_seen_at' => now(),
+            'metadata' => $metadata,
+        ]);
+
+        $serverStatus = $daemon->isOnline() ? 'online' : 'offline';
+
+        if ($containerStatus === 'stopped') {
+            $serverStatus = 'stopped';
+        }
+
+        $daemon->gameServer()?->update(['status' => $serverStatus]);
     }
 
     private function findByToken(string $token): DaemonRegistration

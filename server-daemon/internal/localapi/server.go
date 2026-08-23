@@ -3,14 +3,17 @@ package localapi
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/smelterworks/server-daemon/internal/backup"
 	"github.com/smelterworks/server-daemon/internal/config"
 	"github.com/smelterworks/server-daemon/internal/docker"
+	"github.com/smelterworks/server-daemon/internal/migrate"
 )
 
 type Server struct {
@@ -39,6 +42,8 @@ func (s *Server) Serve() error {
 	mux.HandleFunc("/stop", s.handleStop)
 	mux.HandleFunc("/restart", s.handleRestart)
 	mux.HandleFunc("/backup", s.handleBackup)
+	mux.HandleFunc("/migrate/export", s.handleMigrateExport)
+	mux.HandleFunc("/migrate/import", s.handleMigrateImport)
 	return http.Serve(ln, s.auth(mux))
 }
 
@@ -77,6 +82,85 @@ func (s *Server) handleBackup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, map[string]string{"path": path})
+}
+
+func (s *Server) handleMigrateExport(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		ServerUUID string `json:"server_uuid"`
+		JobUUID    string `json:"job_uuid"`
+	}
+	if err := decodeJSON(r, &body); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	serverID := body.ServerUUID
+	if serverID == "" {
+		serverID = body.JobUUID
+	}
+	if serverID == "" {
+		serverID = "local"
+	}
+
+	if err := s.docker.Stop(r.Context()); err != nil {
+		writeErr(w, err)
+		return
+	}
+
+	dest := filepath.Join(s.cfg.BackupPath, fmt.Sprintf("migrate-%s.tar.gz", serverID))
+	if err := os.MkdirAll(s.cfg.BackupPath, 0o755); err != nil {
+		writeErr(w, err)
+		return
+	}
+
+	path, err := migrate.ExportPackage(s.cfg.DataPath, dest, serverID)
+	if err != nil {
+		writeErr(w, err)
+		return
+	}
+	writeJSON(w, map[string]string{"path": path})
+}
+
+func (s *Server) handleMigrateImport(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		PackagePath string `json:"package_path"`
+	}
+	if err := decodeJSON(r, &body); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if body.PackagePath == "" {
+		http.Error(w, "package_path required", http.StatusBadRequest)
+		return
+	}
+
+	if err := s.docker.Stop(r.Context()); err != nil {
+		writeErr(w, err)
+		return
+	}
+	if err := migrate.ImportPackage(body.PackagePath, s.cfg.DataPath); err != nil {
+		writeErr(w, err)
+		return
+	}
+	if err := s.docker.Start(r.Context(), s.cfg.DataPath, s.cfg.ModsPath, s.cfg.BackupPath); err != nil {
+		writeErr(w, err)
+		return
+	}
+	writeJSON(w, map[string]string{"ok": "true"})
+}
+
+func decodeJSON(r *http.Request, v any) error {
+	if r.Body == nil {
+		return fmt.Errorf("missing body")
+	}
+	defer r.Body.Close()
+	raw, err := io.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+	if len(strings.TrimSpace(string(raw))) == 0 {
+		return nil
+	}
+	return json.Unmarshal(raw, v)
 }
 
 func writeJSON(w http.ResponseWriter, v any) {
