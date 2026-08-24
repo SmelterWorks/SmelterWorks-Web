@@ -25,6 +25,51 @@
         @apply hover:bg-ember/90 focus:outline-none focus:ring-2 focus:ring-ember/40;
     }
 
+    .panel-card {
+        @apply rounded-xl border border-border bg-surface-raised p-5;
+    }
+
+    .panel-list-item {
+        @apply flex items-center justify-between gap-3 rounded-lg border border-border bg-zinc-900/30 px-4 py-3 no-underline transition hover:border-ember/30;
+    }
+
+    .panel-label {
+        @apply mb-1.5 block text-sm font-medium text-zinc-300;
+    }
+
+    .panel-input {
+        @apply w-full rounded-lg border border-border bg-surface px-3.5 py-2.5 text-zinc-100 outline-none transition;
+        @apply placeholder:text-zinc-600 focus:border-ember focus:ring-2 focus:ring-ember/30;
+    }
+
+    .panel-btn {
+        @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition;
+    }
+
+    .panel-btn-primary {
+        @apply bg-ember text-white hover:bg-ember/90;
+    }
+
+    .panel-btn-ghost {
+        @apply border border-border text-zinc-300 hover:border-ember/40 hover:text-ember-light;
+    }
+
+    .panel-btn-danger {
+        @apply border border-red-800/60 text-red-300 hover:bg-red-950/40;
+    }
+
+    .panel-badge {
+        @apply rounded-full bg-zinc-800 px-2.5 py-0.5 text-xs font-medium text-zinc-300;
+    }
+
+    .panel-flash {
+        @apply rounded-lg border border-emerald-800/60 bg-emerald-950/40 px-4 py-3 text-sm text-emerald-200;
+    }
+
+    .panel-error {
+        @apply mt-1.5 text-sm text-red-400;
+    }
+
     .altcha-wrap altcha-widget {
         display: block;
         width: 100%;

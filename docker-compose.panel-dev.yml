@@ -23,12 +23,12 @@ services:
       METRICS_ENABLED: "false"
       SENTRY_LARAVEL_DSN: ""
       DB_CONNECTION: sqlite
-      DB_DATABASE: /var/www/html/database/database.sqlite
+      DB_DATABASE: /var/www/html/storage/app/panel.sqlite
       PANEL_DB_VALIDATE_ON_BOOT: "false"
       PANEL_ALTCHA_ENABLED: "true"
       PANEL_ALTCHA_DRIVER: standalone
     volumes:
-      - panel-sqlite:/var/www/html/database
+      - panel-data:/var/www/html/storage/app
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/up"]
       interval: 5s
@@ -65,7 +65,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  panel-sqlite:
+  panel-data:
   altcha-sentinel-data:
   smelter-data:
   smelter-mods:

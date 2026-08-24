@@ -1,28 +1,41 @@
-@extends('layouts.app', ['title' => 'Dashboard'])
+@extends('layouts.app', ['title' => 'Dashboard', 'section' => 'Overview'])
 
 @section('content')
-    <h1>{{ config('panel.name') }}</h1>
-    <div class="card">
-        <h2>Servers</h2>
-        @forelse ($servers as $server)
-            <p><a href="{{ route('servers.show', $server) }}">{{ $server->name }}</a> ({{ $server->type }})</p>
-        @empty
-            <p>No servers yet.</p>
-        @endforelse
-        <form method="post" action="{{ route('servers.store') }}">
-            @csrf
-            <input type="hidden" name="type" value="byos">
-            <label>Server name</label>
-            <input type="text" name="name" required>
-            <button type="submit">Add BYOS server</button>
-        </form>
-    </div>
-    <div class="card">
-        <h2>Daemons</h2>
-        @forelse ($daemons as $daemon)
-            <p>{{ $daemon->name }} · {{ $daemon->status }} · last seen {{ $daemon->last_seen_at?->diffForHumans() ?? 'never' }}</p>
-        @empty
-            <p>No daemons paired yet.</p>
-        @endforelse
+    <div class="grid gap-6 lg:grid-cols-2">
+        <section class="panel-card">
+            <div class="mb-4 flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-zinc-50">Your servers</h2>
+                <a href="{{ route('servers.purchase') }}" class="panel-btn panel-btn-ghost text-sm">Add server</a>
+            </div>
+            <div class="space-y-3">
+                @forelse ($servers as $server)
+                    <a href="{{ route('servers.show', $server) }}" class="panel-list-item">
+                        <div>
+                            <p class="font-medium text-zinc-100">{{ $server->name }}</p>
+                            <p class="text-xs text-zinc-500">{{ strtoupper($server->type) }} · {{ $server->status }}</p>
+                        </div>
+                        <span class="panel-badge">{{ $server->plan_slug ?? 'custom' }}</span>
+                    </a>
+                @empty
+                    <p class="text-sm text-zinc-500">No servers yet. <a href="{{ route('servers.purchase') }}" class="text-ember-light">Get started</a>.</p>
+                @endforelse
+            </div>
+        </section>
+
+        <section class="panel-card">
+            <h2 class="mb-4 text-lg font-semibold text-zinc-50">Daemons</h2>
+            <div class="space-y-3">
+                @forelse ($daemons as $daemon)
+                    <div class="panel-list-item">
+                        <div>
+                            <p class="font-medium text-zinc-100">{{ $daemon->name }}</p>
+                            <p class="text-xs text-zinc-500">{{ $daemon->status }} · last seen {{ $daemon->last_seen_at?->diffForHumans() ?? 'never' }}</p>
+                        </div>
+                    </div>
+                @empty
+                    <p class="text-sm text-zinc-500">No daemons paired. <a href="{{ route('daemons.pairing') }}" class="text-ember-light">Pair one</a>.</p>
+                @endforelse
+            </div>
+        </section>
     </div>
 @endsection
