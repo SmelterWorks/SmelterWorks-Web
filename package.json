@@ -28,7 +28,7 @@
         "@lhci/cli": "^0.15.1",
         "@tailwindcss/vite": "^4.0.0",
         "blade-formatter": "^1.44.4",
-        "concurrently": "^10.0.4",
+        "concurrently": "^10.0.5",
         "country-flag-icons": "^1.6.20",
         "fontaine": "^0.8.0",
         "laravel-vite-plugin": "^3.1",
