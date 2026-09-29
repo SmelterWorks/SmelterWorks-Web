@@ -12,7 +12,7 @@
         <div class="section__inner">
             <div class="project-list">
                 @forelse ($mods as $mod)
-                    <x-project-row :project="$mod" />
+                    <x-project-row :project="$mod" title-tag="h2" />
                 @empty
                     <x-empty-state title="No mods yet">
                         <p>Nothing listed yet.</p>
