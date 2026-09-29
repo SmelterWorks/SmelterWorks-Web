@@ -2,8 +2,11 @@
 
 namespace Tests\Unit;
 
+use AltchaOrg\Altcha\Algorithm\Pbkdf2;
 use AltchaOrg\Altcha\Altcha;
-use AltchaOrg\Altcha\Hasher\Algorithm;
+use AltchaOrg\Altcha\Challenge;
+use AltchaOrg\Altcha\Payload;
+use AltchaOrg\Altcha\SolveChallengeOptions;
 use App\Support\Altcha\AltchaService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -21,25 +24,17 @@ class AltchaServiceTest extends TestCase
         ]);
 
         $service = app(AltchaService::class);
-        $challenge = $service->createChallenge();
+        $challenge = Challenge::fromArray($service->createChallenge());
 
-        $altcha = new Altcha('test-hmac-key');
-        $solution = $altcha->solveChallenge(
-            (string) $challenge['challenge'],
-            (string) $challenge['salt'],
-            Algorithm::from($challenge['algorithm']),
-            (int) $challenge['maxnumber'],
-        );
+        $altcha = new Altcha(hmacSignatureSecret: 'test-hmac-key');
+        $solution = $altcha->solveChallenge(new SolveChallengeOptions(
+            challenge: $challenge,
+            algorithm: new Pbkdf2,
+        ));
 
         $this->assertNotNull($solution);
 
-        $payload = base64_encode(json_encode([
-            'algorithm' => $challenge['algorithm'],
-            'challenge' => $challenge['challenge'],
-            'number' => $solution->number,
-            'salt' => $challenge['salt'],
-            'signature' => $challenge['signature'],
-        ], JSON_THROW_ON_ERROR));
+        $payload = (new Payload($challenge, $solution))->toBase64();
 
         $this->assertTrue($service->verify($payload));
     }
